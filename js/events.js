@@ -207,7 +207,7 @@ function evSignature(ev){
     String(ev.title||'').trim().toLowerCase().replace(/\s+/g,' '),
     ev.start,ev.end||ev.start,
     (ev.dates&&ev.dates.length)?ev.dates.slice().sort().join(','):'',
-    rep,evStartTime(ev)||'',evEndTime(ev)||'',ev.boda&&ev.boda.coupleId||''].join('|')+(ev.taxModel?'|modelo:'+ev.taxModel:'')+(evIsRomantic(ev)?'|romantico:1':'');
+    rep,evStartTime(ev)||'',evEndTime(ev)||'',ev.boda&&ev.boda.coupleId||''].join('|')+(ev.taxModel?'|modelo:'+ev.taxModel:'')+(evIsRomantic(ev)?'|romantico:1':'')+(evIsBirthdayPlan(ev)?'|cumple:1':'');
 }
 /* Fusiona una lista de eventos entrantes sobre EVENTS sin crear duplicados.
    Devuelve el recuento para poder decirselo al usuario. */
@@ -338,7 +338,7 @@ function evMarkerHtml(ev,pastClass,sizeClass,defaultShape,ds){
   var color=getEvDisplayColor(ev);
   var type=getEvType(ev);
   var shape=evFixedSymbol(type)|| (type==='Ensayos boda'?'x-boda':(ev.shape||defaultShape||'circle'));
-  var romantic=evIsRomantic(ev);
+  var romantic=evPlanBadge(ev);
   var pmk=pastClass||'';
   var sz=sizeClass?(' '+sizeClass):'';
   var dsAttr=ds?(' data-ds="'+ds+'"'):'';
@@ -347,7 +347,7 @@ function evMarkerHtml(ev,pastClass,sizeClass,defaultShape,ds){
   }
   /* Todas las formas se dibujan con evShapeSvg() → mismo grosor de borde
      (EV_SHAPE_BW) y escalado automático al tamaño del contenedor. */
-  return '<span class="ev-annual-marker ev-shape-'+shape+(evIsManagement(type)?' ev-management-mark':'')+pmk+sz+'" data-id="'+ev.id+'"'+dsAttr+' style="color:'+color+'"'+(romantic?' title="Plan romántico"':'')+'>'+evShapeSvg(shape,romantic)+'</span>';
+  return '<span class="ev-annual-marker ev-shape-'+shape+(evIsManagement(type)?' ev-management-mark':'')+pmk+sz+'" data-id="'+ev.id+'"'+dsAttr+' style="color:'+color+'"'+(romantic?' title="'+(romantic==='birthday'?'Plan de cumpleaños':'Plan romántico')+'"':'')+'>'+evShapeSvg(shape,romantic)+'</span>';
 }
 /* Marcador "+" (hay más eventos de los que caben en el día) */
 function evMorePlusHtml(extraClass){

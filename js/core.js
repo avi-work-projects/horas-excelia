@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v574 — Editar pareja: fecha de boda sin flecha y etiquetas mayores';
+var APP_VERSION = 'v575 — Plan de cumpleaños, estilo de Editar/Eliminar y ajustes de calendario';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
@@ -141,6 +141,17 @@ function cycleTheme(){
   var idx=(THEME_SEQUENCE.indexOf(THEME)+1)%THEME_SEQUENCE.length;
   applyTheme(THEME_SEQUENCE[idx]);
   updateThemeBtn();
+}
+/* Estilo de Editar/Eliminar (v575, pendiente de que Ángel elija): «soft» =
+   fondo claro, contorno y texto de color; «filled» = relleno con texto blanco.
+   Se aplica como data-action-style en <html> y viaja en el backup. */
+var ACTION_STYLE_KEY='excelia-action-style-v1';
+var ACTION_STYLE=(function(){try{var v=appStorage.getItem(ACTION_STYLE_KEY);if(v==='filled'||v==='soft')return v;}catch(e){}return 'soft';})();
+function applyActionStyle(v){
+  ACTION_STYLE=v==='filled'?'filled':'soft';
+  document.documentElement.setAttribute('data-action-style',ACTION_STYLE);
+  try{appStorage.setItem(ACTION_STYLE_KEY,ACTION_STYLE);}catch(e){}
+  document.querySelectorAll('[data-action-style-opt]').forEach(function(b){var on=b.dataset.actionStyleOpt===ACTION_STYLE;b.classList.toggle('on',on);b.setAttribute('aria-checked',String(on));});
 }
 function updateThemeBtn(){
   var btn=document.getElementById('themeBtn');

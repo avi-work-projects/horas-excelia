@@ -189,7 +189,12 @@ function renderEvDetail(ev,fromSummary,car,occurrenceDs){
     if(ev._rutSkip&&(!ev._rutExtra||rutSessionByKey(ev._rut,ev._rutKey||ev.start).recoveryOf)&&!rutRecoveryFor(ev._rut,ev._rutKey||ev.start))h+='<button class="ev-btn" id="evDRutRecover">Recuperar esta clase</button>';
     h+='</div>';
   }
-  if(isBirthday&&bdayCanSetAlarm(_findBdayByEvId(ev.id)))h+='<button class="ev-btn primary" id="evDBdayAlarm">🔔 Alarma de cumpleaños</button>';
+  /* Misma fila de alarma que el resto de eventos (antes, un botón azul que se
+     estiraba hasta llenar la ficha del día). */
+  var _bdAl=isBirthday&&_findBdayByEvId(ev.id);
+  if(_bdAl&&bdayCanSetAlarm(_bdAl))h+='<button class="ev-detail-alarm" id="evDBdayAlarm" aria-label="Configurar alarma de cumpleaños"><span class="ev-detail-alarm-icon" aria-hidden="true">🔔</span>'
+    +'<span class="ev-detail-alarm-copy"><strong>Alarma de cumpleaños</strong><small>'+(isBdayAlarmSet(_bdAl)?'Alarma creada':'Sin alarma')+'</small></span>'
+    +'<span class="ev-detail-alarm-action">Configurar</span></button>';
   if(car)h+='</div></div>';
   h+='<div class="ev-detail-actions">';
   var trash='<svg class="ev-delete-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M9 6V3h6v3M6 6l1 15h10l1-15M10 10v7m4-7v7" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';

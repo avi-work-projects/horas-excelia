@@ -16,7 +16,7 @@ function _evFormRead(form){
   var repeat=form.edit&&form.edit.repeat?JSON.parse(JSON.stringify(form.edit.repeat)):null;
   var event={id:form.edit?form.edit.id:'ev-'+Date.now(),title:title,note:_evFormEl(form,'evFNote').value.trim(),color:EV_FREE_COLOR[key]?_evFormColor(form):evTypeColor(kind,type),kind:kind,type:type,start:start,end:end,repeat:repeat};
   if(taxModel!==null)event.taxModel=taxModel;
-  if(kind==='puntual'&&evIsPlan(type)&&form.romantic)event.romantic=true;
+  if(kind==='puntual'&&evIsPlan(type)){if(form.birthday&&type!=='Cumpleaños')event.birthday=true;else if(form.romantic)event.romantic=true;}
   if(type==='Plan cultural'){var culture=form.root.querySelector('[data-culture][aria-pressed="true"]');if(!culture){showToast('Elige el tipo de plan cultural','error');return null;}event.culturalPlan=culture.dataset.culture;}
   if(legacy&&form.edit.dates)event.dates=form.edit.dates.slice();
   else if(EV_FREE_DATES[key]&&form.dates.length>1){event.dates=form.dates.slice();event.start=event.dates[0];event.end=event.start;}

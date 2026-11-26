@@ -253,6 +253,16 @@
 .ev-detail-actions>.ev-btn.danger,:is([data-theme="light"],[data-theme="grey"]) .ev-detail-actions>.ev-btn.danger{background:color-mix(in srgb,var(--c-red) 7%,var(--surface));color:var(--c-red);border:1.5px solid color-mix(in srgb,var(--c-red) 60%,transparent)}
 .ev-detail-actions>.ev-btn.danger:active{background:color-mix(in srgb,var(--c-red) 18%,var(--surface))}
 .ev-detail-actions>.ev-btn.danger .ev-delete-icon path{stroke:currentColor}
+/* Estilo elegido en Ajustes (data-action-style en <html>): «soft» deja Editar y
+   Eliminar con fondo claro y contorno; «filled», los dos rellenos con texto blanco. */
+[data-action-style="soft"][data-action-style] .ev-btn.danger,[data-action-style="soft"][data-action-style] .ev-detail-actions>.ev-btn.danger{background:color-mix(in srgb,var(--c-red) 7%,var(--surface));color:var(--c-red);border:1.5px solid color-mix(in srgb,var(--c-red) 60%,transparent)}
+[data-action-style="soft"][data-action-style] .ev-btn.danger .ev-delete-icon path{stroke:currentColor}
+[data-action-style="soft"][data-action-style] .ev-edit-orange{background:color-mix(in srgb,#fb923c 12%,var(--surface)) !important;color:#c2570c !important;border:1.5px solid color-mix(in srgb,#fb923c 60%,transparent) !important}
+[data-action-style="filled"][data-action-style] .ev-detail-actions>.ev-btn.danger{background:#d64541;color:#fff;border:1px solid #d64541}
+[data-action-style="filled"][data-action-style] .ev-detail-actions>.ev-btn.danger .ev-delete-icon path{stroke:#fff}
+[data-theme="dark"][data-action-style="filled"] .ev-detail-actions>.ev-btn.danger{background:#c0392f;border-color:#c0392f}
+[data-theme="grey"][data-action-style="filled"] .ev-detail-actions>.ev-btn.danger{background:var(--c-red);border-color:var(--c-red)}
+[data-theme="dark"][data-action-style="soft"] .ev-edit-orange{color:#fdba74 !important}
 .ev-io-row{display:flex;gap:8px;margin-top:8px}
 .ev-io-btn:active{background:var(--surface3)}
 /* Event detail */

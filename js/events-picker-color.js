@@ -181,6 +181,14 @@ function evPlanShapeInner(shape){
 function evHeartShapeInner(color,bw){
   return '<path d="M0,8 C-3,5 -9,1 -9,-3 C-9,-9 -2,-10 0,-5 C2,-10 9,-9 9,-3 C9,1 3,5 0,8 Z" fill="'+(color||'currentColor')+'" stroke="#000" '+evSymbolStroke(bw||EV_SHAPE_BW)+' stroke-linejoin="round"/>';
 }
+/* Plan de cumpleaños (v575): como el romántico, pero con la tarta. Son
+   excluyentes y el plan «Cumpleaños» no repite la tarta. */
+function evIsBirthdayPlan(ev){return !!ev&&getEvKind(ev)==='puntual'&&evIsPlan(getEvType(ev))&&getEvType(ev)!=='Cumpleaños'&&ev.birthday===true;}
+function evPlanBadge(ev){return evIsBirthdayPlan(ev)?'birthday':evIsRomantic(ev)?'romantic':null;}
+function evBirthdayBadgeSvg(){
+  var cake=evShapeSvg('cake').replace(/^<svg[^>]*>/,'').replace(/<\/svg>$/,'');
+  return '<g class="ev-birthday-badge" transform="translate(7 7) scale(.44)"><circle r="11" fill="var(--surface,#fff)"/><g transform="scale(.9)">'+cake+'</g></g>';
+}
 function evRomanticBadgeSvg(){
   return '<g class="ev-romantic-badge" transform="translate(7 7) scale(.44)"><circle r="11" fill="var(--surface,#fff)"/>'+evHeartShapeInner('#e2527a',1.6)+'</g>';
 }
@@ -267,7 +275,9 @@ function evShapeSvg(shape,romantic){
   } else { /* rounded */
     inner='<rect x="-9" y="-6" width="18" height="12" rx="4" fill="currentColor" stroke="#000" '+evSymbolStroke(bw)+'/>';
   }
-  return '<svg viewBox="-10 -10 20 20" preserveAspectRatio="xMidYMid meet"'+(romantic?' overflow="visible"':'')+'>'+inner+(romantic?evRomanticBadgeSvg():'')+'</svg>';
+  /* romantic: true/'romantic' pinta el corazón; 'birthday', la tarta. */
+  var badge=romantic==='birthday'?evBirthdayBadgeSvg():romantic?evRomanticBadgeSvg():'';
+  return '<svg viewBox="-10 -10 20 20" preserveAspectRatio="xMidYMid meet"'+(badge?' overflow="visible"':'')+'>'+inner+badge+'</svg>';
 }
 /* Marcador "+N" (4ª posición cuando hay más de 4 eventos puntuales en un día):
    círculo blanco con borde negro y un + negro. Mismo grosor de borde. */

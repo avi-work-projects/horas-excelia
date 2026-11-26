@@ -11,7 +11,7 @@ function swipePreviewRoot(frame,copy,source,scene){
   var root=frame.attachShadow({mode:'closed'});
   if(typeof CSSStyleSheet==='function'&&CSSStyleSheet.prototype.replaceSync){if(!SWIPE_PREVIEW_SHEET){SWIPE_PREVIEW_SHEET=new CSSStyleSheet();SWIPE_PREVIEW_SHEET.replaceSync(SWIPE_PREVIEW_STYLES);}root.adoptedStyleSheets=[SWIPE_PREVIEW_SHEET];}
   else{var style=document.createElement('style');style.textContent=SWIPE_PREVIEW_STYLES;root.appendChild(style);}
-  var context=document.createElement('div');context.setAttribute('data-theme',document.documentElement.getAttribute('data-theme')||'light');context.style.display='contents';root.appendChild(context);
+  var context=document.createElement('div');context.setAttribute('data-theme',document.documentElement.getAttribute('data-theme')||'light');context.setAttribute('data-action-style',document.documentElement.getAttribute('data-action-style')||'soft');context.style.display='contents';root.appendChild(context);
   if(scene){var motion=document.createElement('style');motion.textContent='*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}';root.appendChild(motion);context.appendChild(scene);return;}
   context.appendChild(copy);
 }

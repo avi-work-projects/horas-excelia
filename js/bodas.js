@@ -364,7 +364,9 @@ function _renderBodaCalendario(){
   var dow=first.getDay(),off=dow===0?6:dow-1;
   var cur=new Date(first);cur.setDate(cur.getDate()-off);
   var todayDs=evDk(new Date());
-  for(var cell=0;cell<42;cell++){
+  var calWeeks=0;
+  for(var cell=0;cell<42&&(cell%7||cur.getMonth()===m||cell===0);cell++){
+    if(cell%7===0)calWeeks++;
     var ds=evDk(cur);
     var inM=cur.getMonth()===m;
     var clsDia=bodaSortClasses(porDia[ds]||[]);
@@ -421,6 +423,9 @@ function _renderBodaCalendario(){
       +'</button>';
   });
   h+='</div>';
+  /* Las parejas van pegadas a la última semana; el hueco de las semanas que
+     faltan hasta seis queda debajo, para que el alto no cambie al deslizar. */
+  h+='<div class="boda-cal-spacer" style="height:'+((6-calWeeks)*47)+'px" aria-hidden="true"></div>';
   h+='</div>';
   return h;
 }

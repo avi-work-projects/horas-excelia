@@ -403,6 +403,7 @@ const REGLAS = [
       'excelia-household-tab-v1': 'householdTab',
       'excelia-nav-icons-v1':      'navIconStyle',
       'excelia-theme-v1':          'theme',
+      'excelia-action-style-v1':   'actionStyle',
       /* A proposito FUERA del backup: */
       'excelia-macro-alarm-url':   false,   /* clave antigua, solo se lee como respaldo */
       'excelia-popup-dismissed':   false,   /* aviso de una sesion, no es un dato */

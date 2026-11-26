@@ -36,7 +36,7 @@ function _renderEvTypeButton(kind,t,selType,romantic){
     var sel=(t===selType)?' selected':'';
     h+='<button type="button" class="ev-color-swatch'+sel+(isMulti?' ev-color-swatch-multi':'')+'" data-hex="'+c+'" data-type="'+escHtml(t)+'" data-kind="'+kind+'"'+(isMulti?'':' style="color:'+c+'"')+'>';
     h+=isMulti?'<div class="ev-type-dot ev-type-dot-multi"></div>'
-      :kind==='puntual'?'<span class="ev-type-dot ev-type-symbol">'+evShapeSvg(t==='Ensayos boda'?'x-thick':evDefaultShape({type:t}),romantic&&evIsPlan(t))+'</span>'
+      :kind==='puntual'?'<span class="ev-type-dot ev-type-symbol">'+evShapeSvg(t==='Ensayos boda'?'x-thick':evDefaultShape({type:t}),evIsPlan(t)&&!(romantic==='birthday'&&t==='Cumpleaños')?romantic:false)+'</span>'
       :'<div class="ev-type-dot" style="background:'+c+'"></div>';
     h+='<span class="ev-type-name">'+escHtml(menuTitle(t==='Contratar electricidad'?'Contratar electric.':t))+'</span></button>';
   return h;
@@ -86,7 +86,7 @@ function renderEvForm(ev){
   });
   h+='</div></div>';
   h+='<div class="ev-field"><label>Categor\u00eda</label><div class="ev-type-picker" id="evFTypePicker">';
-  h+=_renderEvTypeSwatches(curKind,curType,null,evIsRomantic(ev));
+  h+=_renderEvTypeSwatches(curKind,curType,null,evPlanBadge(ev));
   h+='</div></div>';
   h+=renderEvTaxFields(ev);
   h+=renderEvCultureFields(ev);
@@ -204,7 +204,7 @@ function evSuggestedTitle(type){
 }
 function bindEvFormEvents(){
   var root=document.getElementById('evFWrap'),edit=EV_EDIT;
-  var form={root:root,edit:edit,day:EV_EDIT_DS,autoTitle:edit?null:'',quickExtras:{},romantic:evIsRomantic(edit),
+  var form={root:root,edit:edit,day:EV_EDIT_DS,autoTitle:edit?null:'',quickExtras:{},romantic:evIsRomantic(edit)&&!evIsBirthdayPlan(edit),birthday:evIsBirthdayPlan(edit),
     colorPicker:_bindColorPicker(root,'evFCp',function(){_evFormShapePreviews(form);}),shape:edit&&edit.shape||'circle',
     dates:edit&&Array.isArray(edit.dates)?edit.dates.slice():[],multiChanged:false,barSize:edit&&edit.barSize||null};
   Object.keys(EV_PICKER_GROUPS).forEach(function(k){if(edit&&evQuickSelection(getEvType(edit),EV_PICKER_GROUPS[k]))form.quickExtras[k]=getEvType(edit);});

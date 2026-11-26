@@ -15,30 +15,40 @@ function renderEvQuickPlans(type,key,extra,romantic){
   return '<section class="ev-category-group ev-quick-group'+(evPickerHas(group,type)?' chosen':'')+'" data-group="'+key+'" style="--category-tone:'+evTypeColor('puntual',group.generic)+';--picker-accent:'+group.accent+'" aria-label="'+group.generic+'"><div class="ev-quick-header">'+_renderEvTypeButton('puntual',group.generic,type,romantic)
     +(remembered?'<div class="ev-quick-selection">'+_renderEvTypeButton('puntual',remembered,type,romantic)+'</div>':'')+'</div><div class="ev-category-children ev-plan-quick" data-quick="'+key+'">'
     +group.quick.map(function(t){return _renderEvTypeButton('puntual',t,type,romantic);}).join('')
-    +'<button type="button" data-picker="'+key+'" class="ev-plan-more'+(selection?' selected':'')+'" aria-label="Más Opciones de '+(key==='plans'?'planes':'gestiones')+'" aria-haspopup="dialog">'+evPickerMoreIcon()+'<span class="ev-type-name">Más Opciones</span></button></div>'+(key==='plans'?renderEvRomanticField('evFRomantic',romantic):'')+'</section>';
+    +'<button type="button" data-picker="'+key+'" class="ev-plan-more'+(selection?' selected':'')+'" aria-label="Más Opciones de '+(key==='plans'?'planes':'gestiones')+'" aria-haspopup="dialog">'+evPickerMoreIcon()+'<span class="ev-type-name">Más Opciones</span></button></div>'+(key==='plans'?renderEvPlanFlags('evF',romantic):'')+'</section>';
 }
-function renderEvRomanticField(id,checked){
-  return '<label class="ev-romantic-toggle" for="'+id+'"><span class="ev-romantic-toggle-symbol" aria-hidden="true">'+evShapeSvg('heart')+'</span><span>Plan romántico</span><input type="checkbox" id="'+id+'"'+(checked?' checked':'')+'></label>';
+/* Distintivo del plan: romántico o cumpleaños, excluyentes (v575). */
+function evFormBadge(o){return o&&o.birthday?'birthday':o&&o.romantic?'romantic':null;}
+function renderEvPlanFlags(prefix,badge){
+  return '<div class="ev-plan-flags">'
+    +'<label class="ev-romantic-toggle" for="'+prefix+'Romantic"><span class="ev-romantic-toggle-symbol" aria-hidden="true">'+evShapeSvg('heart')+'</span><span>Plan romántico</span><input type="checkbox" id="'+prefix+'Romantic"'+(badge==='romantic'?' checked':'')+'></label>'
+    +'<label class="ev-romantic-toggle ev-birthday-toggle" for="'+prefix+'Birthday"><span class="ev-romantic-toggle-symbol" aria-hidden="true">'+evShapeSvg('cake')+'</span><span>Cumpleaños</span><input type="checkbox" id="'+prefix+'Birthday"'+(badge==='birthday'?' checked':'')+'></label>'
+    +'</div>';
 }
-function paintEvRomanticSymbols(scope,romantic){
+function paintEvRomanticSymbols(scope,badge){
   scope.querySelectorAll('[data-type]').forEach(function(button){
-    if(!evIsPlan(button.dataset.type))return;
-    var symbol=button.querySelector('.ev-type-dot');if(symbol)symbol.innerHTML=evShapeSvg(evDefaultShape({type:button.dataset.type}),romantic);
+    var t=button.dataset.type;if(!evIsPlan(t))return;
+    var symbol=button.querySelector('.ev-type-dot');if(symbol)symbol.innerHTML=evShapeSvg(evDefaultShape({type:t}),badge==='birthday'&&t==='Cumpleaños'?false:badge);
   });
+}
+/* Engancha las dos casillas sobre un estado {romantic,birthday}: marcar una desmarca la otra. */
+function bindEvPlanFlags(root,prefix,state,scope){
+  var r=root.querySelector('#'+prefix+'Romantic'),b=root.querySelector('#'+prefix+'Birthday');if(!r||!b)return;
+  function sync(changed){
+    if(changed===r&&r.checked)b.checked=false;
+    if(changed===b&&b.checked)r.checked=false;
+    state.romantic=r.checked;state.birthday=b.checked;
+    paintEvRomanticSymbols(scope(),evFormBadge(state));
+  }
+  r.onchange=function(){sync(r);};b.onchange=function(){sync(b);};
 }
 function bindEvRomanticField(form){
-  var field=_evFormEl(form,'evFRomantic');if(!field)return;
-  field.onchange=function(){form.romantic=field.checked;paintEvRomanticSymbols(field.closest('[data-group="plans"]'),form.romantic);};
-}
-function updateEvQuickPlan(form,type){
-  form.root.querySelectorAll('.ev-quick-group').forEach(function(section){
-    section.querySelector('.ev-plan-more').classList.toggle('selected',!!evQuickSelection(type,EV_PICKER_GROUPS[section.dataset.group]));
-  });
+  bindEvPlanFlags(form.root,'evF',form,function(){return form.root.querySelector('[data-group="plans"]')||form.root;});
 }
 function evFormRenderTypes(form,kind,type){
   var tax=_evFormEl(form,'evFTaxBlock');if(tax)tax.remove();
   var culture=_evFormEl(form,'evFCultureBlock');if(culture)culture.remove();
-  _evFormEl(form,'evFTypePicker').innerHTML=_renderEvTypeSwatches(kind,type,form.quickExtras,form.romantic);
+  _evFormEl(form,'evFTypePicker').innerHTML=_renderEvTypeSwatches(kind,type,form.quickExtras,evFormBadge(form));
   if(tax)(form.root.querySelector('[data-group="management"]')||form.root).appendChild(tax);
   if(culture)(form.root.querySelector('[data-group="plans"]')||form.root).appendChild(culture);
 }
@@ -61,14 +71,13 @@ function evPlanPickerKey(e){
 function openEvPlanPicker(form,key){
   key=key||'plans';var group=EV_PICKER_GROUPS[key];
   var current=form.root.querySelector('.ev-kind-picker').dataset.curType;
-  EV_PLAN_PICK={form:form,type:evPickerHas(group,current)?current:null,romantic:key==='plans'&&form.romantic,back:NAV_BACK};
-  var h='<div class="ev-detail-overlay ev-plan-overlay" id="evPlanPickerOv"><section class="ev-detail-sheet ev-plan-sheet" style="--picker-accent:'+group.accent+'" role="dialog" aria-modal="true" aria-labelledby="evPlanTitle"><header class="ev-plan-header ev-type-picker"><button type="button" class="ev-color-swatch ev-picker-generic'+(current===group.generic?' selected':'')+'" data-type="'+group.generic+'" aria-label="'+group.generic+'" title="'+group.generic+'" style="color:'+evTypeColor('puntual',group.generic)+'"><span class="ev-type-dot">'+evShapeSvg(evDefaultShape({type:group.generic}),EV_PLAN_PICK.romantic)+'</span></button><h2 id="evPlanTitle">'+group.title+'</h2><button class="sy-back" id="evPlanCancel" aria-label="Cerrar selector">×</button></header>'+(key==='plans'?renderEvRomanticField('evPlanRomantic',EV_PLAN_PICK.romantic):'')+'<div class="ev-plan-options ev-type-picker">'+renderEvPlanOptions(EV_PLAN_PICK.type,key,EV_PLAN_PICK.romantic)+'</div><footer class="ev-plan-footer"><button class="ev-btn ev-plan-confirm" id="evPlanConfirm"'+(!EV_PLAN_PICK.type?' disabled':'')+'>Confirmar</button></footer></section></div>';
+  EV_PLAN_PICK={form:form,type:evPickerHas(group,current)?current:null,romantic:key==='plans'&&form.romantic,birthday:key==='plans'&&!!form.birthday,back:NAV_BACK};
+  var h='<div class="ev-detail-overlay ev-plan-overlay" id="evPlanPickerOv"><section class="ev-detail-sheet ev-plan-sheet" style="--picker-accent:'+group.accent+'" role="dialog" aria-modal="true" aria-labelledby="evPlanTitle"><header class="ev-plan-header ev-type-picker"><button type="button" class="ev-color-swatch ev-picker-generic'+(current===group.generic?' selected':'')+'" data-type="'+group.generic+'" aria-label="'+group.generic+'" title="'+group.generic+'" style="color:'+evTypeColor('puntual',group.generic)+'"><span class="ev-type-dot">'+evShapeSvg(evDefaultShape({type:group.generic}),evFormBadge(EV_PLAN_PICK))+'</span></button><h2 id="evPlanTitle">'+group.title+'</h2><button class="sy-back" id="evPlanCancel" aria-label="Cerrar selector">×</button></header>'+(key==='plans'?renderEvPlanFlags('evPlan',evFormBadge(EV_PLAN_PICK)):'')+'<div class="ev-plan-options ev-type-picker">'+renderEvPlanOptions(EV_PLAN_PICK.type,key,evFormBadge(EV_PLAN_PICK))+'</div><footer class="ev-plan-footer"><button class="ev-btn ev-plan-confirm" id="evPlanConfirm"'+(!EV_PLAN_PICK.type?' disabled':'')+'>Confirmar</button></footer></section></div>';
   var wrap=abrirPanel('evPlanPickerWrap',h,{contenedor:document.body,overlay:'evPlanPickerOv',alCerrar:closeEvPlanPicker});
   wrap.querySelector('.ev-plan-sheet').dataset.pickerKind=key;
   NAV_BACK=closeEvPlanPicker;document.addEventListener('keydown',evPlanPickerKey);
   wrap.querySelector('#evPlanCancel').onclick=closeEvPlanPicker;
-  var romantic=wrap.querySelector('#evPlanRomantic');
-  if(romantic)romantic.onchange=function(){EV_PLAN_PICK.romantic=romantic.checked;paintEvRomanticSymbols(wrap,romantic.checked);};
+  bindEvPlanFlags(wrap,'evPlan',EV_PLAN_PICK,function(){return wrap;});
   wrap.querySelectorAll('[data-type]').forEach(function(button){
     button.setAttribute('aria-pressed',String(button.dataset.type===EV_PLAN_PICK.type));
     button.onclick=function(){
@@ -79,7 +88,7 @@ function openEvPlanPicker(form,key){
   });
   wrap.querySelector('#evPlanConfirm').onclick=function(){
     var type=EV_PLAN_PICK.type;if(!type)return;
-    if(key==='plans')form.romantic=EV_PLAN_PICK.romantic;
+    if(key==='plans'){form.romantic=EV_PLAN_PICK.romantic;form.birthday=EV_PLAN_PICK.birthday;}
     if(evQuickSelection(type,group))form.quickExtras[key]=type;
     evFormRenderTypes(form,'puntual',type);
     _bindEvFormTypes(form);_evFormTypeUI(form,'puntual',type);_evFormSuggestTitle(form,type);

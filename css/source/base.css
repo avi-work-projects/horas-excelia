@@ -109,6 +109,19 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .data-menu-item:hover,.data-menu-item:active{background:var(--surface3)}
 .settings-quick-row{display:flex;align-items:stretch;gap:8px;padding:4px}
 .settings-quick-row>#themeBtn{flex:1;min-width:0}
+.settings-quick-row>.settings-gear-btn{flex:none;width:44px;justify-content:center;padding:0;font-size:1.05rem}
+.settings-gear-btn[aria-expanded="true"]{background:var(--surface2)}
+/* Estilo de Editar/Eliminar: dos opciones con vista previa (v575). */
+.settings-action-style{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:4px 4px 8px}
+.settings-action-style[hidden]{display:none}
+.action-style-opt{display:flex;flex-wrap:wrap;justify-content:center;gap:4px;padding:8px 6px;border:1.5px solid var(--border);border-radius:12px;background:var(--surface);color:var(--text);font:inherit;cursor:pointer}
+.action-style-opt.on{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 7%,var(--surface))}
+.action-style-opt small{flex-basis:100%;text-align:center;font-size:.7rem;font-weight:600;color:var(--text-muted)}
+.as-prev{padding:3px 7px;border-radius:7px;font-size:.66rem;font-weight:700}
+[data-action-style-opt="filled"] .as-edit{background:#fb923c;color:#fff}
+[data-action-style-opt="filled"] .as-del{background:#d64541;color:#fff}
+[data-action-style-opt="soft"] .as-edit{background:color-mix(in srgb,#fb923c 12%,var(--surface));color:#c2570c;box-shadow:inset 0 0 0 1.5px color-mix(in srgb,#fb923c 60%,transparent)}
+[data-action-style-opt="soft"] .as-del{background:color-mix(in srgb,var(--c-red) 7%,var(--surface));color:var(--c-red);box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--c-red) 60%,transparent)}
 .app-version-label{font-size:.62rem;color:var(--text-muted);padding:4px 12px 8px;opacity:.55;border-top:1px solid var(--border);margin-top:2px;letter-spacing:.02em}
 
 /* ── WEEK CARDS ── */

@@ -83,7 +83,8 @@ var BDAYS_FROM_SECRET=[];
       <div class="data-menu-wrap">
         <button class="data-btn" id="menuBtn" title="Más opciones">&#8943;</button>
         <div class="data-menu" id="dataMenu">
-          <div class="settings-quick-row"><button class="data-menu-item" id="themeBtn">&#127769;&nbsp;Oscuro</button><button type="button" class="reminders-access settings-reminders-button" id="settingsReminders" aria-label="Mis recordatorios"><span>Recordatorios</span></button></div>
+          <div class="settings-quick-row"><button class="data-menu-item" id="themeBtn">&#127769;&nbsp;Oscuro</button><button type="button" class="data-menu-item settings-gear-btn" id="settingsActionStyleBtn" aria-expanded="false" aria-controls="settingsActionStyle" aria-label="Estilo de Editar y Eliminar" title="Estilo de Editar y Eliminar">&#9881;</button><button type="button" class="reminders-access settings-reminders-button" id="settingsReminders" aria-label="Mis recordatorios"><span>Recordatorios</span></button></div>
+          <div class="settings-action-style" id="settingsActionStyle" role="radiogroup" aria-label="Estilo de Editar y Eliminar" hidden><button type="button" class="action-style-opt" role="radio" data-action-style-opt="filled"><span class="as-prev as-edit">Editar</span><span class="as-prev as-del">Eliminar</span><small>Relleno</small></button><button type="button" class="action-style-opt" role="radio" data-action-style-opt="soft"><span class="as-prev as-edit">Editar</span><span class="as-prev as-del">Eliminar</span><small>Suave</small></button></div>
           <button class="data-menu-item nav-style-setting" id="navIconStyle"><span>Iconos de Navegación</span><span id="navIconStyleValue">Originales</span><span aria-hidden="true">&#8250;</span></button>
           <div class="settings-menu-separator" role="separator"></div>
           <div class="settings-connection" id="settingsConnection" role="group" aria-label="Conexión del móvil"></div>

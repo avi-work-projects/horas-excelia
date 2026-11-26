@@ -275,12 +275,14 @@
 /* Leyenda: una pareja por linea y pulsable para resaltar sus dias */
 .boda-cal-legend{display:flex;flex-wrap:wrap;gap:6px;font-size:.68rem;color:var(--text-muted);margin-top:10px}
 .boda-cal-daylist{margin-top:10px}
+/* Mes sin parejas: el aviso ocupa lo mismo que una fila de chips. */
+.boda-cal-legend>.sy-note{margin:0;padding:0 2px;min-height:27px;display:flex;align-items:center;box-sizing:border-box}
 .boda-cal-pick{cursor:pointer;border-radius:6px}
 .boda-cal-daylist .boda-cal-pick{padding-left:6px;padding-right:4px}
 /* Seleccionada: contorno fino alrededor de toda la fila, sin tapar el aspa. */
 .boda-cal-pick.on{background:color-mix(in srgb,#8b5e34 10%,var(--surface));box-shadow:inset 0 0 0 1.5px #8b5e34}
 .boda-cal-dayw{display:flex;align-items:center;gap:6px;font-size:.75rem;font-weight:600;padding:5px 0;border-top:1px solid var(--border)}
-.boda-cal-lg{display:inline-flex;align-items:center;gap:6px;width:auto;max-width:100%;padding:5px 10px;border:1.5px solid var(--border);border-radius:999px;background:var(--surface2);color:var(--text-muted);cursor:pointer;text-align:left;transition:all .15s}
+.boda-cal-lg{display:inline-flex;align-items:center;gap:6px;width:auto;max-width:100%;padding:5px 10px;border:1.5px solid var(--border);border-radius:999px;background:var(--surface2);color:var(--text-muted);cursor:pointer;text-align:left;transition:background-color .15s,border-color .15s}
 .boda-cal-lg i{width:11px;height:11px;border-radius:50%;display:inline-block;flex-shrink:0;border:1px solid rgba(0,0,0,.4)}
 .boda-cal-lg b{min-width:0;font-weight:600;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .boda-cal-lg em{flex:none;font-style:normal;color:var(--text-dim);font-size:.64rem;white-space:nowrap}

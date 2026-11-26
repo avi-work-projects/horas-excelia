@@ -156,6 +156,10 @@ function bindBodaCalendar(root){
   if(ct)ct.addEventListener('click',function(){var now=new Date();BODA_CAL_DAY=null;BODA_CAL_YEAR=now.getFullYear();BODA_CAL_MONTH=now.getMonth();bodaCalRefresh();});
   /* Deslizar sobre el calendario (rejilla, día y parejas) para cambiar de mes */
   var cg=root.querySelector('#bodaCalGrid'),cb=root.querySelector('#bodaCalBody');
+  /* El hueco bajo las parejas completa seis semanas de alto real: las filas con
+     boda o varias clases crecen y una estimación fija hacía variar el total. */
+  var spacer=root.querySelector('.boda-cal-spacer');
+  if(cg&&spacer){var first=cg.firstElementChild,rowH=first?first.offsetHeight:44,gap=parseFloat(getComputedStyle(cg).rowGap)||0;spacer.style.height=Math.max(0,6*rowH+5*gap-cg.offsetHeight)+'px';}
   if(cb&&typeof addSwipe==='function')addSwipe(cb,function(){bodaCalMove(1);},function(){bodaCalMove(-1);});
   if(cg)cg.querySelectorAll('.boda-cal-day[data-ds]').forEach(function(day){
     function selectDay(){BODA_CAL_HL=null;BODA_CAL_DAY=BODA_CAL_DAY===day.dataset.ds?null:day.dataset.ds;bodaCalRefresh();}

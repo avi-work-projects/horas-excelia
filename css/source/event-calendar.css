@@ -351,7 +351,13 @@
 .ev-romantic-toggle-symbol{display:flex;width:22px;height:22px;flex-shrink:0;color:var(--romantic-tone)}
 .ev-romantic-toggle-symbol svg{width:100%;height:100%}
 .ev-romantic-toggle input{margin:0 0 0 auto;flex-shrink:0}
-.ev-plan-sheet>.ev-romantic-toggle{margin:0 16px 10px;flex-shrink:0}
+.ev-plan-sheet>.ev-plan-flags{margin:0 16px 10px;flex-shrink:0}
+/* Romántico y Cumpleaños, uno al lado del otro. */
+.ev-plan-flags{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 8px 8px}
+.ev-plan-flags .ev-romantic-toggle{margin:0;min-width:0}
+.ev-plan-flags .ev-romantic-toggle>span:not(.ev-romantic-toggle-symbol){min-width:0;overflow-wrap:normal;hyphens:none}
+@media(max-width:360px){.ev-plan-flags{gap:6px}.ev-plan-flags .ev-romantic-toggle{gap:5px;padding:7px 6px}.ev-plan-flags .ev-romantic-toggle>span:not(.ev-romantic-toggle-symbol){flex:1;font-size:.66rem}.ev-plan-flags .ev-romantic-toggle-symbol{width:17px;height:17px}}
+.ev-birthday-toggle{--romantic-tone:#c0507a}
 .ev-plan-options{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:8px;padding:4px 16px 18px;overflow-y:auto;min-height:0}
 .ev-plan-option>.ev-color-swatch{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;width:100%;height:100%;min-height:86px;padding:10px 3px;text-align:center}
 .ev-plan-options .ev-type-dot{width:28px;height:28px}

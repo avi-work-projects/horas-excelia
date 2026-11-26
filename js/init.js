@@ -356,6 +356,13 @@
     e.stopPropagation();
     cycleTheme();
   });
+  /* Rueda: despliega las dos opciones de estilo para Editar/Eliminar */
+  var _asBtn=document.getElementById('settingsActionStyleBtn'),_asBox=document.getElementById('settingsActionStyle');
+  if(_asBtn&&_asBox){
+    _asBtn.addEventListener('click',function(e){e.stopPropagation();_asBox.hidden=!_asBox.hidden;_asBtn.setAttribute('aria-expanded',String(!_asBox.hidden));});
+    _asBox.querySelectorAll('[data-action-style-opt]').forEach(function(b){b.addEventListener('click',function(e){e.stopPropagation();applyActionStyle(b.dataset.actionStyleOpt);});});
+  }
+  applyActionStyle(ACTION_STYLE);
 
   /* ── Aplicar tema al inicio (y actualizar etiqueta del botón) ── */
   bindNavIconStyle();
