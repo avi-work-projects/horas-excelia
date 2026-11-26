@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v561 — Wedding Moves más limpio: filtros, avisos y Eliminar en cabecera';
+var APP_VERSION = 'v562 — Wedding Moves: Calendario con aspas, Configuración en filas';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){

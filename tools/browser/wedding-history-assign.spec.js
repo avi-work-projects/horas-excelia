@@ -15,6 +15,8 @@ test.beforeEach(async({page})=>{
     EVENTS=classes.map(([coupleId,start],i)=>({id:'cl'+i,kind:'puntual',type:'Ensayos boda',title:'Ensayo',start,end:start,repeat:null,boda:{coupleId,time:'18:00',place:'sala',duration:60}}));
     saveBodas();saveEvents();EV_VIEW='bodas';BODA_SUBTAB='stats';openEventsAt();
   },classes);
+  // Los eventos de la ventana se enganchan al terminar de abrirse.
+  await expect(page.locator('#eventsOverlay')).toHaveClass(/open/);
 });
 
 test('récords con todas las clases registradas e histórico deslizable hasta el periodo actual',async({page})=>{
@@ -75,4 +77,24 @@ test('Parejas: orden en desplegable, «faltan» rojo solo con boda cercana y Eli
   await expect(header.locator('h2')).toHaveText('Editar clase');
   await header.locator('#bodaFormDel').click();
   await expect.poll(()=>page.evaluate(()=>EVENTS.some(e=>e.id==='cl8'))).toBe(false);
+});
+
+test('Calendario: pulsar un día lista sus clases y Configuración usa interruptores en filas',async({page})=>{
+  await page.evaluate(()=>{BODA_SUBTAB='calendario';BODA_CAL_YEAR=2026;BODA_CAL_MONTH=10;refreshEvents(false);});
+  await expect(page.locator('.boda-cal-day[data-ds="2026-11-12"] .boda-cal-x svg')).toHaveCount(1);
+  await page.locator('.boda-cal-day[data-ds="2026-11-12"]').click();
+  const list=page.locator('.boda-cal-daylist');
+  await expect(list.locator('.boda-class-ro')).toHaveCount(1);
+  await list.locator('.boda-cl-edit').click();
+  await expect(page.locator('#bodaFormOv .boda-form-header h2')).toHaveText('Editar clase');
+  await page.locator('#bodaFormClose').click();
+  await page.evaluate(()=>{BODA_SUBTAB='config';refreshEvents(false);});
+  const sw=page.getByRole('switch',{name:'Activo: '+await page.evaluate(()=>BODA_CONFIG.packs[0].name)});
+  await expect(sw).toBeChecked();
+  await sw.click();
+  await expect.poll(()=>page.evaluate(()=>BODA_CONFIG.packs[0].active)).toBe(false);
+  for(const width of [320,400]){
+    await page.setViewportSize({width,height:880});
+    expect(await page.locator('#bodaConfigContent .boda-cfg-row').evaluateAll(rows=>rows.every(r=>r.scrollWidth<=r.clientWidth+1))).toBe(true);
+  }
 });

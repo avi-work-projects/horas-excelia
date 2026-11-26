@@ -60,10 +60,10 @@
 ### js/bodas-stats-history.js  _(104 líneas)_
 **Funciones:** bodaMonthSeries:8 · bodaWeekSeries:24 · bodaStatsRecords:40 · best:44 · bodaFmtRate:61 · renderBodaRecords:62 · bodaScrollBarChart:75 · renderBodaHistoryCharts:91 · bindBodaHistoryCharts:98
 
-### js/bodas.js  _(661 líneas)_
-**Estado global:** BODAS_SK:13 · BODA_COUPLES:14 · BODA_PLACE_LIST:25 · BODA_PLACE_DEFAULT:31 · BODA_PLACE_NONE:34 · BODA_PLACE_SHORT:35 · BODA_PLACE_DESC:36 · BODA_PLACE_EMOJI:38 · BODA_WHITE:55 · BODA_SLOTS:56 · BODA_NO_TIME_COLOR:62 · BODA_NO_COUPLE_COLOR:63 · BODA_DEFAULT_TIME:64 · BODA_PALETTE:67 · BODA_CLOSED_SK:235 · BODA_CLOSED:236 · BODA_PENDING:255 · BODA_SUBTAB:297 · BODA_CLASS_MODE:298 · BODA_CLASES_SEARCH:299 · BODA_HIDE_PAST:300 · BODA_HIDE_CLOSED:301 · BODA_CARD_OPEN:302 · BODA_PAREJAS_SEARCH:303 · BODA_PAREJAS_SORT:305 · BODA_PAREJAS_CLASSES:306 · BODA_PAREJAS_FILTER:307 · BODA_CAL_DAY:308 · BODA_CAL_HL:309 · BODA_CAL_YEAR:310 · BODA_CAL_MONTH:311 · BODA_PAREJAS_SORTS:450
+### js/bodas.js  _(676 líneas)_
+**Estado global:** BODAS_SK:13 · BODA_COUPLES:14 · BODA_PLACE_LIST:25 · BODA_PLACE_DEFAULT:31 · BODA_PLACE_NONE:34 · BODA_PLACE_SHORT:35 · BODA_PLACE_DESC:36 · BODA_PLACE_EMOJI:38 · BODA_WHITE:55 · BODA_SLOTS:56 · BODA_NO_TIME_COLOR:62 · BODA_NO_COUPLE_COLOR:63 · BODA_DEFAULT_TIME:64 · BODA_PALETTE:67 · BODA_CLOSED_SK:235 · BODA_CLOSED:236 · BODA_PENDING:255 · BODA_SUBTAB:297 · BODA_CLASS_MODE:298 · BODA_CLASES_SEARCH:299 · BODA_HIDE_PAST:300 · BODA_HIDE_CLOSED:301 · BODA_CARD_OPEN:302 · BODA_PAREJAS_SEARCH:303 · BODA_PAREJAS_SORT:305 · BODA_PAREJAS_CLASSES:306 · BODA_PAREJAS_FILTER:307 · BODA_CAL_DAY:308 · BODA_CAL_HL:309 · BODA_CAL_YEAR:310 · BODA_CAL_MONTH:311 · BODA_PAREJAS_SORTS:460
 
-**Funciones:** saveBodas:18 · bodaPlaceEmoji:39 · bodaPlaceOf:43 · bodaPlaceLabel:48 · bodaNextColor:69 · bodaCouple:77 · bodaSlot:81 · bodaSlotColors:91 · bodaMarkFor:96 · evBodaSvg:102 · bodaClasses:119 · bodaPrimeraClase:123 · bodaClassesOfCouple:127 · bodaEsUltimoEnsayo:131 · bodaUltimoEnsayoHtml:137 · bodaFreeClasses:140 · bodaClaseById:143 · bodaSortClasses:147 · bodaClassesOnDay:154 · bodaNewClass:157 · bodaNormalizeClasses:172 · bodaPlaceForNewOn:209 · bodaDayFull:214 · bodaBulkCreate:218 · bodaProgress:229 · saveBodaClosed:240 · bodaIsClosed:241 · bodaReopenDay:242 · bodaToggleClosed:246 · bodaPendingCount:256 · bodaEff:258 · bodaSetPending:267 · bodaPendingApply:271 · bodaPendingDiscard:294 · _bodaLegendHtml:314 · _renderBodaCalendario:325 (!88) · _renderBodasBody:413 · _bodaCmpFecha:443 · bodaFaltaUrgente:453 · bodaFaltaHtml:458 · _renderBodaParejas:461 (!84) · _bodaFmt:545 · _bodaFmtCorto:546 · _renderBodaClases:553 (!108)
+**Funciones:** saveBodas:18 · bodaPlaceEmoji:39 · bodaPlaceOf:43 · bodaPlaceLabel:48 · bodaNextColor:69 · bodaCouple:77 · bodaSlot:81 · bodaSlotColors:91 · bodaMarkFor:96 · evBodaSvg:102 · bodaClasses:119 · bodaPrimeraClase:123 · bodaClassesOfCouple:127 · bodaEsUltimoEnsayo:131 · bodaUltimoEnsayoHtml:137 · bodaFreeClasses:140 · bodaClaseById:143 · bodaSortClasses:147 · bodaClassesOnDay:154 · bodaNewClass:157 · bodaNormalizeClasses:172 · bodaPlaceForNewOn:209 · bodaDayFull:214 · bodaBulkCreate:218 · bodaProgress:229 · saveBodaClosed:240 · bodaIsClosed:241 · bodaReopenDay:242 · bodaToggleClosed:246 · bodaPendingCount:256 · bodaEff:258 · bodaSetPending:267 · bodaPendingApply:271 · bodaPendingDiscard:294 · _bodaLegendHtml:314 · _renderBodaCalendario:325 (!98) · _renderBodasBody:423 · _bodaCmpFecha:453 · bodaFaltaUrgente:463 · bodaFaltaHtml:468 · _renderBodaParejas:471 (!84) · _bodaFmt:555 · bodaClassRoHtml:557 · _bodaFmtCorto:570 · _renderBodaClases:577 (!99)
 
 ### js/core.js  _(822 líneas)_
 **Estado global:** APP_VERSION:6 · NAV_BACK:115 · THEME_STORAGE_KEY:118 · THEME:119 · THEME_LABELS:125 · THEME_META:126 · THEME_SEQUENCE:127 · ECON_YEAR_CONFIG:151 · MN_SHORT:153 · DN5:497 · FESTIVOS_ANIO:686 · HOURS_WEEK_UNLOCKED:696 · NAV_SWITCH_TIMER:803
@@ -772,7 +772,7 @@
 **Rangos por prefijo de clase:**
 .stats-empty:23-23 · .stats-head:7-8 · .stats-list:24-25 · .stats-metric:11-14 · .stats-metrics:9-10 · .stats-note:15-15 · .stats-section:6-26 · .stats-stack:2-5 · .stats-table:18-22
 
-### css/source/wedding-moves.css  _(370 líneas)_
+### css/source/wedding-moves.css  _(374 líneas)_
 
 **Secciones:**
 
@@ -797,23 +797,23 @@
 - Editar siempre en naranja, como en el resto de la app:195
 - Los tres botones del detalle de pareja comparten aspecto:213
 - Subpestana Calendario de bodas:253
-- Leyenda: una pareja por linea y pulsable para resaltar sus dias:267
-- Dia resaltado al pulsar una pareja en la leyenda:274
-- Medible antes de abrir: colocar las ruedas sin mostrar su posición inicial.:280
-- Ficha del dia: alto fijo para que no baile al pasar de un evento a otro:302
-- Sin esto los hijos se encogen y el texto se derrama sobre los botones:304
-- etiqueta al minimo: el nombre de la pareja necesita el resto:313
-- el color de la pareja va en un punto, no tinendo el nombre:316
-- Los tres botones de la pareja, en una sola linea:323
-- Buscador y boton de anadir en la misma fila:326
-- Tarjeta de pareja desplegada en su sitio (antes era un modal):334
-- Editar pareja: interruptor de «Pareja futura» y pack/boda en la misma fila.:338
-- El interruptor hereda el color de la fila (Eventos fuerza color:inherit en las casillas).:340
-- Asignar clases: accesos a las próximas clases libres en una fila deslizable.:353
-- Estadísticas: histórico deslizable y récords.:359
+- Leyenda: una pareja por linea y pulsable para resaltar sus dias:269
+- Dia resaltado al pulsar una pareja en la leyenda:278
+- Medible antes de abrir: colocar las ruedas sin mostrar su posición inicial.:284
+- Ficha del dia: alto fijo para que no baile al pasar de un evento a otro:306
+- Sin esto los hijos se encogen y el texto se derrama sobre los botones:308
+- etiqueta al minimo: el nombre de la pareja necesita el resto:317
+- el color de la pareja va en un punto, no tinendo el nombre:320
+- Los tres botones de la pareja, en una sola linea:327
+- Buscador y boton de anadir en la misma fila:330
+- Tarjeta de pareja desplegada en su sitio (antes era un modal):338
+- Editar pareja: interruptor de «Pareja futura» y pack/boda en la misma fila.:342
+- El interruptor hereda el color de la fila (Eventos fuerza color:inherit en las casillas).:344
+- Asignar clases: accesos a las próximas clases libres en una fila deslizable.:357
+- Estadísticas: histórico deslizable y récords.:363
 
 **Rangos por prefijo de clase:**
-.boda-actions:204-204 · .boda-add:206-206 · .boda-asg:230-358 · .boda-buscar:327-329 · .boda-cal:254-279 · .boda-card:106-337 · .boda-cform:348-351 · .boda-chip:103-105 · .boda-chips:102-102 · .boda-cl:166-203 · .boda-class:85-165 · .boda-controls:63-63 · .boda-couple:147-149 · .boda-cpk:221-229 · .boda-create:17-19 · .boda-date:205-205 · .boda-day:79-127 · .boda-det:212-325 · .boda-dia:154-156 · .boda-distribution:23-25 · .boda-dot:110-110 · .boda-falta:117-118 · .boda-filters:66-66 · .boda-fsel:67-70 · .boda-ftoggles:71-72 · .boda-hd:199-201 · .boda-inp:142-142 · .boda-iss:41-43 · .boda-issue:28-39 · .boda-issues:27-27 · .boda-legend:207-211 · .boda-mini:161-194 · .boda-mode:55-57 · .boda-multi:157-163 · .boda-name:111-111 · .boda-ok:123-123 · .boda-overview:21-21 · .boda-pfilters:331-332 · .boda-place:150-176 · .boda-prog:113-114 · .boda-record:364-369 · .boda-records:363-363 · .boda-ro:167-175 · .boda-save:99-100 · .boda-savebar:95-98 · .boda-scroll:360-362 · .boda-search:330-330 · .boda-sec:12-20 · .boda-sobra:124-124 · .boda-sort:333-333 · .boda-stat:45-47 · .boda-sticky:8-10 · .boda-sum:59-62 · .boda-summary:58-58 · .boda-swap:132-139 · .boda-switch:339-341 · .boda-time:143-143 · .boda-tp:283-286 · .boda-wed:112-112 · .ev-alarm:182-188 · .ev-bficha:309-309 · .ev-bfila:310-319 · .ev-bpunto:317-317 · .ev-bver:322-322 · .ev-car:305-306 · .ev-detail:303-303 · .ev-upcoming:178-180 · .ev-wk:190-192 · .hbar-lbl:51-51 · .hbar-row:50-50 · .hbar-rows:49-49 · .hbar-track:52-53 · .hbar-val:54-54 · .rut-wpick:296-301 · .sy-body:5-11
+.boda-actions:204-204 · .boda-add:206-206 · .boda-asg:230-362 · .boda-buscar:331-333 · .boda-cal:254-283 · .boda-card:106-341 · .boda-cform:352-355 · .boda-chip:103-105 · .boda-chips:102-102 · .boda-cl:166-203 · .boda-class:85-165 · .boda-controls:63-63 · .boda-couple:147-149 · .boda-cpk:221-229 · .boda-create:17-19 · .boda-date:205-205 · .boda-day:79-127 · .boda-det:212-329 · .boda-dia:154-156 · .boda-distribution:23-25 · .boda-dot:110-110 · .boda-falta:117-118 · .boda-filters:66-66 · .boda-fsel:67-70 · .boda-ftoggles:71-72 · .boda-hd:199-201 · .boda-inp:142-142 · .boda-iss:41-43 · .boda-issue:28-39 · .boda-issues:27-27 · .boda-legend:207-211 · .boda-mini:161-194 · .boda-mode:55-57 · .boda-multi:157-163 · .boda-name:111-111 · .boda-ok:123-123 · .boda-overview:21-21 · .boda-pfilters:335-336 · .boda-place:150-176 · .boda-prog:113-114 · .boda-record:368-373 · .boda-records:367-367 · .boda-ro:167-175 · .boda-save:99-100 · .boda-savebar:95-98 · .boda-scroll:364-366 · .boda-search:334-334 · .boda-sec:12-20 · .boda-sobra:124-124 · .boda-sort:337-337 · .boda-stat:45-47 · .boda-sticky:8-10 · .boda-sum:59-62 · .boda-summary:58-58 · .boda-swap:132-139 · .boda-switch:343-345 · .boda-time:143-143 · .boda-tp:287-290 · .boda-wed:112-112 · .ev-alarm:182-188 · .ev-bficha:313-313 · .ev-bfila:314-323 · .ev-bpunto:321-321 · .ev-bver:326-326 · .ev-car:309-310 · .ev-detail:307-307 · .ev-upcoming:178-180 · .ev-wk:190-192 · .hbar-lbl:51-51 · .hbar-row:50-50 · .hbar-rows:49-49 · .hbar-track:52-53 · .hbar-val:54-54 · .rut-wpick:300-305 · .sy-body:5-11
 
 ### css/source/routines.css  _(132 líneas)_
 
@@ -826,7 +826,7 @@
 **Rangos por prefijo de clase:**
 .ev-shape:19-19 · .rut-add:82-82 · .rut-card:72-80 · .rut-day:88-89 · .rut-days:87-87 · .rut-dot:75-75 · .rut-first:16-16 · .rut-flex:13-21 · .rut-hist:91-94 · .rut-hpd:2-5 · .rut-icon:7-11 · .rut-name:76-76 · .rut-pct:81-81 · .rut-plan:22-71 · .rut-sec:12-12 · .rut-session:47-69 · .rut-sug:83-86 · .rut-susp:90-90 · .rut-tag:77-78 · .rut-vacio:79-79 · .rut-week:98-129
 
-### css/source/shared-refinements.css  _(990 líneas)_
+### css/source/shared-refinements.css  _(997 líneas)_
 
 **Secciones:**
 
@@ -839,55 +839,56 @@
 - Marca oficial con transparencia; conserva contraste en ambos temas.:84
 - Geometría constante aunque una subpestaña tenga más contenido y scroll.:104
 - Catálogos: cabecera de sección, ficha y controles siempre en el mismo orden.:122
-- Las tres vistas de Cumpleaños comparten el naranja en ambos temas.:152
-- Text edits retain the solid orange; only standalone pencils use a tint.:161
-- Etiquetas y casillas comparten tono dentro de Eventos, tambien en sus hojas.:168
-- Canceladas: visibles solo en las vistas de detalle, con marca y tono apagado.:235
-- Formulario de rutina: ritmo y etiquetas comunes, sin alterar otros paneles.:250
-- Cancelaciones sutiles: el calendario mensual conserva el color original.:260
-- Pestañas de Eventos: la seleccion solo intensifica el fondo.:272
-- Titulo y estado separados para que "saltada" nunca quede tachado.:297
-- Casillas vacias: mantener el tono de su etiqueta o su color explicito.:307
-- El titulo queda dentro del borde de 1.5px de su caja continua.:312
-- Economia, Fiscal y Escenarios: tono constante, seleccion por fondo.:318
-- Los SVG comparten caja; Home solo es mas grande con los iconos originales.:335
-- Una identidad de color por ventana para ambos juegos de iconos.:339
-- Mes y titulo fijo comparten una referencia de altura: sin franja abierta.:370
-- Semanas enviadas en claro: verdes suaves, sin pastillas oscuras.:378
-- Borde discreto para identificar semanas enviadas en ambos temas.:383
-- Filtros junto al buscador sin ensanchar la ventana movil.:387
-- Configuracion de tarifa: controles verdes y valores neutros.:401
-- Aire entre dias; el hueco entre eventos del mismo dia se conserva.:419
-- Texto del trayecto alineado con el titulo, sin mover las tarjetas puntuales.:436
-- Controles de plegado compartidos: superficie, foco y chevrón dibujado.:439
-- Los controles de cumpleaños heredan el tema de la vista que los aloja.:461
-- Calendario mensual: malla tranquila; conserva la geometría de eventos y puentes.:473
-- La cabecera sigue su mes; hoy comparte el acento de cumpleaños.:497
-- Lista de cumpleaños: etiquetas opcionales y acceso a hoy junto al mes.:509
-- Controles compactos y paneles estables: solo se desplaza su contenido.:536
-- Buscador y filtro comparten fila; las opciones conservan todo el ancho.:579
-- Ficha compacta, acciones compartidas y fecha sin controles nativos.:623
-- Cumpleaños: jerarquía por espacios y edición junto a cada campo.:657
-- Todas las personas de hoy comparten acento; solo la primera lleva la línea.:680
-- Separadores discretos con aire y alarma dentro de su propia sección.:686
-- Ficha de cumpleaños: paneles como en Próximos, sin separadores sueltos.:695
-- Controles de cumpleaños: aire en los bordes y símbolos sin alterar las filas.:721
-- Cumpleaños: resumen abierto y paneles blancos con acento suave.:732
-- Fichas ajustadas a su contenido y acciones con tonos suaves.:747
-- Lista de cumpleaños: controles compactos y edición por etiqueta.:802
-- Todos: búsqueda y categoría a ancho completo, ordenación segmentada.:811
-- Centro geométrico del panel: ambos extremos reservan el mismo ancho.:831
-- Configuración personal: grupos de registros con edición explícita.:882
-- Filtros: contorno de identidad, nunca relleno gris al seleccionar.:898
-- Próximos: el selector de cumpleaños conserva su posición al alternar.:908
-- Estadísticas: período explícito y días únicos.:914
-- v457: selección de categoría separada de su desplegable.:940
-- Mantener la misma composición de texto antes, durante y después del swipe.:953
-- Navegación cuadrada, calendarios y accesos de consulta (v481).:959
-- Conservar fuentes y controles a su tamaño habitual, también en móviles estrechos.:963
+- Cada opción en una fila: nombre, Por defecto, interruptor de activo y lápiz.:125
+- Las tres vistas de Cumpleaños comparten el naranja en ambos temas.:159
+- Text edits retain the solid orange; only standalone pencils use a tint.:168
+- Etiquetas y casillas comparten tono dentro de Eventos, tambien en sus hojas.:175
+- Canceladas: visibles solo en las vistas de detalle, con marca y tono apagado.:242
+- Formulario de rutina: ritmo y etiquetas comunes, sin alterar otros paneles.:257
+- Cancelaciones sutiles: el calendario mensual conserva el color original.:267
+- Pestañas de Eventos: la seleccion solo intensifica el fondo.:279
+- Titulo y estado separados para que "saltada" nunca quede tachado.:304
+- Casillas vacias: mantener el tono de su etiqueta o su color explicito.:314
+- El titulo queda dentro del borde de 1.5px de su caja continua.:319
+- Economia, Fiscal y Escenarios: tono constante, seleccion por fondo.:325
+- Los SVG comparten caja; Home solo es mas grande con los iconos originales.:342
+- Una identidad de color por ventana para ambos juegos de iconos.:346
+- Mes y titulo fijo comparten una referencia de altura: sin franja abierta.:377
+- Semanas enviadas en claro: verdes suaves, sin pastillas oscuras.:385
+- Borde discreto para identificar semanas enviadas en ambos temas.:390
+- Filtros junto al buscador sin ensanchar la ventana movil.:394
+- Configuracion de tarifa: controles verdes y valores neutros.:408
+- Aire entre dias; el hueco entre eventos del mismo dia se conserva.:426
+- Texto del trayecto alineado con el titulo, sin mover las tarjetas puntuales.:443
+- Controles de plegado compartidos: superficie, foco y chevrón dibujado.:446
+- Los controles de cumpleaños heredan el tema de la vista que los aloja.:468
+- Calendario mensual: malla tranquila; conserva la geometría de eventos y puentes.:480
+- La cabecera sigue su mes; hoy comparte el acento de cumpleaños.:504
+- Lista de cumpleaños: etiquetas opcionales y acceso a hoy junto al mes.:516
+- Controles compactos y paneles estables: solo se desplaza su contenido.:543
+- Buscador y filtro comparten fila; las opciones conservan todo el ancho.:586
+- Ficha compacta, acciones compartidas y fecha sin controles nativos.:630
+- Cumpleaños: jerarquía por espacios y edición junto a cada campo.:664
+- Todas las personas de hoy comparten acento; solo la primera lleva la línea.:687
+- Separadores discretos con aire y alarma dentro de su propia sección.:693
+- Ficha de cumpleaños: paneles como en Próximos, sin separadores sueltos.:702
+- Controles de cumpleaños: aire en los bordes y símbolos sin alterar las filas.:728
+- Cumpleaños: resumen abierto y paneles blancos con acento suave.:739
+- Fichas ajustadas a su contenido y acciones con tonos suaves.:754
+- Lista de cumpleaños: controles compactos y edición por etiqueta.:809
+- Todos: búsqueda y categoría a ancho completo, ordenación segmentada.:818
+- Centro geométrico del panel: ambos extremos reservan el mismo ancho.:838
+- Configuración personal: grupos de registros con edición explícita.:889
+- Filtros: contorno de identidad, nunca relleno gris al seleccionar.:905
+- Próximos: el selector de cumpleaños conserva su posición al alternar.:915
+- Estadísticas: período explícito y días únicos.:921
+- v457: selección de categoría separada de su desplegable.:947
+- Mantener la misma composición de texto antes, durante y después del swipe.:960
+- Navegación cuadrada, calendarios y accesos de consulta (v481).:966
+- Conservar fuentes y controles a su tamaño habitual, también en móviles estrechos.:970
 
 **Rangos por prefijo de clase:**
-.alarm-now:986-986 · .alarm-panel:983-985 · .app-update:674-676 · .bd-detail:596-597 · .bd-panel:550-832 · .bday-category:522-691 · .bday-date:631-730 · .bday-detail:564-807 · .bday-edit:806-806 · .bday-filter:513-588 · .bday-first:534-534 · .bday-form:669-670 · .bday-group:510-673 · .bday-hdr:153-154 · .bday-header:148-463 · .bday-label:540-540 · .bday-list:519-723 · .bday-month:166-737 · .bday-name:598-678 · .bday-next:96-97 · .bday-no:570-570 · .bday-person:517-563 · .bday-show:521-625 · .bday-sub:277-278 · .bday-today:503-722 · .bday-upcoming:54-488 · .bday-vip:489-825 · .boda-catalog:77-82 · .boda-cfg:123-139 · .boda-config:73-120 · .boda-date:141-159 · .boda-day:110-110 · .boda-field:111-116 · .boda-mini:63-63 · .boda-pfilters:57-58 · .boda-stat:987-987 · .boda-sticky:74-136 · .boda-teachers:98-98 · .contact-add:894-894 · .contact-entry:887-892 · .contact-group:884-886 · .contact-remove:893-893 · .data-actions:336-336 · .data-btn:337-348 · .econ-equiv:457-457 · .econ-tab:319-323 · .econ-tariff:402-459 · .energy-tariff:448-450 · .est-nav:321-322 · .ev-alarm:755-756 · .ev-annual:492-492 · .ev-bday:279-526 · .ev-bright:438-438 · .ev-btn:757-758 · .ev-calendar:960-975 · .ev-current:977-977 · .ev-del:13-14 · .ev-filter:776-945 · .ev-hairdresser:981-982 · .ev-list:2-949 · .ev-month:474-980 · .ev-multi:50-68 · .ev-rut:236-303 · .ev-search:3-7 · .ev-sort:8-53 · .ev-stat:915-951 · .ev-type:423-425 · .ev-types:422-791 · .ev-up:263-912 · .ev-upcoming:913-937 · .ev-view:62-62 · .ev-wk:218-437 · .export-choice:761-922 · .export-folder:739-773 · .fiscal-hdr:496-496 · .fiscal-hip:399-400 · .fiscal-tab:320-320 · .hip-rate:465-469 · .hip-ro:493-494 · .imp-mode:17-27 · .invoice-field:935-935 · .invoice-sheet:855-855 · .macro-url:66-66 · .nav-icon:356-366 · .nav-pro:330-342 · .nav-style:354-354 · .panel-header:833-834 · .personal-copy:871-871 · .personal-data:870-877 · .personal-note:895-927 · .personal-notes:928-932 · .rate-input:46-46 · .rut-addition:198-215 · .rut-agenda:212-213 · .rut-cancelled:239-298 · .rut-done:759-760 · .rut-history:182-233 · .rut-hpd:180-180 · .rut-icon:164-165 · .rut-recovery:207-216 · .rut-session:217-217 · .rut-skipped:299-300 · .rut-week:181-181 · .selected:363-363 · .settings-copy:863-866 · .settings-details:99-101 · .settings-edit:67-883 · .settings-editor:840-878 · .settings-field:861-880 · .settings-is:850-957 · .settings-menu:434-434 · .sw-upd:873-873 · .sy-back:37-37 · .sy-body:35-529 · .sy-card:41-41 · .sy-header:36-464 · .sy-lbl:40-40 · .sy-period:408-415 · .sy-table:42-42 · .sy-tr:43-43 · .sy-val:39-39 · .sy-year:38-38 · .week-action:827-828 · .week-card:384-384 · .weeks-container:954-954 · .wm-logo:85-243
+.alarm-now:993-993 · .alarm-panel:990-992 · .app-update:681-683 · .bd-detail:603-604 · .bd-panel:557-839 · .bday-category:529-698 · .bday-date:638-737 · .bday-detail:571-814 · .bday-edit:813-813 · .bday-filter:520-595 · .bday-first:541-541 · .bday-form:676-677 · .bday-group:517-680 · .bday-hdr:160-161 · .bday-header:155-470 · .bday-label:547-547 · .bday-list:526-730 · .bday-month:173-744 · .bday-name:605-685 · .bday-next:96-97 · .bday-no:577-577 · .bday-person:524-570 · .bday-show:528-632 · .bday-sub:284-285 · .bday-today:510-729 · .bday-upcoming:54-495 · .bday-vip:496-832 · .boda-catalog:77-82 · .boda-cfg:123-146 · .boda-config:73-120 · .boda-date:148-166 · .boda-day:110-110 · .boda-field:111-116 · .boda-mini:63-63 · .boda-pfilters:57-58 · .boda-stat:994-994 · .boda-sticky:74-143 · .boda-teachers:98-98 · .contact-add:901-901 · .contact-entry:894-899 · .contact-group:891-893 · .contact-remove:900-900 · .data-actions:343-343 · .data-btn:344-355 · .econ-equiv:464-464 · .econ-tab:326-330 · .econ-tariff:409-466 · .energy-tariff:455-457 · .est-nav:328-329 · .ev-alarm:762-763 · .ev-annual:499-499 · .ev-bday:286-533 · .ev-bright:445-445 · .ev-btn:764-765 · .ev-calendar:967-982 · .ev-current:984-984 · .ev-del:13-14 · .ev-filter:783-952 · .ev-hairdresser:988-989 · .ev-list:2-956 · .ev-month:481-987 · .ev-multi:50-68 · .ev-rut:243-310 · .ev-search:3-7 · .ev-sort:8-53 · .ev-stat:922-958 · .ev-type:430-432 · .ev-types:429-798 · .ev-up:270-919 · .ev-upcoming:920-944 · .ev-view:62-62 · .ev-wk:225-444 · .export-choice:768-929 · .export-folder:746-780 · .fiscal-hdr:503-503 · .fiscal-hip:406-407 · .fiscal-tab:327-327 · .hip-rate:472-476 · .hip-ro:500-501 · .imp-mode:17-27 · .invoice-field:942-942 · .invoice-sheet:862-862 · .macro-url:66-66 · .nav-icon:363-373 · .nav-pro:337-349 · .nav-style:361-361 · .panel-header:840-841 · .personal-copy:878-878 · .personal-data:877-884 · .personal-note:902-934 · .personal-notes:935-939 · .rate-input:46-46 · .rut-addition:205-222 · .rut-agenda:219-220 · .rut-cancelled:246-305 · .rut-done:766-767 · .rut-history:189-240 · .rut-hpd:187-187 · .rut-icon:171-172 · .rut-recovery:214-223 · .rut-session:224-224 · .rut-skipped:306-307 · .rut-week:188-188 · .selected:370-370 · .settings-copy:870-873 · .settings-details:99-101 · .settings-edit:67-890 · .settings-editor:847-885 · .settings-field:868-887 · .settings-is:857-964 · .settings-menu:441-441 · .sw-upd:880-880 · .sy-back:37-37 · .sy-body:35-536 · .sy-card:41-41 · .sy-header:36-471 · .sy-lbl:40-40 · .sy-period:415-422 · .sy-table:42-42 · .sy-tr:43-43 · .sy-val:39-39 · .sy-year:38-38 · .week-action:834-835 · .week-card:391-391 · .weeks-container:961-961 · .wm-logo:85-250
 
 ### css/source/home-sharing.css  _(177 líneas)_
 

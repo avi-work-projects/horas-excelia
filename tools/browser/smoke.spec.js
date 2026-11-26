@@ -376,7 +376,7 @@ test('pestanas: tono estable y titulo de viaje que sigue al scroll',async({page}
  }).toBe(2);
  await page.screenshot({path:'.local-preview/sticky-trip.png'});
  await page.locator('#evViewBodas').click();await page.locator('#bodaConfigBtn').click();
- const label=page.locator('.boda-cfg-card-controls label').first();await expect(label).toHaveCSS('color','rgb(107, 31, 32)');
+ const label=page.locator('.boda-cfg-default').first();await expect(label).toHaveCSS('color','rgb(107, 31, 32)');
 });
 
 test('bicolor seleccionado, casillas vacias y pestanas de cumpleanos',async({page})=>{

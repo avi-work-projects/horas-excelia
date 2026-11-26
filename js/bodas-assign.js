@@ -321,9 +321,9 @@ function renderBodaAssignHtml(A){
   for(var i=cells;i<42;i++)h+='<div class="boda-asg-spacer" aria-hidden="true"></div>';
   h+='</div>';
   h+='<div class="boda-asg-legend">'
-    +'<span><i class="lg-libre"></i>día de ensayo libre</span>'
-    +'<span><i class="lg-sel" style="background:'+c.color+'"></i>de esta pareja</span>'
-    +'<span><i class="lg-ajena"></i>otra pareja: admite nueva clase</span><span>&#128274; cerrado: se reabre al añadir</span></div>';
+    +'<span><i class="lg-libre"></i>Libre</span>'
+    +'<span><i class="lg-sel" style="background:'+c.color+'"></i>Esta pareja</span>'
+    +'<span><i class="lg-ajena"></i>Otra pareja</span><span>&#128274; Cerrado</span></div>';
   h+='<div class="ev-detail-actions">';
   h+='<button class="ev-btn primary" id="bodaAsgSave">Guardar</button>';
   h+='</div>';

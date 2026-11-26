@@ -122,12 +122,19 @@ button.action-edit.active,button.action-edit:active{background:rgba(251,146,60,.
 /* Catálogos: cabecera de sección, ficha y controles siempre en el mismo orden. */
 .boda-cfg-section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
 .boda-cfg-section-head h4{margin:0;font-size:.9rem}
-.boda-cfg-section-head p{margin:5px 0 0;font-size:.72rem;color:var(--text-muted)}
-#bodaConfigContent .boda-catalog-row{display:block;padding:12px;margin:0 0 10px;border:1px solid var(--border);border-radius:12px;background:var(--surface)}
-.boda-cfg-card-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
-.boda-cfg-card-head>span{flex:1;min-width:0}
-.boda-cfg-card-controls{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:12px;padding-top:10px;border-top:1px solid var(--border)}
-.boda-cfg-card-controls label{display:flex;align-items:center;gap:7px;font-size:.72rem;color:var(--text-muted)}
+/* Cada opción en una fila: nombre, Por defecto, interruptor de activo y lápiz. */
+.boda-cfg-teachers{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;padding:12px;border:1px solid var(--border);border-radius:12px;background:var(--surface)}
+.boda-cfg-teachers .ev-field{margin:0;font-size:.72rem;color:var(--text-muted)}
+.boda-cfg-list{border:1px solid var(--border);border-radius:12px;background:var(--surface);overflow:hidden}
+#bodaConfigContent .boda-cfg-row{display:flex;flex-wrap:nowrap;align-items:center;gap:8px;min-height:52px;padding:8px 12px;margin:0;border:0;border-top:1px solid var(--border)}
+#bodaConfigContent .boda-cfg-row:first-child{border-top:0}
+#bodaConfigContent .boda-cfg-name{flex:1;min-width:0}
+.boda-cfg-name b{display:block;font-size:.84rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.boda-cfg-name small{margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.boda-cfg-row.off .boda-cfg-name{opacity:.5}
+.boda-cfg-default{flex:none;color:var(--text-muted)}
+.boda-cfg-default input{accent-color:var(--wm-wine,#6b1f20);margin:0}
+.boda-cfg-switch{flex:none;color:#a0703f}
 
 .boda-sticky-hd .econ-sub-tabs{grid-template-columns:repeat(4,minmax(0,1fr)) 28px;gap:6px;padding:10px 0}
 .boda-sticky-hd .econ-sub-tab,.boda-sticky-hd .boda-config-btn{width:100%;padding-left:2px;padding-right:2px}
@@ -286,7 +293,7 @@ button.action-edit.action-edit-text:active{background:#f97316!important}
 :is([data-theme="light"],[data-theme="grey"]) #eventsOverlay .ev-hdr-sub .ev-btn-rutinas{--tab-tone:#1f2937}
 #eventsOverlay .ev-hdr-sub .ev-view-toggle.ev-btn-split{--tab-tone:var(--vacaciones);--tab-alpha:13%;background:linear-gradient(to bottom,color-mix(in srgb,#ffb347 var(--tab-alpha),var(--surface)) 50%,color-mix(in srgb,#f472b6 var(--tab-alpha),var(--surface)) 50%)!important}
 #eventsOverlay .ev-hdr-sub .ev-btn-split.active{--tab-alpha:30%}
-#eventsOverlay .boda-cfg-card-controls label{color:var(--wm-wine)}
+#eventsOverlay .boda-cfg-default{color:var(--wm-wine)}
 .ev-rut-mark.rut-skip::before,.ev-rut-mark.rut-skip::after{height:1.5px;top:calc(50% - .75px)}
 .rut-cancelled .ev-upcoming-title,.rut-cancelled .ev-upcoming-note,.rut-cancelled .ev-upcoming-meta,.rut-cancelled .ev-wk-chip-title,.rut-cancelled .ev-wk-chip-meta{text-decoration-color:currentColor}
 .ev-wk-chips{border-bottom:0}

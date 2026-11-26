@@ -385,16 +385,26 @@ function _renderBodaCalendario(){
     });
     clsDia.forEach(function(ev){
       var c=bodaCouple(ev.boda&&ev.boda.coupleId);
-      var col=c?c.color:BODA_NO_COUPLE_COLOR;
       h+='<span class="boda-cal-cls" title="'+escHtml((c?c.name:'sin asignar'))+'">'
-        +'<i style="background:'+col+'"></i>'
+        +'<i class="boda-cal-x">'+evBodaSvg(ev)+'</i>'
         +'<span>'+((ev.boda&&ev.boda.time)?ev.boda.time:'--:--')+'</span></span>';
     });
     h+='</div>';
     cur.setDate(cur.getDate()+1);
   }
   h+='</div>';
-  /* Leyenda: una pareja por linea, pulsable */
+  /* Día pulsado: sus bodas y sus clases, con la misma fila que Consulta */
+  if(BODA_CAL_DAY&&(porDia[BODA_CAL_DAY]||bodasDia[BODA_CAL_DAY])){
+    var clsSel=bodaSortClasses(porDia[BODA_CAL_DAY]||[]);
+    h+='<div class="boda-day boda-cal-daylist" data-day="'+BODA_CAL_DAY+'"><div class="boda-day-hd">'+_bodaFmtCorto(BODA_CAL_DAY)
+      +(clsSel.length?'<span class="boda-day-n">'+clsSel.length+' clase'+(clsSel.length>1?'s':'')+'</span>':'')+'</div>';
+    (bodasDia[BODA_CAL_DAY]||[]).forEach(function(c){
+      h+='<div class="boda-cal-dayw"><span class="ev-bpunto" style="background:'+c.color+'"></span>&#128141; Boda de '+escHtml(c.name)+'</div>';
+    });
+    clsSel.forEach(function(ev){h+=bodaClassRoHtml(ev);});
+    h+='</div>';
+  }
+  /* Parejas del mes: chips pulsables que resaltan sus días */
   h+='<div class="boda-cal-legend">';
   if(!leyenda.length)h+='<div class="sy-note">Sin ensayos ni bodas este mes.</div>';
   leyenda.forEach(function(c){
@@ -403,7 +413,7 @@ function _renderBodaCalendario(){
       +(on?' style="border-color:'+c.color+';background:'+c.color+'1f"':'')+'>'
       +'<i style="background:'+c.color+'"></i>'
       +'<b>'+escHtml(c.name)+'</b>'
-      +'<em>('+(c.weddingDate?('boda '+_bodaFmt(c.weddingDate)):'sin fecha de boda')+')</em>'
+      +(c.weddingDate?'<em>&#128141; '+_bodaFmtCorto(c.weddingDate).slice(4)+'</em>':'')
       +'</button>';
   });
   h+='</div>';
@@ -543,6 +553,20 @@ function _renderBodaParejas(){
   return h;
 }
 function _bodaFmt(ds){return ds?ds.slice(8)+'/'+ds.slice(5,7)+'/'+ds.slice(0,4):'';}
+/* Fila de una clase en modo consulta: la comparten Clases y el día del Calendario. */
+function bodaClassRoHtml(ev){
+  var b=bodaEff(ev),c=bodaCouple(b.coupleId);
+  var falta=!!(b.coupleId&&(!b.time||!bodaPlaceOf(ev)));
+  return '<div class="boda-class boda-class-ro'+(falta?' incompleta':'')+'" data-id="'+ev.id+'">'
+    +'<span class="boda-class-mark">'+evBodaSvg(ev)+'</span>'
+    +'<span class="boda-ro-time'+(b.time?'':' none')+'">'+(b.time||'--:--')+'</span>'
+    +'<span class="boda-ro-couple">'
+    +(c?('<span class="ev-bpunto" style="background:'+c.color+'"></span><span>'+escHtml(c.name)+'</span>')
+       :'<span class="boda-ro-sin">sin asignar</span>')+'</span>'
+    +'<span class="boda-ro-place'+(b.place?'':' vacio')+'">'+escHtml(bodaPlaceLabel(b.place))+'</span>'
+    +'<button class="action-edit boda-mini-btn boda-cl-edit" data-id="'+ev.id+'" title="Editar esta clase">'+editPencilHtml()+'</button>'
+    +'</div>';
+}
 function _bodaFmtCorto(ds){
   var WN=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
   var d=new Date(ds+'T00:00:00');
@@ -611,16 +635,7 @@ function _renderBodaClases(){
       if(!edit){
         /* Consulta: fila limpia, sin controles. En amarillo si le falta la
            hora o la sala — el mismo criterio que el aviso "info incompleta". */
-        var _falta=!!(b.coupleId&&(!b.time||!bodaPlaceOf(ev)));
-        h+='<div class="boda-class boda-class-ro'+(_falta?' incompleta':'')+'" data-id="'+ev.id+'">';
-        h+='<span class="boda-class-mark">'+evBodaSvg(ev)+'</span>';
-        h+='<span class="boda-ro-time'+(b.time?'':' none')+'">'+(b.time||'--:--')+'</span>';
-        h+='<span class="boda-ro-couple">'
-          +(c?('<span class="ev-bpunto" style="background:'+c.color+'"></span><span>'+escHtml(c.name)+'</span>')
-             :'<span class="boda-ro-sin">sin asignar</span>')+'</span>';
-        h+='<span class="boda-ro-place'+(b.place?'':' vacio')+'">'+escHtml(bodaPlaceLabel(b.place))+'</span>';
-        h+='<button class="action-edit boda-mini-btn boda-cl-edit" data-id="'+ev.id+'" title="Editar esta clase">'+editPencilHtml()+'</button>';
-        h+='</div>';
+        h+=bodaClassRoHtml(ev);
         return;
       }
       h+='<div class="boda-class'+(BODA_PENDING[ev.id]?' pend':'')+'" data-id="'+ev.id+'">';

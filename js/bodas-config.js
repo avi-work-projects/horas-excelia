@@ -103,7 +103,7 @@ function bodaTeacherStats(){
   });return counts;
 }
 function renderBodaPackStats(){
-  var s=bodaPackStats(),h='<section class="stats-section boda-distribution" aria-label="Clases impartidas por pareja"><header class="stats-head"><h3>Clases impartidas por pareja</h3></header><p class="stats-note">Cuántas parejas han recibido cada número de clases. Incluye las que aún no han empezado.</p>';
+  var s=bodaPackStats(),h='<section class="stats-section boda-distribution" aria-label="Clases impartidas por pareja"><header class="stats-head"><h3>Clases impartidas por pareja</h3></header>';
   var nums=Object.keys(s.counts).map(Number).sort(function(a,b){return a-b;});
   if(!nums.length)h+='<p class="stats-note">Todavía no hay parejas registradas.</p>';
   else{
@@ -114,29 +114,29 @@ function renderBodaPackStats(){
   h+='</section>';
   var packs='<p class="stats-note">'+s.extras+(s.extras===1?' pareja':' parejas')+' con clases extras.</p>';
   BODA_CONFIG.packs.forEach(function(p){var row=s.byPack[p.id]||{couples:0,classes:0};packs+='<div class="stats-list-row boda-pack-stat"><b>'+escHtml(p.name)+'</b><span>'+row.couples+' parejas · '+row.classes+' extras</span></div>';});
-  h+=renderStatsCard('Clases extras por pack',packs,'Extras = clases tomadas por encima de las incluidas al contratar el pack.');
+  h+=renderStatsCard('Clases extras por pack',packs);
   var teachers=bodaTeacherStats();
   var items=[['both',bodaTeacherName('angel')+' y '+bodaTeacherName('celia')],['celia','Solo '+bodaTeacherName('celia')],['angel','Solo '+bodaTeacherName('angel')],['substitute','Con sustituto']].map(function(t){return [teachers[t[0]],t[1]];});
-  h+=renderStatsCard('Clases dadas por profesores',renderStatsMetrics(items),'Cada clase cuenta una vez. Con sustituto incluye tanto las clases en solitario como acompañado. Las clases sin selección guardada se cuentan con ambos profesores principales.');
+  h+=renderStatsCard('Clases dadas por profesores',renderStatsMetrics(items));
   return h;
 }
 function renderBodaConfig(){
   var h='<div id="bodaConfigContent"><h3>Configuración de Bodas</h3>';
-  h+='<section class="boda-config-section"><h4>Profesores principales</h4><div class="boda-catalog-row">';
+  h+='<section class="boda-config-section"><header class="boda-cfg-section-head"><h4>Profesores</h4><button class="ev-io-btn io-primaria" id="bodaSaveTeacherNames">Guardar</button></header><div class="boda-cfg-teachers">';
   ['angel','celia'].forEach(function(k,i){h+='<label class="ev-field">Profesor '+(i+1)+'<input class="ev-input" data-teacher-name="'+k+'" maxlength="40" value="'+escHtml(BODA_CONFIG.teacherNames[k])+'"></label>';});
-  h+='<button class="ev-io-btn io-primaria" id="bodaSaveTeacherNames">Guardar nombres</button></div></section>';
+  h+='</div></section>';
   [['packs','Packs'],['durations','Duraciones'],['places','Salas']].forEach(function(pair){
-    var kind=pair[0];h+='<section class="boda-config-section"><header class="boda-cfg-section-head"><div><h4>'+pair[1]+'</h4><p>'+({packs:'Clases incluidas por pareja',durations:'Tiempo de cada ensayo',places:'Lugares disponibles para enseñar'})[kind]+'</p></div><button class="ev-io-btn io-primaria" data-cfg-add="'+kind+'">+ Añadir</button></header>';
-    BODA_CONFIG[kind].forEach(function(x){var id=x.id||x.k;
-      h+='<div class="boda-catalog-row"><div class="boda-cfg-card-head"><span><b>'+escHtml(x.name||x.n||x.minutes+' min')+'</b><small>'+escHtml(kind==='packs'?x.classes+' clases':kind==='places'?x.d:(id===BODA_CONFIG.defaultDurationId?'Predeterminada':''))+'</small></span>';
-      h+='<button class="boda-mini-btn action-edit" data-cfg-edit="'+kind+'" data-id="'+id+'" aria-label="Editar '+escHtml(x.name||x.n||x.minutes+' min')+'">'+editPencilHtml()+'</button>';
-      h+='</div><div class="boda-cfg-card-controls"><label><input type="checkbox" data-cfg-active="'+kind+'" data-id="'+id+'"'+(x.active!==false?' checked':'')+'> Activo</label>';
-      if(kind==='places'&&x.active!==false)h+='<label><input type="radio" name="bodaDefaultPlace" data-default-place="'+id+'"'+(id===BODA_CONFIG.defaultPlace?' checked':'')+'> Por defecto</label>';
-      if(kind==='durations'&&x.active!==false)h+='<label><input type="radio" name="bodaDefaultDuration" data-default="'+id+'"'+(id===BODA_CONFIG.defaultDurationId?' checked':'')+'> Por defecto</label>';
-      h+='</div></div>';
-    });h+='</section>';
+    var kind=pair[0];h+='<section class="boda-config-section"><header class="boda-cfg-section-head"><h4>'+pair[1]+'</h4><button class="ev-io-btn io-primaria" data-cfg-add="'+kind+'">+ Añadir</button></header><div class="boda-cfg-list">';
+    BODA_CONFIG[kind].forEach(function(x){var id=x.id||x.k,name=x.name||x.n||x.minutes+' min',on=x.active!==false;
+      var detail=kind==='packs'?x.classes+' clases':kind==='places'?(x.d||''):'';
+      h+='<div class="boda-catalog-row boda-cfg-row'+(on?'':' off')+'"><span class="boda-cfg-name"><b>'+escHtml(name)+'</b>'+(detail?'<small>'+escHtml(detail)+'</small>':'')+'</span>';
+      if(kind==='places'&&on)h+='<label class="boda-cfg-default"><input type="radio" name="bodaDefaultPlace" data-default-place="'+id+'"'+(id===BODA_CONFIG.defaultPlace?' checked':'')+'> Por defecto</label>';
+      if(kind==='durations'&&on)h+='<label class="boda-cfg-default"><input type="radio" name="bodaDefaultDuration" data-default="'+id+'"'+(id===BODA_CONFIG.defaultDurationId?' checked':'')+'> Por defecto</label>';
+      h+='<label class="boda-cfg-switch"><input type="checkbox" role="switch" class="boda-switch" data-cfg-active="'+kind+'" data-id="'+id+'" aria-label="Activo: '+escHtml(name)+'"'+(on?' checked':'')+'></label>';
+      h+='<button class="boda-mini-btn action-edit" data-cfg-edit="'+kind+'" data-id="'+id+'" aria-label="Editar '+escHtml(name)+'">'+editPencilHtml()+'</button></div>';
+    });h+='</div></section>';
   });
-  h+='<p class="boda-stat-note">Desactivar oculta opciones para nuevas asignaciones y conserva las existentes. Cambiar un pack o duración no modifica las clases ya guardadas ni el número contratado por las parejas anteriores.</p></div>';
+  h+='</div>';
   return h;
 }
 function openBodaConfig(){BODA_SUBTAB='config';refreshEvents();}
