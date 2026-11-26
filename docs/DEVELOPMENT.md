@@ -1,5 +1,26 @@
 # Arquitectura y desarrollo
 
+## Selector de planes compacto (26/11/2026, pendiente de integración)
+
+Por petición de Ángel, las tarjetas de «Elige tu Plan» pasan de 86 a 72 px
+de alto: sustituye el mínimo anterior de v505 solo en este selector. Se mantienen
+las cuatro columnas, los tamaños de símbolos y textos, el marco estable y el
+scroll interior con Confirmar fijo. Gestiones conserva sus medidas.
+
+El catálogo visual reúne Navidad/Fiesta/Boda, Juegos de mesa/Torneo y el bloque
+Montaña/Plan exterior junto a los seis deportes. Solo cambia la lista del selector;
+las preferencias de orden, horas y eventos guardados conservan su comportamiento.
+
+Los SVG compartidos de Desayunar, Sorpresa, Cine y Boda reservan margen para sus
+trazos dentro del marcador. Hacer deporte conserva el recipiente y el rayo, sin
+asa y centrado; Fiesta usa un gorro con confeti. Se comprueban selección, cancelación,
+persistencia, geometría móvil y píxeles fuera del marco en Edge oculto. El atlas
+actualiza únicamente los tres estados del selector, pendientes de revisión de Ángel.
+
+Esta tarea se conserva en su rama propia por petición expresa para integrarla
+con el trabajo de Claude más adelante. Las versiones se incrementarán al publicar
+la integración; esta rama no despliega la app.
+
 ## Elipsis de un día y acciones con relleno (v551)
 
 En Calendario 1 mes, un evento grande de un día conserva dos líneas de título;
