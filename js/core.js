@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v576 — Botón Atrás dentro de Gestify y semanas en duda';
+var APP_VERSION = 'v577 — Corrige el error al elegir un acceso rápido de evento';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){

@@ -266,10 +266,10 @@
 
 **Funciones:** openOtrosDatePicker:7 (!96) · _evDk:13 · _count:14 · _render:15 · _attach:56 · _rerender:87 · _close:93
 
-### js/events-plan-picker.js  _(112 líneas)_
-**Estado global:** EV_PLAN_PICK:2 · EV_QUICK_PLANS:3 · EV_PICKER_GROUPS:4 · EV_CULTURE_OPTIONS:100
+### js/events-plan-picker.js  _(119 líneas)_
+**Estado global:** EV_PLAN_PICK:2 · EV_QUICK_PLANS:3 · EV_PICKER_GROUPS:4 · EV_CULTURE_OPTIONS:107
 
-**Funciones:** evPickerHas:8 · evPickerMoreIcon:9 · evQuickSelection:10 · renderEvQuickPlans:13 · evFormBadge:21 · renderEvPlanFlags:22 · paintEvRomanticSymbols:28 · bindEvPlanFlags:35 · sync:37 · bindEvRomanticField:45 · evFormRenderTypes:48 · renderEvPlanOptions:55 · closeEvPlanPicker:62 · evPlanPickerKey:68 · openEvPlanPicker:71 · renderEvCultureFields:101 · bindEvCultureFields:105
+**Funciones:** evPickerHas:8 · evPickerMoreIcon:9 · evQuickSelection:10 · renderEvQuickPlans:13 · evFormBadge:21 · renderEvPlanFlags:22 · paintEvRomanticSymbols:28 · bindEvPlanFlags:35 · sync:37 · bindEvRomanticField:45 · updateEvQuickPlan:50 · evFormRenderTypes:55 · renderEvPlanOptions:62 · closeEvPlanPicker:69 · evPlanPickerKey:75 · openEvPlanPicker:78 · renderEvCultureFields:108 · bindEvCultureFields:112
 
 ### js/events-render.js  _(652 líneas)_
 **Estado global:** EV_LIST_TYPES:223
@@ -791,7 +791,7 @@
 **Rangos por prefijo de clase:**
 .stats-empty:23-23 · .stats-head:7-8 · .stats-list:24-25 · .stats-metric:11-14 · .stats-metrics:9-10 · .stats-note:15-15 · .stats-section:6-26 · .stats-stack:2-5 · .stats-table:18-22
 
-### css/source/wedding-moves.css  _(437 líneas)_
+### css/source/wedding-moves.css  _(436 líneas)_
 
 **Secciones:**
 
@@ -835,11 +835,11 @@
 - Gráficos de Estadísticas: el gesto horizontal nunca cambia de subpestaña (data-swipe-lock).:369
 - Estadísticas (v565): filtro por año y mapa de día × franja.:384
 - Resumen compacto (v566): una fila por tema y el año en un desplegable.:385
-- Editar pareja (v571): fichas de filas como Editar clase y un solo acento granate.:412
-- Etiquetas de la ficha de pareja algo mayores que las de las fichas compactas.:426
+- Editar pareja (v571): fichas de filas como Editar clase y un solo acento granate.:411
+- Etiquetas de la ficha de pareja algo mayores que las de las fichas compactas.:425
 
 **Rangos por prefijo de clase:**
-.boda-actions:207-207 · .boda-add:20-209 · .boda-asg:233-367 · .boda-buscar:343-345 · .boda-cal:258-295 · .boda-card:109-353 · .boda-cform:360-429 · .boda-chip:106-108 · .boda-chips:105-105 · .boda-cl:169-206 · .boda-class:88-168 · .boda-controls:66-66 · .boda-couple:150-152 · .boda-cpk:224-232 · .boda-create:17-23 · .boda-date:208-425 · .boda-day:82-130 · .boda-det:215-341 · .boda-dia:157-159 · .boda-distribution:26-28 · .boda-dot:113-113 · .boda-falta:120-121 · .boda-filters:69-69 · .boda-fsel:70-73 · .boda-ftoggles:74-75 · .boda-hd:202-204 · .boda-heat:405-410 · .boda-inp:145-145 · .boda-iss:44-46 · .boda-issue:31-42 · .boda-issues:30-30 · .boda-legend:210-214 · .boda-mini:164-197 · .boda-mode:58-60 · .boda-multi:160-166 · .boda-name:114-419 · .boda-ok:126-126 · .boda-pack:430-436 · .boda-pfilters:347-348 · .boda-place:153-179 · .boda-prog:116-117 · .boda-record:371-382 · .boda-records:376-376 · .boda-ro:170-178 · .boda-save:102-103 · .boda-savebar:98-101 · .boda-scroll:370-375 · .boda-search:346-346 · .boda-sec:12-25 · .boda-see:24-24 · .boda-sobra:127-127 · .boda-sort:349-349 · .boda-stat:48-50 · .boda-stats:386-386 · .boda-sticky:8-10 · .boda-sum:62-398 · .boda-summary:61-61 · .boda-swap:135-142 · .boda-switch:428-428 · .boda-time:146-146 · .boda-tp:299-302 · .boda-wed:115-424 · .boda-year:399-404 · .ev-alarm:185-191 · .ev-bficha:325-325 · .ev-bfila:326-335 · .ev-bpunto:333-333 · .ev-bver:338-338 · .ev-car:321-322 · .ev-detail:319-319 · .ev-upcoming:181-183 · .ev-wk:193-195 · .hbar-lbl:54-54 · .hbar-row:53-53 · .hbar-rows:52-52 · .hbar-track:55-56 · .hbar-val:57-57 · .rut-wpick:312-317 · .sy-body:5-11
+.boda-actions:207-207 · .boda-add:20-209 · .boda-asg:233-367 · .boda-buscar:343-345 · .boda-cal:258-295 · .boda-card:109-353 · .boda-cform:360-428 · .boda-chip:106-108 · .boda-chips:105-105 · .boda-cl:169-206 · .boda-class:88-168 · .boda-controls:66-66 · .boda-couple:150-152 · .boda-cpk:224-232 · .boda-create:17-23 · .boda-date:208-424 · .boda-day:82-130 · .boda-det:215-341 · .boda-dia:157-159 · .boda-distribution:26-28 · .boda-dot:113-113 · .boda-falta:120-121 · .boda-filters:69-69 · .boda-fsel:70-73 · .boda-ftoggles:74-75 · .boda-hd:202-204 · .boda-heat:404-409 · .boda-inp:145-145 · .boda-iss:44-46 · .boda-issue:31-42 · .boda-issues:30-30 · .boda-legend:210-214 · .boda-mini:164-197 · .boda-mode:58-60 · .boda-multi:160-166 · .boda-name:114-418 · .boda-ok:126-126 · .boda-pack:429-435 · .boda-pfilters:347-348 · .boda-place:153-179 · .boda-prog:116-117 · .boda-record:371-382 · .boda-records:376-376 · .boda-ro:170-178 · .boda-save:102-103 · .boda-savebar:98-101 · .boda-scroll:370-375 · .boda-search:346-346 · .boda-sec:12-25 · .boda-see:24-24 · .boda-sobra:127-127 · .boda-sort:349-349 · .boda-stat:48-50 · .boda-stats:386-386 · .boda-sticky:8-10 · .boda-sum:62-397 · .boda-summary:61-61 · .boda-swap:135-142 · .boda-switch:427-427 · .boda-time:146-146 · .boda-tp:299-302 · .boda-wed:115-423 · .boda-year:398-403 · .ev-alarm:185-191 · .ev-bficha:325-325 · .ev-bfila:326-335 · .ev-bpunto:333-333 · .ev-bver:338-338 · .ev-car:321-322 · .ev-detail:319-319 · .ev-upcoming:181-183 · .ev-wk:193-195 · .hbar-lbl:54-54 · .hbar-row:53-53 · .hbar-rows:52-52 · .hbar-track:55-56 · .hbar-val:57-57 · .rut-wpick:312-317 · .sy-body:5-11
 
 ### css/source/routines.css  _(138 líneas)_
 

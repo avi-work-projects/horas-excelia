@@ -45,6 +45,13 @@ function bindEvPlanFlags(root,prefix,state,scope){
 function bindEvRomanticField(form){
   bindEvPlanFlags(form.root,'evF',form,function(){return form.root.querySelector('[data-group="plans"]')||form.root;});
 }
+/* Marca «Más Opciones» del grupo que tiene elegido un tipo fuera de los accesos rápidos.
+   (Se perdió al reescribir las casillas en v575 y rompía al elegir un acceso rápido.) */
+function updateEvQuickPlan(form,type){
+  form.root.querySelectorAll('.ev-quick-group').forEach(function(section){
+    section.querySelector('.ev-plan-more').classList.toggle('selected',!!evQuickSelection(type,EV_PICKER_GROUPS[section.dataset.group]));
+  });
+}
 function evFormRenderTypes(form,kind,type){
   var tax=_evFormEl(form,'evFTaxBlock');if(tax)tax.remove();
   var culture=_evFormEl(form,'evFCultureBlock');if(culture)culture.remove();

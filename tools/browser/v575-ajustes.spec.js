@@ -57,3 +57,10 @@ test('Calendario de Wedding Moves: las parejas quedan justo bajo la última sema
   for(const month of [9,10]){await page.evaluate(m=>{BODA_CAL_MONTH=m;bodaCalRefresh();},month);heights.push(await page.locator('#bodaCalBody').evaluate(e=>Math.round(e.getBoundingClientRect().height)));}
   expect(Math.abs(heights[0]-heights[1])).toBeLessThanOrEqual(2);
 });
+
+test('Nuevo evento: los accesos rápidos de cada grupo no lanzan errores (regresión v576)',async({page})=>{
+  const errs=[];page.on('pageerror',e=>errs.push(e.message));
+  await page.locator('#eventsBtn').click();await page.evaluate(()=>openEvForm(null));
+  for(const t of ['Llamada','Cita','Peluquería','Comida','Tomar algo','Cena'])await page.locator('#evFTypePicker [data-type="'+t+'"]').first().click();
+  expect(errs).toEqual([]);
+});

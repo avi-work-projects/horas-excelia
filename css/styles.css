@@ -2770,7 +2770,6 @@ input[type="checkbox"].boda-switch:focus-visible{outline:2px solid #8b5e34;outli
 /* Resumen compacto (v566): una fila por tema y el año en un desplegable. */
 .boda-stats-summary .stats-head{position:relative}
 .boda-sum-row{display:grid;grid-template-columns:76px 56px minmax(0,1fr);align-items:center;gap:8px;padding:9px 0;border-top:1px solid var(--border)}
-.boda-sum-row:first-of-type{border-top:0}
 .boda-sum-lbl{font-size:.7rem;font-weight:600;color:var(--text-muted)}
 .boda-sum-main{display:flex;align-items:baseline;gap:3px;padding:0;border:0;background:none;color:var(--stats-tone);font:inherit;text-align:left}
 button.boda-sum-main{cursor:pointer}
