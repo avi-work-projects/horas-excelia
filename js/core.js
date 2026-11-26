@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v572 — Deslizamientos sin copias solapadas y color contraído';
+var APP_VERSION = 'v573 — Retoques de Wedding Moves: fecha, Hoy y Editar pareja';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){

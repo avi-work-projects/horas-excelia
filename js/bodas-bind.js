@@ -17,15 +17,15 @@ function renderBodaCoupleForm(c){
   h+='</header><div class="bd-panel-body ev-fixed-form-body">';
   /* Mismo patrón que Editar clase: el nombre como campo y el resto en fichas de
      filas (etiqueta a la izquierda, valor a la derecha), con un solo acento. */
-  /* La pareja: nombre y «Pareja futura» en la misma ficha. */
-  h+='<div class="ev-field boda-cform-group"><label for="bodaCName">Pareja</label><div class="ev-bficha boda-cform-ficha">';
+  /* La pareja en una sola ficha de tres filas: nombre, futura y día de la boda.
+     Las dos etiquetas comparten formato; la fecha se edita tocándola y la
+     cuenta atrás va en cursiva abajo a la derecha. */
+  var wed=isEdit&&c.weddingDate?c.weddingDate:'';
+  h+='<div class="ev-field boda-cform-group"><label for="bodaCName">Pareja</label><div class="ev-bficha boda-cform-ficha boda-date-ficha">';
   h+='<div class="ev-bfila boda-name-row"><input class="boda-name-input" id="bodaCName" type="text" maxlength="40" placeholder="Ej: Marta y Juan" value="'+(isEdit?escHtml(c.name):'')+'"></div>';
   h+='<label class="ev-bfila" for="bodaCFuture"><span class="ev-bfila-lbl">Pareja futura</span><span class="ev-bfila-val boda-switch-cell"><input type="checkbox" role="switch" class="boda-switch" id="bodaCFuture"'+(c&&c.future?' checked':'')+'></span></label>';
+  h+='<label class="ev-bfila boda-wed-row" for="bodaCWed"><span class="ev-bfila-lbl">Día de la boda</span><input id="bodaCWed" type="date" value="'+wed+'"><small class="boda-wed-hint" id="bodaCWedHint">'+(wed?bodaWedHint(wed):'')+'</small></label>';
   h+='</div></div>';
-  /* Día de la boda: la fecha a la derecha y la cuenta atrás debajo de ella. */
-  var wed=isEdit&&c.weddingDate?c.weddingDate:'';
-  h+='<div class="ev-bficha boda-date-ficha boda-cform-ficha"><label class="ev-bfila" for="bodaCWed"><span class="ev-bfila-lbl">Día de la boda</span>'
-    +'<span class="boda-wed-val"><input id="bodaCWed" type="date" value="'+wed+'"><small class="boda-wed-hint" id="bodaCWedHint">'+(wed?bodaWedHint(wed):'')+'</small></span></label></div>';
   var selected=isEdit?bodaPackOf(c):(BODA_CONFIG.packs.find(function(p){return p.active!==false&&p.classes===4;})||BODA_CONFIG.packs.find(function(p){return p.active!==false;}));
   /* La pareja conserva sus clases contratadas mientras mantenga el mismo pack. */
   var kept=isEdit?(c.packClasses==null?c.contracted:c.packClasses):null;
@@ -58,6 +58,8 @@ function openBodaCoupleForm(c){
     });
   });
   var wedIn=document.getElementById('bodaCWed');
+  /* Sin icono de calendario: tocar la fecha abre el selector del sistema. */
+  wedIn.addEventListener('click',function(){try{if(wedIn.showPicker)wedIn.showPicker();}catch(e){}});
   wedIn.addEventListener('input',function(){document.getElementById('bodaCWedHint').textContent=wedIn.value?bodaWedHint(wedIn.value):'';});
   document.getElementById('bodaCCancel').addEventListener('click',closeBodaCoupleForm);
   var del=document.getElementById('bodaCDel');
