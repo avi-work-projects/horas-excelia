@@ -120,6 +120,12 @@ body:has(#rutPlanOv.open) .tasks-fab{visibility:hidden}
 .rut-week-option>span{min-width:0;display:flex;flex-direction:column;gap:5px}
 .rut-week-option strong{font-size:.76rem;font-weight:600;line-height:1.4;color:var(--text)}
 .rut-week-option small{font-size:.7rem;line-height:1.5;color:var(--text-muted)}
+/* Alcance del cambio: conmutador segmentado «Solo esta semana | Desde esta semana». */
+.rut-scope-switch{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;border:1px solid var(--border);border-radius:12px;background:var(--surface2)}
+.rut-scope-opt{position:relative;display:flex;align-items:center;justify-content:center;min-height:40px;padding:0 6px;border-radius:9px;color:var(--text-muted);font-size:.76rem;font-weight:600;text-align:center;cursor:pointer}
+.rut-scope-opt input{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:pointer}
+.rut-scope-opt:has(input:checked){background:var(--surface);color:var(--accent);box-shadow:0 0 0 1px var(--accent),0 1px 3px #0001}
+.rut-scope-opt:has(input:focus-visible){outline:2px solid var(--accent);outline-offset:2px}
 .rut-week-body .rut-hpd-rows{gap:8px;margin-top:12px;padding:0 2px}
 .rut-week-body .rut-hpd-row{gap:14px}
 .rut-week-body .rut-hpd-row>span{font-size:.76rem;color:var(--text);font-weight:500}

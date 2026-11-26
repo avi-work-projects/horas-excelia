@@ -470,8 +470,11 @@ function _rutWeekRender(r){
   h+='<div class="ev-date-row rut-week-fields"><div class="ev-field"><label for="rutWkTime" id="rutWkTimeLabel">'+(separate?'Hora por defecto':'Hora')+'</label>';
   h+='<input class="ev-input" id="rutWkTime" type="text" readonly data-time-picker data-time-quarter aria-haspopup="dialog" placeholder="Sin hora" value="'+hora+'"></div>';
   h+='<div class="ev-field"><label for="rutWkDur">Duración (min)</label><input class="ev-input" id="rutWkDur" type="number" min="15" max="480" step="15" value="'+effective.dur+'"></div></div>';
-  h+='<div class="rut-week-time-options"><label class="rut-week-option"><input type="checkbox" id="rutWkPerDay"'+(separate?' checked':'')+'><span><strong>Horario distinto según el día</strong><small>Elige una hora para cada día de clase.</small></span></label><div class="rut-hpd-rows" id="rutWkTimes"'+(separate?'':' hidden')+'>'+rutDayTimesHtml(dias,dayTimes,hora)+'</div></div>';
-  h+='<div class="rut-week-scope"><h3>Aplicar el cambio</h3><label class="rut-week-option"><input type="checkbox" id="rutWkForward"><span><strong>Desde esta semana en adelante</strong><small id="rutWkScope">Solo afecta a esta semana. El horario habitual se mantiene.</small></span></label></div>';
+  h+='<div class="rut-week-time-options"><label class="rut-week-option"><input type="checkbox" id="rutWkPerDay"'+(separate?' checked':'')+'><span><strong>Horario distinto según el día</strong></span></label><div class="rut-hpd-rows" id="rutWkTimes"'+(separate?'':' hidden')+'>'+rutDayTimesHtml(dias,dayTimes,hora)+'</div></div>';
+  /* Alcance: un conmutador de dos opciones; los títulos bastan, sin explicaciones. */
+  h+='<div class="rut-week-scope rut-scope-switch" role="radiogroup" aria-label="Aplicar el cambio">'
+    +'<label class="rut-scope-opt"><input type="radio" name="rutWkScopeOpt" id="rutWkOnly" checked><span>Solo esta semana</span></label>'
+    +'<label class="rut-scope-opt"><input type="radio" name="rutWkScopeOpt" id="rutWkForward"><span>Desde esta semana</span></label></div>';
   h+='</div><div class="ev-detail-actions rut-week-actions">';
   if(o)h+='<button class="ev-btn cancel" id="rutWkReset">Quitar el cambio</button>';
   h+='<button class="ev-btn primary" id="rutWkSave">Guardar semana</button>';
@@ -484,10 +487,9 @@ function _rutWeekRender(r){
     document.getElementById('rutWkTimeLabel').textContent=box.hidden?'Hora':'Hora por defecto';
   }
   document.getElementById('rutWkPerDay').onchange=paintTimes;
-  document.getElementById('rutWkForward').addEventListener('change',function(){
-    document.getElementById('rutWkScope').textContent=this.checked?'Nuevo horario habitual desde esta semana. Se conservan las sesiones pasadas y canceladas.':'Solo afecta a esta semana. El horario habitual se mantiene.';
-    document.getElementById('rutWkSave').textContent=this.checked?'Guardar horario':'Guardar semana';
-  });
+  ['rutWkOnly','rutWkForward'].forEach(function(id){document.getElementById(id).addEventListener('change',function(){
+    document.getElementById('rutWkSave').textContent=document.getElementById('rutWkForward').checked?'Guardar horario':'Guardar semana';
+  });});
   document.getElementById('rutWkClose').addEventListener('click',function(){_rutWeekPick(r);});
   document.querySelectorAll('#rutWkDays .rut-day-btn').forEach(function(b){
     b.addEventListener('click',function(){b.classList.toggle('on');b.setAttribute('aria-pressed',b.classList.contains('on'));paintTimes();});

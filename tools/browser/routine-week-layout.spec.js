@@ -21,7 +21,7 @@ test('Editor semanal: tarjetas completas, etiquetas comunes y pie estable al amp
   const initial=await page.locator('.rut-week-sheet').boundingBox();
   const footer=await page.locator('.rut-week-actions').boundingBox();
   await expect(page.locator('#rutWkTimes')).toBeHidden();
-  const fonts=await page.evaluate(()=>['.rut-week-title strong','#rutWkTimeLabel','#rutWkDur','#rutWkScope','.rut-week-option strong'].map(s=>getComputedStyle(document.querySelector(s)).fontFamily));
+  const fonts=await page.evaluate(()=>['.rut-week-title strong','#rutWkTimeLabel','#rutWkDur','.rut-scope-opt span','.rut-week-option strong'].map(s=>getComputedStyle(document.querySelector(s)).fontFamily));
   expect(new Set(fonts).size).toBe(1);
   expect(await page.locator('#rutWkTimeLabel').evaluate(el=>parseFloat(getComputedStyle(el).fontSize))).toBeLessThan(14);
   await page.locator('.rut-week-option').first().click();
@@ -48,8 +48,10 @@ test('La tarjeta de alcance cambia la opción y conserva las horas al alternar h
  await page.getByLabel('Hora del miércoles').evaluate(el=>el.value='19:00');
  await page.locator('.rut-week-option').first().click();await expect(page.locator('#rutWkTimes')).toBeHidden();
  await page.locator('.rut-week-option').first().click();await expect(page.getByLabel('Hora del miércoles')).toHaveValue('19:00');
- await page.locator('.rut-week-scope .rut-week-option').click();await expect(page.locator('#rutWkForward')).toBeChecked();
- await expect(page.locator('#rutWkScope')).toContainText('Nuevo horario habitual');await expect(page.locator('#rutWkSave')).toHaveText('Guardar horario');
+ // Alcance: conmutador de dos opciones, sin textos explicativos.
+ await expect(page.locator('.rut-scope-opt')).toHaveText(['Solo esta semana','Desde esta semana']);await expect(page.locator('#rutWkOnly')).toBeChecked();
+ await page.locator('.rut-scope-opt').nth(1).click();await expect(page.locator('#rutWkForward')).toBeChecked();
+ await expect(page.locator('.rut-week-sheet small')).toHaveCount(0);await expect(page.locator('#rutWkSave')).toHaveText('Guardar horario');
  await page.evaluate(async()=>Promise.all(document.getAnimations().filter(a=>a.effect.getTiming().iterations!==Infinity).map(a=>a.finished.catch(()=>{}))));
  await page.screenshot({path:info.outputPath('semana-horarios.png')});
  await page.locator('#rutWkSave').click();await expect(page.locator('#rutWkOv')).toHaveCount(0);

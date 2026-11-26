@@ -253,7 +253,7 @@ test('rutinas: horario por semana, duración, histórico editable y backup',asyn
  expect(await page.evaluate(()=>['2026-08-17','2026-08-24'].map(ds=>rutOccursOn(RUTINAS[0],ds)))).toEqual(['17:00','18:00']);
  await page.locator('[data-rweek]').click();await page.locator('#rutWkOv [data-week="2026-08-31"]').click();
  await page.locator('#rutWkDays [data-wd="1"]').click();await page.locator('#rutWkDays [data-wd="2"]').click();await chooseTime(page,'#rutWkTime','19:00');
- await page.locator('#rutWkForward').check();await expect(page.locator('#rutWkScope')).toContainText('Nuevo horario habitual');await page.locator('#rutWkSave').click();await expect(page.locator('#rutWkWrap')).toHaveCount(0);
+ await page.locator('#rutWkForward').check();await expect(page.locator('#rutWkSave')).toHaveText('Guardar horario');await page.locator('#rutWkSave').click();await expect(page.locator('#rutWkWrap')).toHaveCount(0);
  expect(await page.evaluate(()=>['2026-08-17','2026-08-24','2026-08-31','2026-09-01','2026-09-07'].map(ds=>rutOccursOn(RUTINAS[0],ds)))).toEqual(['17:00','18:00','17:00','19:00',null]);
  await page.locator('.rut-edit').click();await page.locator('#rutFName').fill('Actividad renombrada');await page.locator('#rutFSave').click();await expect(page.locator('#rutFWrap')).toHaveCount(0);
  await page.locator('[data-rhistory]').click();

@@ -12,7 +12,7 @@ test.beforeEach(async({page})=>{
 });
 
 test('acciones de Clases y Parejas comparten acento y abren sus formularios',async({page})=>{
-  await expect(page.locator('.boda-create-actions button')).toHaveText(['Clase','Pareja']);
+  await expect(page.locator('.boda-create-actions button')).toHaveText(['Añadirclase','Añadirpareja']);
   await expect(page.locator('#bodaAddClass')).toHaveAccessibleName('Añadir clase');await expect(page.locator('#bodaAddCouple')).toHaveAccessibleName('Añadir pareja');
   for(const width of [320,400]){
     await page.setViewportSize({width,height:880});

@@ -270,6 +270,7 @@ cualquier cambio visual/funcional definida el 25/10.
 - Los botones de volver y las flechas de navegación usan cajas cuadradas con esquinas redondeadas. Los tres calendarios comparten posición y tamaño de «Hoy». En el calendario mensual las iniciales semanales acompañan al mes durante el swipe; solo el mes actual marca el día de la semana presente en verde. Preferencia de Ángel del 16/10/2026.
 
 - Por defecto, el título de cada menú o panel nuevo se centra respecto al ancho completo de su contenedor, no al espacio sobrante tras la flecha. Reutilizar `.bd-panel-header.panel-header-centered`, con columnas laterales simétricas; si hay acciones más anchas, reservar el mismo ancho en ambos lados. Preferencia de Ángel del 11/10/2026.
+- Menús minimalistas: no explicar opciones que ya se entienden por su título. Sin subtítulos, notas ni textos de ayuda bajo cada opción; si hay que elegir entre alternativas, usar un conmutador con títulos claros (por ejemplo «Solo esta semana | Desde esta semana»). Norma de Ángel del 26/11/2026.
 
 - En desplegables, reutilizar los indicadores dibujados de la aplicación (`.ev-tax-chevron` o el chevrón de `details > summary`). No usar caracteres de texto como `⌄` para representar la flecha. Preferencia de Ángel del 11/10/2026.
 - En el editor de cumpleaños, nombre y fecha comparten un panel blanco; categorías tiene su propio panel con acento suave. En la ficha, el resumen queda abierto, sin recuadro interior, y categorías conserva su panel.

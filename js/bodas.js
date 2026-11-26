@@ -561,9 +561,6 @@ function _renderBodaParejas(){
 }
 function _bodaFmt(ds){return ds?ds.slice(8)+'/'+ds.slice(5,7)+'/'+ds.slice(0,4):'';}
 /* Fila de una clase en modo consulta: la comparten Clases y el día del Calendario. */
-/* Iconos de los botones de añadir: aspa de clase y anillos de pareja, con un «+». */
-var BODA_ICON_CLASS='<svg class="boda-add-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 5l9 9M13 5l-9 9"/><path d="M19 13v8M15 17h8" stroke-width="2"/></svg>';
-var BODA_ICON_COUPLE='<svg class="boda-add-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="7.5" cy="11" r="4.5"/><circle cx="13.5" cy="11" r="4.5"/><path d="M19 15v8M15 19h8" stroke-width="2" stroke-linecap="round"/></svg>';
 function bodaClassRoHtml(ev,pick){
   var b=bodaEff(ev),c=bodaCouple(b.coupleId);
   var falta=!!(b.coupleId&&(!b.time||!bodaPlaceOf(ev)));
@@ -608,8 +605,8 @@ function _renderBodaClases(){
   h+='</div>';
   /* Añadir y los dos filtros «Ver», en una sola fila compacta. */
   h+='<div class="boda-create-actions" aria-label="Añadir a Wedding Moves">';
-  h+='<button class="bday-io-btn io-primaria boda-create-button boda-add-class" id="bodaAddClass" aria-label="Añadir clase">'+BODA_ICON_CLASS+'<span>Clase</span></button>';
-  h+='<button class="bday-io-btn io-primaria boda-create-button boda-add-couple" id="bodaAddCouple" aria-label="Añadir pareja">'+BODA_ICON_COUPLE+'<span>Pareja</span></button>';
+  h+='<button class="bday-io-btn io-primaria boda-create-button boda-add-class" id="bodaAddClass" aria-label="Añadir clase"><span>Añadir</span><span>clase</span></button>';
+  h+='<button class="bday-io-btn io-primaria boda-create-button boda-add-couple" id="bodaAddCouple" aria-label="Añadir pareja"><span>Añadir</span><span>pareja</span></button>';
   h+='<label class="boda-see-chip"><input type="checkbox" id="bodaShowPast"'+(BODA_HIDE_PAST?'':' checked')+'> Pasadas</label>';
   h+='<label class="boda-see-chip"><input type="checkbox" style="--chk:var(--wm-wine)" id="bodaShowClosed"'
     +(BODA_HIDE_CLOSED?'':' checked')+'> Cerrados</label>';
