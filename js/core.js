@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v563 — Wedding Moves: Calendario con aspas, Configuración en filas';
+var APP_VERSION = 'v564 — Wedding Moves: Calendario con aspas, Configuración en filas';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
