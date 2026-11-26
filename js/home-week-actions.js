@@ -24,9 +24,12 @@ function homeWeekActionsButton(label,icon,style,action,iconOnly){
 }
 function renderHomeWeekActions(card,key){
   var section=card.querySelector('.week-actions');
+  var covered=homeWeekCovered(key),expanded=covered&&HOME_WEEK_ACTIONS[key],sig=(covered?'c':'')+(expanded?'e':'');
+  /* Repintar con el mismo estado no reconstruye los botones: al llegar la
+     respuesta de Kairo tras cambiar de mes se veía un destello en cada semana. */
+  if(section&&section.dataset.sig===sig)return;
   if(!section){section=document.createElement('div');card.appendChild(section);}
-  section.className='week-actions home-week-actions';section.replaceChildren();
-  var covered=homeWeekCovered(key),expanded=covered&&HOME_WEEK_ACTIONS[key];
+  section.className='week-actions home-week-actions';section.replaceChildren();section.dataset.sig=sig;
   var mail='<svg class="week-action-icon mail-icon" viewBox="0 0 24 24" aria-hidden="true"><path fill="#fff" d="M3 4h18a1 1 0 0 1 1 1v.5L12 12 2 5.5V5a1 1 0 0 1 1-1Zm-1 4 9.45 6.14a1 1 0 0 0 1.1 0L22 8v11a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1Z"/></svg>';
   if(!covered||expanded)section.appendChild(homeWeekActionsButton('Enviar a Outlook',mail,'send',function(){sendManualEmail(key);}));
   if(!covered)return;

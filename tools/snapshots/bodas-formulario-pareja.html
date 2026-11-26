@@ -8,22 +8,23 @@
 <button class="ev-btn danger" id="bodaCDel" style="flex:none;padding:6px 12px;font-size:.75rem">Eliminar</button>
 </header>
 <div class="bd-panel-body ev-fixed-form-body">
+<div class="boda-cform-name">
 <div class="ev-field">
 <label for="bodaCName">Pareja</label>
 <input class="ev-input" id="bodaCName" type="text" maxlength="40" placeholder="Ej: Marta y Juan" value="Pareja Uno">
 </div>
-<label class="boda-switch-row" for="bodaCFuture">
-<span>Pareja futura</span>
-<input type="checkbox" role="switch" class="boda-switch" id="bodaCFuture">
+<label class="boda-future-toggle" for="bodaCFuture">
+<span>Futura</span>
+<input type="checkbox" role="switch" class="boda-switch" id="bodaCFuture" aria-label="Pareja futura">
 </label>
+</div>
 <div class="boda-cform-pair">
 <div class="ev-field">
-<label for="bodaCPack">Pack</label>
-<select class="ev-input" id="bodaCPack">
-<option value="pack-2">Esencia · 2 clases</option>
-<option value="pack-4" selected>Latido · 4 clases</option>
-<option value="pack-6">Eternidad · 6 clases</option>
-</select>
+<label for="bodaCPackBtn">Pack</label>
+<input type="hidden" id="bodaCPack" value="pack-4" data-kept="4" data-orig="pack-4">
+<button type="button" class="ev-input boda-pack-btn" id="bodaCPackBtn" aria-haspopup="dialog">Latido · 4 clases<span class="ev-tax-chevron" aria-hidden="true">
+</span>
+</button>
 </div>
 <div class="ev-field">
 <label for="bodaCWed">Día de la boda</label>

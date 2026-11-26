@@ -1,3 +1,25 @@
+function bodaPackLabel(p,n){return escHtml(p.name)+' · '+n+' clases'+(p.active===false?' (inactivo)':'');}
+/* Selector de pack con las mismas filas que los selectores de sala y pareja. */
+function openBodaPackPicker(){
+  var input=document.getElementById('bodaCPack'),btn=document.getElementById('bodaCPackBtn');if(!input||!btn)return;
+  var cur=input.value,orig=input.dataset.orig,kept=input.dataset.kept;
+  function close(){bodaCloseSheet('bodaPackPkWrap','bodaPackPkOv');}
+  var h='<div class="ev-detail-overlay" id="bodaPackPkOv"><div class="ev-detail-sheet">';
+  h+='<div class="ev-detail-handle"></div><header class="bd-panel-header panel-header-centered boda-form-header"><button class="sy-back" id="bodaPackPkClose" aria-label="Volver">&#8592;</button><h2>Pack</h2></header>';
+  BODA_CONFIG.packs.filter(function(p){return p.active!==false||p.id===cur||p.id===orig;}).forEach(function(p){
+    var n=p.id===orig&&kept!==''?+kept:p.classes;
+    h+='<button type="button" class="boda-cpk-row'+(cur===p.id?' sel':'')+'" data-pack="'+p.id+'" data-n="'+n+'"><span class="boda-cpk-name">'+escHtml(p.name)+(p.active===false?' (inactivo)':'')+'</span><span class="boda-cpk-desc">'+n+' clases</span></button>';
+  });
+  h+='</div></div>';
+  bodaOpenSheet('bodaPackPkWrap','bodaPackPkOv',h,close);
+  document.getElementById('bodaPackPkClose').addEventListener('click',close);
+  document.querySelectorAll('#bodaPackPkOv [data-pack]').forEach(function(b){
+    b.addEventListener('click',function(){
+      var p=BODA_CONFIG.packs.find(function(x){return x.id===b.dataset.pack;});if(!p)return;
+      input.value=p.id;btn.innerHTML=bodaPackLabel(p,+b.dataset.n)+'<span class="ev-tax-chevron" aria-hidden="true"></span>';close();
+    });
+  });
+}
 function renderBodaCoupleForm(c){
   var isEdit=!!c;
   var col=isEdit?c.color:bodaNextColor();
@@ -9,14 +31,16 @@ function renderBodaCoupleForm(c){
   if(isEdit)h+='<button class="ev-btn danger" id="bodaCDel" style="flex:none;padding:6px 12px;font-size:.75rem">Eliminar</button>';
   else h+='<div style="width:36px"></div>';
   h+='</header><div class="bd-panel-body ev-fixed-form-body">';
-  h+='<div class="ev-field"><label for="bodaCName">Pareja</label><input class="ev-input" id="bodaCName" type="text" maxlength="40" placeholder="Ej: Marta y Juan" value="'+(isEdit?escHtml(c.name):'')+'"></div>';
-  h+='<label class="boda-switch-row" for="bodaCFuture"><span>Pareja futura</span><input type="checkbox" role="switch" class="boda-switch" id="bodaCFuture"'+(c&&c.future?' checked':'')+'></label>';
+  /* «Pareja futura» va a la derecha del nombre, en la misma fila. */
+  h+='<div class="boda-cform-name"><div class="ev-field"><label for="bodaCName">Pareja</label><input class="ev-input" id="bodaCName" type="text" maxlength="40" placeholder="Ej: Marta y Juan" value="'+(isEdit?escHtml(c.name):'')+'"></div>';
+  h+='<label class="boda-future-toggle" for="bodaCFuture"><span>Futura</span><input type="checkbox" role="switch" class="boda-switch" id="bodaCFuture" aria-label="Pareja futura"'+(c&&c.future?' checked':'')+'></label></div>';
   var selected=isEdit?bodaPackOf(c):(BODA_CONFIG.packs.find(function(p){return p.active!==false&&p.classes===4;})||BODA_CONFIG.packs.find(function(p){return p.active!==false;}));
   /* La pareja conserva sus clases contratadas mientras mantenga el mismo pack. */
   var kept=isEdit?(c.packClasses==null?c.contracted:c.packClasses):null;
-  h+='<div class="boda-cform-pair"><div class="ev-field"><label for="bodaCPack">Pack</label><select class="ev-input" id="bodaCPack">';
-  BODA_CONFIG.packs.filter(function(p){return p.active!==false||(selected&&p.id===selected.id);}).forEach(function(p){var mine=selected&&selected.id===p.id,n=mine&&kept!=null?kept:p.classes;h+='<option value="'+p.id+'"'+(mine?' selected':'')+'>'+escHtml(p.name)+' · '+n+' clases'+(p.active===false?' (inactivo)':'')+'</option>';});
-  h+='</select></div>';
+  /* Pack: botón que abre el selector de la app (no el desplegable de Android). */
+  var packKept=selected?(kept!=null?kept:selected.classes):0;
+  h+='<div class="boda-cform-pair"><div class="ev-field"><label for="bodaCPackBtn">Pack</label><input type="hidden" id="bodaCPack" value="'+(selected?selected.id:'')+'" data-kept="'+(kept!=null?kept:'')+'" data-orig="'+(selected?selected.id:'')+'">';
+  h+='<button type="button" class="ev-input boda-pack-btn" id="bodaCPackBtn" aria-haspopup="dialog">'+(selected?bodaPackLabel(selected,packKept):'Elegir pack')+'<span class="ev-tax-chevron" aria-hidden="true"></span></button></div>';
   h+='<div class="ev-field"><label for="bodaCWed">Día de la boda</label><input class="ev-input" id="bodaCWed" type="date" value="'+(isEdit&&c.weddingDate?c.weddingDate:'')+'"></div></div>';
   h+='<div class="ev-field"><label for="bodaCNote">Notas <span id="bodaCCnt" class="boda-cform-count">'+((isEdit&&c.note?c.note.length:0))+'/200</span></label>';
   h+='<textarea class="ev-textarea" id="bodaCNote" maxlength="200" placeholder="Notas de la pareja">'+(isEdit&&c.note?escHtml(c.note):'')+'</textarea></div>';
@@ -34,6 +58,7 @@ function openBodaCoupleForm(c){
   var noteEl=document.getElementById('bodaCNote'),cnt=document.getElementById('bodaCCnt');
   noteEl.addEventListener('input',function(){cnt.textContent=noteEl.value.length+'/200';});
   document.getElementById('bodaCClose').addEventListener('click',closeBodaCoupleForm);
+  document.getElementById('bodaCPackBtn').addEventListener('click',openBodaPackPicker);
   document.getElementById('bodaCCancel').addEventListener('click',closeBodaCoupleForm);
   var del=document.getElementById('bodaCDel');
   if(del)del.addEventListener('click',function(){
@@ -49,7 +74,7 @@ function openBodaCoupleForm(c){
     var name=document.getElementById('bodaCName').value.trim();
     if(!name){showToast('El nombre de la pareja es obligatorio','error');return;}
     var pack=BODA_CONFIG.packs.find(function(p){return p.id===document.getElementById('bodaCPack').value;});
-    if(!pack){showToast('Activa o crea un pack en Configuracion de Bodas','error');return;}
+    if(!pack){showToast(BODA_CONFIG.packs.some(function(p){return p.active!==false;})?'Elige un pack':'Activa o crea un pack en Configuracion de Bodas','error');return;}
     var previous=c&&bodaPackOf(c),num=previous&&previous.id===pack.id?(c.packClasses==null?c.contracted:c.packClasses):pack.classes;
     var data={name:name,contracted:num,packId:pack.id,packClasses:num,
       weddingDate:document.getElementById('bodaCWed').value||null,future:document.getElementById('bodaCFuture').checked,
@@ -100,14 +125,65 @@ function bodaRefreshRow(ev){
 }
 
 /* ── Binds de la pestaña ── */
+/* Calendario de Wedding Moves: cambiar de mes, elegir día o pareja repinta
+   solo .boda-sec (repintar toda la ventana parpadeaba). La pareja elegida se
+   mantiene al cambiar de mes aunque ese mes no tenga clases suyas. */
+function bodaCalRefresh(){
+  var sec=document.querySelector('#eventsOverlay .boda-sec');
+  if(!sec||BODA_SUBTAB!=='calendario'){refreshEvents();return;}
+  sec.innerHTML=_renderBodaCalendario();
+  bindBodaCalendar(sec);
+}
+function bodaCalMove(d){
+  BODA_CAL_DAY=null;
+  BODA_CAL_MONTH+=d;
+  if(BODA_CAL_MONTH<0){BODA_CAL_MONTH=11;BODA_CAL_YEAR--;}
+  if(BODA_CAL_MONTH>11){BODA_CAL_MONTH=0;BODA_CAL_YEAR++;}
+  bodaCalRefresh();
+}
+function bindBodaCalendar(root){
+  var cp=root.querySelector('#bodaCalPrev');
+  if(cp)cp.addEventListener('click',function(){bodaCalMove(-1);});
+  var cn=root.querySelector('#bodaCalNext');
+  if(cn)cn.addEventListener('click',function(){bodaCalMove(1);});
+  /* Deslizar sobre la rejilla para cambiar de mes */
+  var cg=root.querySelector('#bodaCalGrid');
+  if(cg&&typeof addSwipe==='function')addSwipe(cg,function(){bodaCalMove(1);},function(){bodaCalMove(-1);});
+  if(cg)cg.querySelectorAll('.boda-cal-day[data-ds]').forEach(function(day){
+    function selectDay(){BODA_CAL_HL=null;BODA_CAL_DAY=BODA_CAL_DAY===day.dataset.ds?null:day.dataset.ds;bodaCalRefresh();}
+    day.addEventListener('click',selectDay);
+    day.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();selectDay();}});
+  });
+  /* Chips de pareja, filas de clase y de boda del día: resaltan todo lo de esa pareja */
+  function toggleCouple(id){if(!id)return;BODA_CAL_HL=BODA_CAL_HL===id?null:id;bodaCalRefresh();}
+  root.querySelectorAll('.boda-cal-lg[data-hl]').forEach(function(b){
+    b.addEventListener('click',function(){BODA_CAL_DAY=null;toggleCouple(b.dataset.hl);});
+  });
+  root.querySelectorAll('.boda-cal-daylist [data-hl]').forEach(function(row){
+    row.addEventListener('click',function(e){if(e.target.closest('.boda-cl-edit'))return;toggleCouple(row.dataset.hl);});
+  });
+  root.querySelectorAll('.boda-cal-daylist .boda-cl-edit[data-id]').forEach(function(b){
+    b.addEventListener('click',function(e){e.stopPropagation();var ev=bodaClaseById(b.dataset.id);if(ev)openBodaClaseForm(ev);});
+  });
+}
 function bindBodasEvents(){
   document.querySelectorAll('[data-stats-couples]').forEach(function(btn){btn.onclick=function(){BODA_SUBTAB='parejas';BODA_PAREJAS_FILTER=btn.dataset.statsCouples;BODA_PAREJAS_CLASSES='';BODA_PAREJAS_SEARCH='';BODA_PAREJAS_SORT='boda';BODA_CARD_OPEN=null;refreshEvents(false);};});
   var exp=document.getElementById('evCalendarExport');if(exp)exp.onclick=openEvCalendarExport;
   bindBodaConfig();
   if(typeof bindBodaHistoryCharts==='function')bindBodaHistoryCharts();
-  document.querySelectorAll('.boda-chip[data-bstats-year]').forEach(function(b){
-    b.addEventListener('click',function(){BODA_STATS_YEAR=b.dataset.bstatsYear?+b.dataset.bstatsYear:null;refreshEvents();});
-  });
+  var yearBtn=document.getElementById('bodaYearBtn'),yearList=document.getElementById('bodaYearList');
+  if(yearBtn&&yearList){
+    yearBtn.addEventListener('click',function(){
+      var open=yearList.hidden;yearList.hidden=!open;yearBtn.setAttribute('aria-expanded',String(open));
+      if(!open)return;
+      /* Abre centrado en el año elegido o, con «Todos», en el año actual. */
+      var target=yearList.querySelector('.boda-year-opt.on:not([data-bstats-year=""])')||yearList.querySelector('[data-bstats-year="'+new Date().getFullYear()+'"]')||yearList.querySelector('.boda-year-opt.on');
+      if(target)yearList.scrollTop=target.offsetTop-(yearList.clientHeight-target.offsetHeight)/2;
+    });
+    yearList.querySelectorAll('[data-bstats-year]').forEach(function(b){
+      b.addEventListener('click',function(){BODA_STATS_YEAR=b.dataset.bstatsYear?+b.dataset.bstatsYear:null;refreshEvents();});
+    });
+  }
   /* Al salir de la lista se guarda lo pendiente para no perderlo sin avisar */
   function _guardaPendientes(){
     if(bodaPendingCount())showToast(bodaPendingApply(true)+' cambios guardados','success');
@@ -120,33 +196,7 @@ function bindBodasEvents(){
       refreshEvents(false);
     });
   });
-  function _bodaCalMove(d){
-    BODA_CAL_DAY=null;
-    BODA_CAL_MONTH+=d;
-    if(BODA_CAL_MONTH<0){BODA_CAL_MONTH=11;BODA_CAL_YEAR--;}
-    if(BODA_CAL_MONTH>11){BODA_CAL_MONTH=0;BODA_CAL_YEAR++;}
-    refreshEvents();
-  }
-  var cp=document.getElementById('bodaCalPrev');
-  if(cp)cp.addEventListener('click',function(){_bodaCalMove(-1);});
-  var cn=document.getElementById('bodaCalNext');
-  if(cn)cn.addEventListener('click',function(){_bodaCalMove(1);});
-  /* Deslizar sobre la rejilla para cambiar de mes */
-  var cg=document.getElementById('bodaCalGrid');
-  if(cg&&typeof addSwipe==='function')addSwipe(cg,function(){_bodaCalMove(1);},function(){_bodaCalMove(-1);});
-  if(cg)cg.querySelectorAll('.boda-cal-day[data-ds]').forEach(function(day){
-    function selectDay(){BODA_CAL_HL=null;BODA_CAL_DAY=BODA_CAL_DAY===day.dataset.ds?null:day.dataset.ds;refreshEvents();}
-    day.addEventListener('click',selectDay);
-    day.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();selectDay();}});
-  });
-  /* Leyenda: resaltar los dias de una pareja (se mantiene al cambiar de mes) */
-  document.querySelectorAll('.boda-cal-lg[data-hl]').forEach(function(b){
-    b.addEventListener('click',function(){
-      BODA_CAL_DAY=null;
-      BODA_CAL_HL=(BODA_CAL_HL===b.dataset.hl)?null:b.dataset.hl;
-      refreshEvents();
-    });
-  });
+  bindBodaCalendar(document);
   document.querySelectorAll('.boda-mode-btn[data-bmode]').forEach(function(b){
     b.addEventListener('click',function(){_guardaPendientes();BODA_CLASS_MODE=b.dataset.bmode;refreshEvents();});
   });
@@ -232,6 +282,7 @@ function bindBodasEvents(){
   });
   /* Editar una clase suelta desde Consulta */
   document.querySelectorAll('.boda-cl-edit[data-id]').forEach(function(b){
+    if(b.closest('.boda-cal-daylist'))return;   /* los engancha bindBodaCalendar */
     b.addEventListener('click',function(e){
       e.stopPropagation();
       var ev=findClass(b.dataset.id);

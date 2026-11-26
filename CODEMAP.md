@@ -37,15 +37,15 @@
 
 **Funciones:** _showBdayInlineCtrl:20 · tc:88 · bdName:89 · getBdayColor:91 · getBdaysOn:100 · bdayItemsInRange:104 · bdayRelativeLabel:114 · daysUntil:123 · bdayCanSetAlarm:131 · hasUpcomingBday:137 · updateBdayBtn:143 · getBdayAlarmKey:153 · isBdayAlarmSet:154 · setBdayAlarmState:158 · syncVipBdaysToEvents:165
 
-### js/bodas-assign.js  _(485 líneas)_
-**Estado global:** DN2:185 · BODA_ASSIGN:223
+### js/bodas-assign.js  _(466 líneas)_
+**Estado global:** DN2:171 · BODA_ASSIGN:204
 
-**Funciones:** bodaOpenSheet:1 · bodaCloseSheet:4 · bodaCreatedAt:10 · bodaIssues:15 · _renderBodaIssueCards:31 · card:34 · openBodaIssue:55 (!81) · findEv:97 · closeBodaIssue:136 · _bodaWeekKey:139 · bodaStatsOverview:147 · renderBodaStatsOverview:156 · _renderBodaStats:164 · openBodaAssign:224 · closeBodaAssign:247 · renderBodaAssign:251 · renderBodaAssignHtml:255 (!88) · bindBodaAssign:343 · openBodaPlacePicker:415 · closeBodaPlacePicker:448 · bodaAplicarCampo:452 · bodaTrasElegir:462 · bodaEndAt:474
+**Funciones:** bodaOpenSheet:1 · bodaCloseSheet:4 · bodaCreatedAt:10 · bodaIssues:15 · _renderBodaIssueCards:31 · card:34 · openBodaIssue:55 (!82) · findEv:98 · closeBodaIssue:137 · _bodaWeekKey:140 · bodaStatsOverview:148 · _renderBodaStats:157 · openBodaAssign:205 · closeBodaAssign:228 · renderBodaAssign:232 · renderBodaAssignHtml:236 (!88) · bindBodaAssign:324 · openBodaPlacePicker:396 · closeBodaPlacePicker:429 · bodaAplicarCampo:433 · bodaTrasElegir:443 · bodaEndAt:455
 
-### js/bodas-bind.js  _(301 líneas)_
-**Estado global:** BODA_RENDER_CLASSES:296
+### js/bodas-bind.js  _(352 líneas)_
+**Estado global:** BODA_RENDER_CLASSES:347
 
-**Funciones:** renderBodaCoupleForm:1 · openBodaCoupleForm:30 · closeBodaCoupleForm:70 · bodaRefreshRow:74 · bindBodasEvents:103 (!182) · _guardaPendientes:112 · _bodaCalMove:123 · selectDay:138 · findClass:220 · bodaMatchesDate:285 · bodaMatchesClasses:291 · renderBodasBody:297
+**Funciones:** bodaPackLabel:1 · openBodaPackPicker:3 · close:6 · renderBodaCoupleForm:23 · openBodaCoupleForm:54 · closeBodaCoupleForm:95 · bodaRefreshRow:99 · bodaCalRefresh:131 · bodaCalMove:137 · bindBodaCalendar:144 · selectDay:153 · toggleCouple:158 · bindBodasEvents:169 (!167) · _guardaPendientes:188 · findClass:270 · bodaMatchesDate:336 · bodaMatchesClasses:342 · renderBodasBody:348
 
 ### js/bodas-class-form.js  _(348 líneas)_
 **Estado global:** BODA_FORM:1 · BODA_TIME_H:225
@@ -57,23 +57,23 @@
 
 **Funciones:** bodaLoadConfig:4 · bodaApplyConfig:15 · saveBodaConfig:24 · validateBodaConfig:25 · importBodaConfig:42 · bodaPackOf:58 · bodaDuration:59 · bodaDefaultDuration:60 · bodaDurationOf:61 · bodaConfigUsed:62 · bodaSetCatalogItem:66 · bodaDeleteCatalogItem:75 · bodaTaken:80 · bodaPackStats:85 · bodaTeacherName:97 · bodaTeacherCount:98 · bodaTeacherStats:99 · renderBodaPackStats:105 · renderBodaConfig:123 · openBodaConfig:142 · bindBodaConfig:143 · openBodaCatalogForm:152
 
-### js/bodas-stats-history.js  _(104 líneas)_
-**Funciones:** bodaMonthSeries:8 · bodaWeekSeries:24 · bodaStatsRecords:40 · best:44 · bodaFmtRate:61 · renderBodaRecords:62 · bodaScrollBarChart:75 · renderBodaHistoryCharts:91 · bindBodaHistoryCharts:98
+### js/bodas-stats-history.js  _(108 líneas)_
+**Funciones:** bodaMonthSeries:8 · bodaWeekSeries:24 · bodaStatsRecords:40 · best:44 · bodaFmtRate:61 · renderBodaRecords:62 · bodaScrollBarChart:75 · renderBodaHistoryCharts:95 · bindBodaHistoryCharts:102
 
-### js/bodas-stats-insights.js  _(97 líneas)_
-**Estado global:** BODA_STATS_YEAR:4 · DAYS:81
+### js/bodas-stats-insights.js  _(118 líneas)_
+**Estado global:** BODA_STATS_YEAR:4 · DAYS:102
 
-**Funciones:** bodaStatsYears:6 · bodaStatsInYear:12 · bodaStatsCouples:13 · renderBodaYearChips:16 · bodaComplianceStats:27 · bodaLeadStats:37 · renderBodaCompliance:48 · renderBodaLead:55 · renderBodaSeason:61 · bodaHeatData:68 · renderBodaHeatmap:78
+**Funciones:** bodaStatsYears:6 · bodaStatsInYear:12 · bodaStatsCouples:13 · renderBodaYearPicker:18 · bodaComplianceStats:32 · bodaLeadStats:42 · bodaSumRow:55 · bodaSumPart:59 · renderBodaSummary:62 · n:65 · renderBodaSeason:82 · bodaHeatData:89 · renderBodaHeatmap:99
 
-### js/bodas.js  _(681 líneas)_
-**Estado global:** BODAS_SK:13 · BODA_COUPLES:14 · BODA_PLACE_LIST:25 · BODA_PLACE_DEFAULT:31 · BODA_PLACE_NONE:34 · BODA_PLACE_SHORT:35 · BODA_PLACE_DESC:36 · BODA_PLACE_EMOJI:38 · BODA_WHITE:55 · BODA_SLOTS:56 · BODA_NO_TIME_COLOR:62 · BODA_NO_COUPLE_COLOR:63 · BODA_DEFAULT_TIME:64 · BODA_PALETTE:67 · BODA_CLOSED_SK:235 · BODA_CLOSED:236 · BODA_PENDING:255 · BODA_SUBTAB:297 · BODA_CLASS_MODE:298 · BODA_CLASES_SEARCH:299 · BODA_HIDE_PAST:300 · BODA_HIDE_CLOSED:301 · BODA_CARD_OPEN:302 · BODA_PAREJAS_SEARCH:303 · BODA_PAREJAS_SORT:305 · BODA_PAREJAS_CLASSES:306 · BODA_PAREJAS_FILTER:307 · BODA_CAL_DAY:308 · BODA_CAL_HL:309 · BODA_CAL_YEAR:310 · BODA_CAL_MONTH:311 · BODA_PAREJAS_SORTS:460
+### js/bodas.js  _(687 líneas)_
+**Estado global:** BODAS_SK:13 · BODA_COUPLES:14 · BODA_PLACE_LIST:25 · BODA_PLACE_DEFAULT:31 · BODA_PLACE_NONE:34 · BODA_PLACE_SHORT:35 · BODA_PLACE_DESC:36 · BODA_PLACE_EMOJI:38 · BODA_WHITE:55 · BODA_SLOTS:56 · BODA_NO_TIME_COLOR:62 · BODA_NO_COUPLE_COLOR:63 · BODA_DEFAULT_TIME:64 · BODA_PALETTE:67 · BODA_CLOSED_SK:235 · BODA_CLOSED:236 · BODA_PENDING:255 · BODA_SUBTAB:297 · BODA_CLASS_MODE:298 · BODA_CLASES_SEARCH:299 · BODA_HIDE_PAST:300 · BODA_HIDE_CLOSED:301 · BODA_CARD_OPEN:302 · BODA_PAREJAS_SEARCH:303 · BODA_PAREJAS_SORT:305 · BODA_PAREJAS_CLASSES:306 · BODA_PAREJAS_FILTER:307 · BODA_CAL_DAY:308 · BODA_CAL_HL:309 · BODA_CAL_YEAR:310 · BODA_CAL_MONTH:311 · BODA_PAREJAS_SORTS:462 · BODA_ICON_CLASS:565 · BODA_ICON_COUPLE:566
 
-**Funciones:** saveBodas:18 · bodaPlaceEmoji:39 · bodaPlaceOf:43 · bodaPlaceLabel:48 · bodaNextColor:69 · bodaCouple:77 · bodaSlot:81 · bodaSlotColors:91 · bodaMarkFor:96 · evBodaSvg:102 · bodaClasses:119 · bodaPrimeraClase:123 · bodaClassesOfCouple:127 · bodaEsUltimoEnsayo:131 · bodaUltimoEnsayoHtml:137 · bodaFreeClasses:140 · bodaClaseById:143 · bodaSortClasses:147 · bodaClassesOnDay:154 · bodaNewClass:157 · bodaNormalizeClasses:172 · bodaPlaceForNewOn:209 · bodaDayFull:214 · bodaBulkCreate:218 · bodaProgress:229 · saveBodaClosed:240 · bodaIsClosed:241 · bodaReopenDay:242 · bodaToggleClosed:246 · bodaPendingCount:256 · bodaEff:258 · bodaSetPending:267 · bodaPendingApply:271 · bodaPendingDiscard:294 · _bodaLegendHtml:314 · _renderBodaCalendario:325 (!98) · _renderBodasBody:423 · _bodaCmpFecha:453 · bodaFaltaUrgente:463 · bodaFaltaHtml:468 · bodaUrgentCouples:472 · _renderBodaParejas:476 (!84) · _bodaFmt:560 · bodaClassRoHtml:562 · _bodaFmtCorto:575 · _renderBodaClases:582 (!99)
+**Funciones:** saveBodas:18 · bodaPlaceEmoji:39 · bodaPlaceOf:43 · bodaPlaceLabel:48 · bodaNextColor:69 · bodaCouple:77 · bodaSlot:81 · bodaSlotColors:91 · bodaMarkFor:96 · evBodaSvg:102 · bodaClasses:119 · bodaPrimeraClase:123 · bodaClassesOfCouple:127 · bodaEsUltimoEnsayo:131 · bodaUltimoEnsayoHtml:137 · bodaFreeClasses:140 · bodaClaseById:143 · bodaSortClasses:147 · bodaClassesOnDay:154 · bodaNewClass:157 · bodaNormalizeClasses:172 · bodaPlaceForNewOn:209 · bodaDayFull:214 · bodaBulkCreate:218 · bodaProgress:229 · saveBodaClosed:240 · bodaIsClosed:241 · bodaReopenDay:242 · bodaToggleClosed:246 · bodaPendingCount:256 · bodaEff:258 · bodaSetPending:267 · bodaPendingApply:271 · bodaPendingDiscard:294 · _bodaLegendHtml:314 · _renderBodaCalendario:325 (!100) · _renderBodasBody:425 · _bodaCmpFecha:455 · bodaFaltaUrgente:465 · bodaFaltaHtml:470 · bodaUrgentCouples:474 · _renderBodaParejas:478 (!84) · _bodaFmt:562 · bodaClassRoHtml:567 · _bodaFmtCorto:581 · _renderBodaClases:588 (!99)
 
-### js/core.js  _(822 líneas)_
-**Estado global:** APP_VERSION:6 · NAV_BACK:115 · THEME_STORAGE_KEY:118 · THEME:119 · THEME_LABELS:125 · THEME_META:126 · THEME_SEQUENCE:127 · ECON_YEAR_CONFIG:151 · MN_SHORT:153 · DN5:497 · FESTIVOS_ANIO:686 · HOURS_WEEK_UNLOCKED:696 · NAV_SWITCH_TIMER:803
+### js/core.js  _(833 líneas)_
+**Estado global:** APP_VERSION:6 · NAV_BACK:115 · THEME_STORAGE_KEY:118 · THEME:119 · THEME_LABELS:125 · THEME_META:126 · THEME_SEQUENCE:127 · ECON_YEAR_CONFIG:151 · MN_SHORT:153 · DN5:499 · FESTIVOS_ANIO:697 · HOURS_WEEK_UNLOCKED:707 · NAV_SWITCH_TIMER:814
 
-**Funciones:** normalizeMacroBase:9 · addSwipe:18 · startedInScrollX:25 · startedInPanel:38 · addLongPress:80 · start:84 · move:98 · end:101 · applyTheme:128 · cycleTheme:135 · updateThemeBtn:140 · load:158 · save:170 · loadEconYear:175 · saveEconYear:194 · fakeTrans:204 · simpleBarChart:221 · hBarRows:245 · shareOrDownload:262 · fallback:269 · download:270 · dispatchIcon:300 · homeScheduleLabel:301 · renderDocumentIcon:302 · menuTitle:304 · escHtml:310 · mkey:315 · getMonthH:316 · defH:322 · dayH:323 · dayT:324 · dk:325 · fd:326 · ad:327 · fh:328 · fhP:329 · isToday:330 · isPast:331 · wn:332 · weeks:335 · homeSubmissionStatus:349 · renderHomeSubmissionStatus:363 · getWD:383 · _toastReset:399 · _toastBindSwipe:409 · end:434 · showToast:452 · sendEmail:479 · editPencilHtml:482 · prohibitionIconHtml:483 · sendManualEmail:484 · buildMailtoBody:496 · render:518 · buildHomeCalendar:538 · openSheet:585 · closeSheet:604 · selectType:610 · contarVacaciones:645 · confirmarCupoVacaciones:658 · contarFestivos:674 · confirmarCupoFestivos:687 · _panelBorrarLuego:717 · _panelCancelarBorrado:728 · abrirPanel:730 · engancharFondo:751 · abrirUnaVez:769 · cerrarPanel:775 · renderNavBar:786 · bindNavBar:793 · navigateMain:805 · open:816
+**Funciones:** normalizeMacroBase:9 · addSwipe:18 · startedInScrollX:25 · startedInPanel:38 · addLongPress:80 · start:84 · move:98 · end:101 · applyTheme:128 · cycleTheme:135 · updateThemeBtn:140 · load:158 · save:170 · loadEconYear:175 · saveEconYear:194 · fakeTrans:204 · simpleBarChart:221 · hBarRows:245 · shareOrDownload:262 · fallback:269 · download:270 · dispatchIcon:300 · homeScheduleLabel:301 · renderDocumentIcon:302 · menuTitle:304 · escHtml:310 · mkey:315 · getMonthH:316 · defH:322 · dayH:323 · dayT:324 · dk:325 · fd:326 · ad:327 · fh:328 · fhP:329 · isToday:330 · isPast:331 · wn:332 · weeks:335 · homeSubmissionStatus:349 · renderHomeSubmissionStatus:363 · getWD:383 · _toastReset:399 · _toastBindSwipe:409 · end:434 · showToast:452 · sendEmail:479 · editPencilHtml:482 · eyeIconHtml:484 · prohibitionIconHtml:485 · sendManualEmail:486 · buildMailtoBody:498 · render:520 · replaceIfChanged:541 · buildHomeCalendar:549 · openSheet:596 · closeSheet:615 · selectType:621 · contarVacaciones:656 · confirmarCupoVacaciones:669 · contarFestivos:685 · confirmarCupoFestivos:698 · _panelBorrarLuego:728 · _panelCancelarBorrado:739 · abrirPanel:741 · engancharFondo:762 · abrirUnaVez:780 · cerrarPanel:786 · renderNavBar:797 · bindNavBar:804 · navigateMain:816 · open:827
 
 ### js/csv-sync.js  _(40 líneas)_
 **Estado global:** CSV_EXPORT_KEY:2 · CSV_WARNED:3
@@ -312,10 +312,10 @@
 ### js/home-status.js  _(17 líneas)_
 **Funciones:** homeStatusIcon:2 · homeActionLabel:15 · homePanelAction:16
 
-### js/home-week-actions.js  _(66 líneas)_
+### js/home-week-actions.js  _(69 líneas)_
 **Estado global:** HOME_WEEK_ACTIONS:2 · HOME_EDIT_CONFIRM_KEY:3
 
-**Funciones:** homeWeekEditState:4 · homeConfirmWeekEdit:9 · homeWeekActionsButton:19 · renderHomeWeekActions:25 · homeDayChangeLabel:48 · homeConfirmDayChange:49 · setHomeDayHours:61
+**Funciones:** homeWeekEditState:4 · homeConfirmWeekEdit:9 · homeWeekActionsButton:19 · renderHomeWeekActions:25 · homeDayChangeLabel:51 · homeConfirmDayChange:52 · setHomeDayHours:64
 
 ### js/home-weeks.js  _(58 líneas)_
 **Funciones:** homePeriodMode:2 · homeDueSoon:6 · homeMailState:11 · homeWeekCovered:15 · homeStatusWeeks:16 · homeWeekUnlocked:17 · homeSubmissionWeeks:18 · homePreviousMailMonth:24 · homeSubmissionWarnings:34 · homeWeekSchedule:42
@@ -777,49 +777,51 @@
 **Rangos por prefijo de clase:**
 .stats-empty:23-23 · .stats-head:7-8 · .stats-list:24-25 · .stats-metric:11-14 · .stats-metrics:9-10 · .stats-note:15-15 · .stats-section:6-26 · .stats-stack:2-5 · .stats-table:18-22
 
-### css/source/wedding-moves.css  _(383 líneas)_
+### css/source/wedding-moves.css  _(412 líneas)_
 
 **Secciones:**
 
 - Pestana Bodas y pestana partida Vacaciones/Festivos:1
 - Mitad marron (vacaciones/festivos) + mitad rosa (puentes), sin linea visible:2
 - Acento de acciones propio; los botones compartidos conservan su color por defecto fuera de Bodas.:13
-- Tarjetas de avisos (huecos / parejas pendientes / info incompleta):26
-- Filas del panel de un aviso:40
-- Estadisticas:44
-- Barras horizontales de reparto (componente generico: hBarRows):48
-- Dia cerrado: no admite mas clases:73
-- Una clase a la que le falta la hora o la sala se marca ella sola.:84
-- Fila con cambios sin guardar:89
-- Filtros de Parejas como chips pulsables:101
-- Ficha de una clase: cabecera centrada con Eliminar a la derecha, como Editar pareja.:119
-- El color de la pareja va en un punto delante; el nombre, en color normal:169
-- Sala sin asignar: se marca en naranja para que cante en la lista:174
-- Nota propia del dia en la lista de Proximos:177
-- Hora y sala de un ensayo, al pie de la tarjeta de Proximos:179
-- Atajos de alarma para un ensayo: 1 h / 30 min antes (se pueden marcar los dos):181
-- Agenda semanal: hora y sala de los ensayos + continuacion de un mes anterior:189
-- Editar siempre en naranja, como en el resto de la app:195
-- Los tres botones del detalle de pareja comparten aspecto:213
-- Subpestana Calendario de bodas:253
-- Leyenda: una pareja por linea y pulsable para resaltar sus dias:269
-- Dia resaltado al pulsar una pareja en la leyenda:278
-- Medible antes de abrir: colocar las ruedas sin mostrar su posición inicial.:284
-- Ficha del dia: alto fijo para que no baile al pasar de un evento a otro:306
-- Sin esto los hijos se encogen y el texto se derrama sobre los botones:308
-- etiqueta al minimo: el nombre de la pareja necesita el resto:317
-- el color de la pareja va en un punto, no tinendo el nombre:320
-- Los tres botones de la pareja, en una sola linea:327
-- Buscador y boton de anadir en la misma fila:330
-- Tarjeta de pareja desplegada en su sitio (antes era un modal):338
-- Editar pareja: interruptor de «Pareja futura» y pack/boda en la misma fila.:342
-- El interruptor hereda el color de la fila (Eventos fuerza color:inherit en las casillas).:344
-- Asignar clases: accesos a las próximas clases libres en una fila deslizable.:357
-- Estadísticas: histórico deslizable y récords.:363
-- Estadísticas (v565): filtro por año y mapa de día × franja.:375
+- Pareja en marrón, para distinguirla de Clase (granate).:21
+- Tarjetas de avisos (huecos / parejas pendientes / info incompleta):28
+- Filas del panel de un aviso:42
+- Estadisticas:46
+- Barras horizontales de reparto (componente generico: hBarRows):50
+- Dia cerrado: no admite mas clases:75
+- Una clase a la que le falta la hora o la sala se marca ella sola.:86
+- Fila con cambios sin guardar:91
+- Filtros de Parejas como chips pulsables:103
+- Ficha de una clase: cabecera centrada con Eliminar a la derecha, como Editar pareja.:121
+- El color de la pareja va en un punto delante; el nombre, en color normal:171
+- Sala sin asignar: se marca en naranja para que cante en la lista:176
+- Nota propia del dia en la lista de Proximos:179
+- Hora y sala de un ensayo, al pie de la tarjeta de Proximos:181
+- Atajos de alarma para un ensayo: 1 h / 30 min antes (se pueden marcar los dos):183
+- Agenda semanal: hora y sala de los ensayos + continuacion de un mes anterior:191
+- Editar siempre en naranja, como en el resto de la app:197
+- Los tres botones del detalle de pareja comparten aspecto:215
+- Subpestana Calendario de bodas:255
+- Leyenda: una pareja por linea y pulsable para resaltar sus dias:271
+- Dia resaltado al pulsar una pareja en la leyenda:282
+- Medible antes de abrir: colocar las ruedas sin mostrar su posición inicial.:288
+- Ficha del dia: alto fijo para que no baile al pasar de un evento a otro:310
+- Sin esto los hijos se encogen y el texto se derrama sobre los botones:312
+- etiqueta al minimo: el nombre de la pareja necesita el resto:321
+- el color de la pareja va en un punto, no tinendo el nombre:324
+- Los tres botones de la pareja, en una sola linea:331
+- Buscador y boton de anadir en la misma fila:334
+- Tarjeta de pareja desplegada en su sitio (antes era un modal):342
+- Editar pareja: «Futura» a la derecha del nombre; el color del interruptor llega por currentColor.:346
+- Asignar clases: accesos a las próximas clases libres en una fila deslizable.:363
+- Estadísticas: histórico deslizable y récords.:369
+- Gráficos de Estadísticas: el gesto horizontal nunca cambia de subpestaña (data-swipe-lock).:370
+- Estadísticas (v565): filtro por año y mapa de día × franja.:385
+- Resumen compacto (v566): una fila por tema y el año en un desplegable.:386
 
 **Rangos por prefijo de clase:**
-.boda-actions:204-204 · .boda-add:206-206 · .boda-asg:230-362 · .boda-buscar:331-333 · .boda-cal:254-283 · .boda-card:106-341 · .boda-cform:352-355 · .boda-chip:103-105 · .boda-chips:102-102 · .boda-cl:166-203 · .boda-class:85-165 · .boda-controls:63-63 · .boda-couple:147-149 · .boda-cpk:221-229 · .boda-create:17-19 · .boda-date:205-205 · .boda-day:79-127 · .boda-det:212-329 · .boda-dia:154-156 · .boda-distribution:23-25 · .boda-dot:110-110 · .boda-falta:117-118 · .boda-filters:66-66 · .boda-fsel:67-70 · .boda-ftoggles:71-72 · .boda-hd:199-201 · .boda-heat:377-382 · .boda-inp:142-142 · .boda-iss:41-43 · .boda-issue:28-39 · .boda-issues:27-27 · .boda-legend:207-211 · .boda-mini:161-194 · .boda-mode:55-57 · .boda-multi:157-163 · .boda-name:111-111 · .boda-ok:123-123 · .boda-overview:21-21 · .boda-pfilters:335-336 · .boda-place:150-176 · .boda-prog:113-114 · .boda-record:368-373 · .boda-records:367-367 · .boda-ro:167-175 · .boda-save:99-100 · .boda-savebar:95-98 · .boda-scroll:364-366 · .boda-search:334-334 · .boda-sec:12-20 · .boda-sobra:124-124 · .boda-sort:337-337 · .boda-stat:45-47 · .boda-stats:376-376 · .boda-sticky:8-10 · .boda-sum:59-62 · .boda-summary:58-58 · .boda-swap:132-139 · .boda-switch:343-345 · .boda-time:143-143 · .boda-tp:287-290 · .boda-wed:112-112 · .ev-alarm:182-188 · .ev-bficha:313-313 · .ev-bfila:314-323 · .ev-bpunto:321-321 · .ev-bver:326-326 · .ev-car:309-310 · .ev-detail:307-307 · .ev-upcoming:178-180 · .ev-wk:190-192 · .hbar-lbl:51-51 · .hbar-row:50-50 · .hbar-rows:49-49 · .hbar-track:52-53 · .hbar-val:54-54 · .rut-wpick:300-305 · .sy-body:5-11
+.boda-actions:206-206 · .boda-add:20-208 · .boda-asg:232-368 · .boda-buscar:335-337 · .boda-cal:256-287 · .boda-card:108-345 · .boda-cform:347-361 · .boda-chip:105-107 · .boda-chips:104-104 · .boda-cl:168-205 · .boda-class:87-167 · .boda-controls:65-65 · .boda-couple:149-151 · .boda-cpk:223-231 · .boda-create:17-22 · .boda-date:207-207 · .boda-day:81-129 · .boda-det:214-333 · .boda-dia:156-158 · .boda-distribution:25-27 · .boda-dot:112-112 · .boda-falta:119-120 · .boda-filters:68-68 · .boda-fsel:69-72 · .boda-ftoggles:73-74 · .boda-future:349-350 · .boda-hd:201-203 · .boda-heat:406-411 · .boda-inp:144-144 · .boda-iss:43-45 · .boda-issue:30-41 · .boda-issues:29-29 · .boda-legend:209-213 · .boda-mini:163-196 · .boda-mode:57-59 · .boda-multi:159-165 · .boda-name:113-113 · .boda-ok:125-125 · .boda-pack:351-351 · .boda-pfilters:339-340 · .boda-place:152-178 · .boda-prog:115-116 · .boda-record:372-383 · .boda-records:377-377 · .boda-ro:169-177 · .boda-save:101-102 · .boda-savebar:97-100 · .boda-scroll:371-376 · .boda-search:338-338 · .boda-sec:12-24 · .boda-see:23-23 · .boda-sobra:126-126 · .boda-sort:341-341 · .boda-stat:47-49 · .boda-stats:387-387 · .boda-sticky:8-10 · .boda-sum:61-399 · .boda-summary:60-60 · .boda-swap:134-141 · .boda-time:145-145 · .boda-tp:291-294 · .boda-wed:114-114 · .boda-year:400-405 · .ev-alarm:184-190 · .ev-bficha:317-317 · .ev-bfila:318-327 · .ev-bpunto:325-325 · .ev-bver:330-330 · .ev-car:313-314 · .ev-detail:311-311 · .ev-upcoming:180-182 · .ev-wk:192-194 · .hbar-lbl:53-53 · .hbar-row:52-52 · .hbar-rows:51-51 · .hbar-track:54-55 · .hbar-val:56-56 · .rut-wpick:304-309 · .sy-body:5-11
 
 ### css/source/routines.css  _(132 líneas)_
 
@@ -967,14 +969,15 @@
 **Rangos por prefijo de clase:**
 .dispatch-icon:126-126 · .home-invoice:6-9 · .home-schedule:8-8 · .home-sync:11-23 · .hours-control:3-24 · .hours-export:68-79 · .invoice-action:93-93 · .invoice-actions:39-39 · .invoice-body:28-28 · .invoice-calculation:95-107 · .invoice-card:30-32 · .invoice-config:37-112 · .invoice-confirm:44-44 · .invoice-day:43-43 · .invoice-days:116-122 · .invoice-document:52-52 · .invoice-equals:102-102 · .invoice-error:45-45 · .invoice-eye:64-65 · .invoice-field:34-34 · .invoice-fields:33-55 · .invoice-filename:46-46 · .invoice-kairo:86-125 · .invoice-line:98-101 · .invoice-mail:108-108 · .invoice-money:103-103 · .invoice-month:29-113 · .invoice-note:35-35 · .invoice-send:83-85 · .invoice-sheet:26-92 · .invoice-status:36-36 · .invoice-summary:62-63 · .invoice-tool:109-111 · .invoice-totals:38-115
 
-### css/source/home-status.css  _(62 líneas)_
+### css/source/home-status.css  _(64 líneas)_
 
 **Secciones:**
 
 - R8: the two Home panels share spacing, status colors and action geometry.:1
+- v566: Acciones se integra con el verde de la semana enviada o programada.:51
 
 **Rangos por prefijo de clase:**
-.home-invoice:27-44 · .home-panel:2-41 · .home-pending:20-25 · .home-rule:30-31 · .home-status:16-16 · .home-submission:15-45 · .home-week:49-61 · .week-actions:48-56
+.home-invoice:27-44 · .home-panel:2-41 · .home-pending:20-25 · .home-rule:30-31 · .home-status:16-16 · .home-submission:15-45 · .home-week:49-63 · .week-actions:48-58
 
 ### css/source/invoices-calendar.css  _(27 líneas)_
 

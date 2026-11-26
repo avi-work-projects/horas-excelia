@@ -79,7 +79,7 @@ function renderHomeInvoiceStatus(year,month){
   return '<section class="home-invoice-status home-panel '+m.tone+(urgent?' urgent':'')+(m.unsent?' unsent':'')+'" id="homeInvoiceStatus" aria-label="Estado de factura" aria-live="polite"><div class="home-panel-row'+(action?'':' no-action')+'"><div class="home-panel-status"><span class="home-invoice-icon" aria-hidden="true">'+icon+'</span><div class="home-invoice-copy home-panel-copy"><strong>'+escHtml(m.title)+'</strong>'+detail+'</div></div>'+action+'</div></section>';
 }
 
-function paintHomeInvoiceStatus(){if(typeof paintInvoiceCalendar==='function')paintInvoiceCalendar();var current=document.getElementById('homeInvoiceStatus');if(current)current.outerHTML=renderHomeInvoiceStatus(CY,CM);}
+function paintHomeInvoiceStatus(){if(typeof paintInvoiceCalendar==='function')paintInvoiceCalendar();var current=document.getElementById('homeInvoiceStatus');if(current)replaceIfChanged(current,renderHomeInvoiceStatus(CY,CM));}
 async function fetchHomeInvoiceStatus(period,url,force){
   var pending=INVOICE_HOME_REQUESTS[period+'|'+url];if(pending)return pending;
   if(INVOICE_HOME_CACHE.url!==url)INVOICE_HOME_CACHE={schema:1,url:url,periods:{}};

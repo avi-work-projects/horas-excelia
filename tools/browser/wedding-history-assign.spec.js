@@ -101,14 +101,17 @@ test('Calendario: pulsar un día lista sus clases y Configuración usa interrupt
 
 test('Estadísticas por año, aviso de boda cercana en Recordatorios y Duplicar clase',async({page})=>{
   // Por año: 2025 deja solo las clases de la pareja antigua; Récords sigue contándolas todas.
-  await expect(page.locator('.boda-stats-years .boda-chip')).toHaveText(['Todos','2026','2025']);
+  await page.locator('#bodaYearBtn').click();
+  await expect(page.locator('#bodaYearList .boda-year-opt')).toHaveText(['Todos los años','2026','2025']);
   await page.locator('[data-bstats-year="2025"]').click();
-  await expect(page.locator('.boda-overview-total').nth(1)).toContainText('7');
-  await expect(page.locator('.boda-stats-compliance')).toContainText('7');
+  await expect(page.locator('#bodaYearBtn')).toContainText('2025');
+  const rows=page.locator('.boda-stats-summary .boda-sum-row');
+  await expect(rows.nth(1).locator('.boda-sum-main b')).toHaveText('7');
+  await expect(rows.filter({hasText:'Contratadas'}).locator('.boda-sum-main b')).toHaveText('7');
   await expect(page.locator('.boda-record').nth(2)).toContainText('7 clases');
   await expect(page.locator('.boda-stats-heat .boda-heat-c.strong')).toHaveCount(1);
-  await page.locator('[data-bstats-year=""]').click();
-  await expect(page.locator('.boda-overview-total').nth(1)).toContainText('12');
+  await page.locator('#bodaYearBtn').click();await page.locator('[data-bstats-year=""]').click();
+  await expect(rows.nth(1).locator('.boda-sum-main b')).toHaveText('12');
   // Duplicar: misma pareja y hora, una semana después, sin tocar el original hasta Guardar.
   await page.evaluate(()=>{BODA_SUBTAB='clases';refreshEvents(false);openBodaClaseForm(EVENTS.find(e=>e.id==='cl8'));});
   await page.locator('#bodaFormDup').click();
@@ -119,4 +122,51 @@ test('Estadísticas por año, aviso de boda cercana en Recordatorios y Duplicar 
   // Recordatorios: pareja con boda en 30 días o menos y clases por asignar.
   await page.evaluate(()=>{BODA_COUPLES[1].contracted=6;BODA_COUPLES[1].weddingDate='2026-11-10';saveBodas();closeEvents();openHomePopup(true);});
   await expect(page.locator('#homePopupContent')).toContainText('Pareja Actual boda el 10/11 · faltan 3 clases por asignar');
+});
+
+test('v566: gráficos sin cambio de subpestaña, línea de récord, calendario con pareja fija y pack propio',async({page})=>{
+  // Récord en los gráficos deslizables y bloqueo del gesto horizontal.
+  await expect(page.locator('.boda-scroll-wrap .boda-record-tag')).toHaveText(['Récord 5','Récord 2']);
+  await expect(page.locator('.boda-scroll-wrap[data-swipe-lock] .boda-record-line')).toHaveCount(2);
+  // Calendario: tocar la fila de una clase resalta a su pareja y se mantiene al cambiar de mes.
+  await page.evaluate(()=>{BODA_SUBTAB='calendario';BODA_CAL_YEAR=2026;BODA_CAL_MONTH=8;BODA_CAL_HL=null;refreshEvents(false);});
+  await page.locator('.boda-cal-day[data-ds="2026-09-28"]').click();
+  await page.locator('.boda-cal-daylist [data-hl="b"]').click();
+  expect(await page.evaluate(()=>BODA_CAL_HL)).toBe('b');
+  await page.evaluate(()=>window._hd=document.querySelector('.boda-sticky-hd'));
+  await page.locator('#bodaCalPrev').click();await page.locator('#bodaCalPrev').click();
+  await expect(page.locator('.boda-cal-month')).toHaveText('Julio 2026');
+  await expect(page.locator('.boda-cal-lg.on[data-hl="b"]')).toHaveCount(1);
+  // Cambiar de mes repinta solo el calendario: la cabecera de subpestañas es el mismo nodo.
+  expect(await page.evaluate(()=>window._hd.isConnected)).toBe(true);
+  await page.locator('#bodaCalNext').click();await page.locator('#bodaCalNext').click();
+  await expect(page.locator('.boda-cal-day.hl')).toHaveCount(2);
+  // Editar pareja: Futura junto al nombre y selector de pack propio.
+  await page.evaluate(()=>openBodaCoupleForm(BODA_COUPLES[1]));
+  await expect(page.locator('.boda-cform-name').getByRole('switch',{name:'Pareja futura'})).toHaveCount(1);
+  await page.locator('#bodaCPackBtn').click();
+  const rowsPk=page.locator('#bodaPackPkOv [data-pack]');await expect(rowsPk.first()).toBeVisible();
+  await rowsPk.last().click();
+  const last=await page.evaluate(()=>BODA_CONFIG.packs.filter(p=>p.active!==false).slice(-1)[0]);
+  await expect(page.locator('#bodaCPackBtn')).toContainText(last.name);
+  await page.locator('#bodaCSave').click();
+  await expect.poll(()=>page.evaluate(()=>BODA_COUPLES[1].packId)).toBe(last.id);
+});
+
+test('deslizar sobre un gráfico de Estadísticas no cambia de subpestaña; fuera de él, sí',async({page})=>{
+  async function swipe(sel,dx){
+    await page.evaluate(async([sel,dx])=>{
+      const el=document.querySelector(sel),r=el.getBoundingClientRect(),x0=r.left+r.width/2,y=r.top+Math.min(40,r.height/2);
+      const t=x=>new Touch({identifier:1,target:el,clientX:x,clientY:y});
+      el.dispatchEvent(new TouchEvent('touchstart',{touches:[t(x0)],changedTouches:[t(x0)],bubbles:true,cancelable:true}));
+      for(let i=1;i<=6;i++){await new Promise(r=>requestAnimationFrame(r));el.dispatchEvent(new TouchEvent('touchmove',{touches:[t(x0+dx*i/6)],changedTouches:[t(x0+dx*i/6)],bubbles:true,cancelable:true}));}
+      el.dispatchEvent(new TouchEvent('touchend',{touches:[],changedTouches:[t(x0+dx)],bubbles:true,cancelable:true}));
+      await new Promise(r=>setTimeout(r,600));
+    },[sel,dx]);
+  }
+  await page.locator('.boda-stats-season').scrollIntoViewIfNeeded();
+  for(const sel of ['.boda-stats-season [data-swipe-lock]','.boda-scroll-wrap'])await swipe(sel,-160);
+  expect(await page.evaluate(()=>BODA_SUBTAB)).toBe('stats');
+  await swipe('.boda-stats-summary',160);
+  await expect.poll(()=>page.evaluate(()=>BODA_SUBTAB)).toBe('calendario');
 });

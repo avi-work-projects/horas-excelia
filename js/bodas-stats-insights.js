@@ -13,16 +13,21 @@ function bodaStatsInYear(ds){return !BODA_STATS_YEAR||(!!ds&&+ds.slice(0,4)===BO
 function bodaStatsCouples(){
   return BODA_COUPLES.filter(function(c){return !BODA_STATS_YEAR||bodaStatsInYear(c.weddingDate);});
 }
-function renderBodaYearChips(all){
+/* Desplegable de año: lista con scroll vertical que abre en el año elegido
+   (o en el actual con «Todos»); solo años con clases o bodas. */
+function renderBodaYearPicker(all){
   var years=bodaStatsYears(all);
   if(BODA_STATS_YEAR&&years.indexOf(BODA_STATS_YEAR)===-1)BODA_STATS_YEAR=null;
   if(years.length<2)return '';
-  var h='<div class="boda-chips boda-stats-years" role="group" aria-label="Año de las estadísticas">';
-  h+='<button class="boda-chip'+(BODA_STATS_YEAR?'':' active')+'" data-bstats-year="" aria-pressed="'+!BODA_STATS_YEAR+'">Todos</button>';
-  years.forEach(function(y){h+='<button class="boda-chip'+(BODA_STATS_YEAR===y?' active':'')+'" data-bstats-year="'+y+'" aria-pressed="'+(BODA_STATS_YEAR===y)+'">'+y+'</button>';});
-  return h+'</div>';
+  var label=BODA_STATS_YEAR?String(BODA_STATS_YEAR):'Todos los años';
+  var h='<div class="boda-year-pick"><button type="button" class="boda-year-btn" id="bodaYearBtn" aria-haspopup="listbox" aria-expanded="false">'+label+'<span class="ev-tax-chevron" aria-hidden="true"></span></button>';
+  h+='<div class="boda-year-list" id="bodaYearList" role="listbox" aria-label="Año de las estadísticas" hidden>';
+  [null].concat(years).forEach(function(y){
+    var on=BODA_STATS_YEAR===y;
+    h+='<button type="button" role="option" class="boda-year-opt'+(on?' on':'')+'" aria-selected="'+on+'" data-bstats-year="'+(y||'')+'">'+(y||'Todos los años')+'</button>';
+  });
+  return h+'</div></div>';
 }
-
 /* Contratadas, asignadas (sin contar extras) y pendientes de asignar. */
 function bodaComplianceStats(couples){
   var s={contracted:0,assigned:0,extras:0,missing:0};
@@ -45,24 +50,40 @@ function bodaLeadStats(couples){
   var sum=days.reduce(function(a,b){return a+b;},0);
   return {avg:sum/days.length,min:Math.min.apply(null,days),max:Math.max.apply(null,days),n:days.length};
 }
-function renderBodaCompliance(couples){
-  var s=bodaComplianceStats(couples);
-  if(!s.contracted&&!s.extras)return '';
-  var pct=s.contracted?Math.round(s.assigned*100/s.contracted):0;
-  return renderStatsCard('Contratadas y asignadas',renderStatsMetrics([[s.contracted,'contratadas'],[s.assigned,'asignadas · '+pct+' %'],[s.missing,'por asignar']],3),
-    s.extras?(s.extras+(s.extras===1?' clase extra':' clases extras')):'','boda-stats-compliance');
+/* Resumen compacto: una fila por tema (Parejas, Clases, Ritmo, Contratadas,
+   Antelación) con la cifra principal y su desglose al lado. */
+function bodaSumRow(label,main,parts,sub,mainAttrs){
+  var m=mainAttrs?'<button type="button" class="boda-sum-main"'+mainAttrs+'>'+main+'</button>':'<span class="boda-sum-main">'+main+'</span>';
+  return '<div class="boda-sum-row"><span class="boda-sum-lbl">'+label+'</span>'+m+'<div class="boda-sum-parts">'+parts.join('')+(sub?'<small>'+sub+'</small>':'')+'</div></div>';
 }
-function renderBodaLead(couples){
-  var s=bodaLeadStats(couples);
-  if(!s)return '';
-  return renderStatsCard('Antelación de la primera clase',renderStatsMetrics([[Math.round(s.avg),'días de media'],[bodaFmtRate(s.avg/7),'semanas de media']]),
-    'De '+s.min+' a '+s.max+' días · '+s.n+(s.n===1?' pareja':' parejas'),'boda-stats-lead');
+function bodaSumPart(n,label,attrs){
+  return attrs?'<button type="button" class="boda-sum-part"'+attrs+'><b>'+n+'</b> '+label+'</button>':'<span class="boda-sum-part"><b>'+n+'</b> '+label+'</span>';
+}
+function renderBodaSummary(all,todas,couples){
+  var o=bodaStatsOverview(all),c=bodaComplianceStats(couples),lead=bodaLeadStats(couples);
+  var pool=BODA_STATS_YEAR?couples:BODA_COUPLES;
+  function n(f){return pool.filter(function(x){return bodaMatchesDate(x,f);}).length;}
+  var h='<section class="stats-section boda-stats-summary" aria-label="Resumen"><header class="stats-head"><h3>Resumen</h3>'+renderBodaYearPicker(todas)+'</header>';
+  h+=bodaSumRow('Parejas','<b>'+pool.length+'</b>',[bodaSumPart(n('pasadas'),'pasadas',' data-stats-couples="pasadas"'),bodaSumPart(n('activas'),'en curso',' data-stats-couples="activas"'),bodaSumPart(n('futuras'),'próximas',' data-stats-couples="futuras"')],
+    o.taught+' con clases impartidas',' id="bodaStatsCouples" data-stats-couples="todas" aria-label="Ver todas las parejas"');
+  h+=bodaSumRow('Clases','<b>'+o.total+'</b>',[bodaSumPart(o.taken,'impartidas'),bodaSumPart(o.pending,'pendientes'),bodaSumPart(o.unassigned,'sin pareja')]);
+  if(all.length){
+    var first=all[0].start,last=all[all.length-1].start;
+    var days=Math.max(1,Math.round((new Date(last+'T00:00:00')-new Date(first+'T00:00:00'))/86400000)+1);
+    h+=bodaSumRow('Ritmo','<b>'+bodaFmtRate(all.length/(days/7))+'</b><small>/ sem</small>',[bodaSumPart(bodaFmtRate(all.length/(days/30.44)),'/ mes')],_bodaFmt(first)+' – '+_bodaFmt(last));
+  }
+  if(c.contracted||c.extras){
+    var pct=c.contracted?Math.round(c.assigned*100/c.contracted):0;
+    h+=bodaSumRow('Contratadas','<b>'+c.contracted+'</b>',[bodaSumPart(c.assigned,'asignadas · '+pct+' %'),bodaSumPart(c.missing,'por asignar')].concat(c.extras?[bodaSumPart(c.extras,c.extras===1?'extra':'extras')]:[]));
+  }
+  if(lead)h+=bodaSumRow('Antelación','<b>'+Math.round(lead.avg)+'</b><small>días</small>',[bodaSumPart(bodaFmtRate(lead.avg/7),'semanas')],'De '+lead.min+' a '+lead.max+' días · '+lead.n+(lead.n===1?' pareja':' parejas'));
+  return h+'</section>';
 }
 function renderBodaSeason(couples){
   var counts=MN_SHORT.map(function(){return 0;}),any=false;
   couples.forEach(function(c){if(c.weddingDate){counts[+c.weddingDate.slice(5,7)-1]++;any=true;}});
   if(!any)return '';
-  return renderStatsCard('Bodas por mes',simpleBarChart(counts,MN_SHORT,'#a0703f',{height:70}),'','boda-stats-season');
+  return renderStatsCard('Bodas por mes','<div data-swipe-lock>'+simpleBarChart(counts,MN_SHORT,'#a0703f',{height:70})+'</div>','','boda-stats-season');
 }
 /* Mapa de día de la semana × franja horaria; las clases sin hora no cuentan. */
 function bodaHeatData(all){

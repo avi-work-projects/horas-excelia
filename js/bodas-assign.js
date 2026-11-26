@@ -38,7 +38,7 @@ function _renderBodaIssueCards(){
   }
   var h='<div class="boda-issues">';
   h+=card('huecos',is.huecos.length,'huecos sin asignar','','tono-azul');
-  h+=card('pendientes',is.pendientes.length,'parejas pendientes',faltan+' clase'+(faltan===1?'':'s')+' por programar','tono-rojo');
+  h+=card('pendientes',is.pendientes.length,'parejas pendientes',faltan+' clase'+(faltan===1?'':'s')+' por programar','tono-vino');
   var _sinHora=0,_sinSala=0;
   is.incompletas.forEach(function(ev){
     if(!(ev.boda&&ev.boda.time))_sinHora++;
@@ -63,11 +63,12 @@ function openBodaIssue(kind){
   h+='<div style="width:36px"></div></div>';
   if(kind==='pendientes'){
     if(!is.pendientes.length)h+='<div class="sy-note">Ninguna pareja pendiente.</div>';
-    is.pendientes.forEach(function(c){
+    /* Primero la boda más cercana; sin fecha, al final. */
+    is.pendientes.slice().sort(function(a,b){return _bodaCmpFecha(a.weddingDate,b.weddingDate,false);}).forEach(function(c){
       var p=bodaProgress(c);
       h+='<div class="boda-iss-row">';
       h+='<span class="boda-dot" style="background:'+c.color+'"></span>';
-      h+='<span class="boda-iss-main">'+escHtml(c.name)+'<em>'+p.done+' / '+p.total+'</em></span>';
+      h+='<span class="boda-iss-main">'+escHtml(c.name)+'<em>'+p.done+' / '+p.total+(c.weddingDate?' · &#128141; '+_bodaFmt(c.weddingDate):'')+'</em></span>';
       h+=bodaFaltaHtml(c,p.falta);
       h+='<button class="boda-mini-btn" data-iss-assign="'+c.id+'" title="Asignar clases">&#128197;</button>';
       h+='</div>';
@@ -153,28 +154,13 @@ function bodaStatsOverview(all){
     future:BODA_COUPLES.filter(function(c){return bodaMatchesDate(c,'futuras');}).length,
     taught:new Set(taken.map(function(ev){return ev.boda.coupleId;}).filter(function(id){return !!bodaCouple(id);})).size};
 }
-function renderBodaStatsOverview(s){
-  var h='<section class="stats-section boda-overview" aria-label="Resumen de parejas"><header class="stats-head"><h3>Parejas</h3><button id="bodaStatsCouples" class="boda-overview-total" data-stats-couples="todas"><b>'+s.couples+'</b><span>en total →</span></button></header><div class="stats-metrics stats-metrics-three boda-overview-grid">';
-  [['pasadas','Pasadas',s.past],['activas','En curso',s.active],['futuras','Próximas',s.future]].forEach(function(x){h+='<button type="button" class="stats-metric" data-stats-couples="'+x[0]+'"><b>'+x[2]+'</b><span>'+x[1]+'</span></button>';});
-  h+='</div><p class="stats-note">'+s.taught+' '+(s.taught===1?'pareja con clases impartidas':'parejas con clases impartidas')+'</p></section>';
-  h+='<section class="stats-section boda-overview" aria-label="Resumen de clases"><header class="stats-head"><h3>Clases</h3><div class="boda-overview-total"><b>'+s.total+'</b><span>registradas</span></div></header><div class="stats-metrics stats-metrics-three boda-overview-grid">';
-  [['Impartidas',s.taken],['Pendientes',s.pending],['Sin pareja',s.unassigned]].forEach(function(x){h+='<div class="stats-metric"><b>'+x[1]+'</b><span>'+x[0]+'</span></div>';});
-  return h+'</div></section>';
-}
 function _renderBodaStats(){
   var todas=bodaSortClasses(bodaClasses());
   /* El año elegido filtra clases y parejas (por fecha de boda); Récords y el
      histórico deslizable siguen contando todas las clases registradas. */
-  var years=renderBodaYearChips(todas);
   var all=todas.filter(function(ev){return bodaStatsInYear(ev.start);}),couples=bodaStatsCouples();
-  var overview=years+renderBodaStatsOverview(bodaStatsOverview(all));
-  if(!todas.length)return '<div class="stats-stack stats-stack-wedding">'+overview+renderBodaPackStats()+'</div>';
-  var h=overview;
-  if(all.length){
-  /* Medias sobre el periodo real con clases */
-  var primera=all[0].start, ultima=all[all.length-1].start;
-  var dias=Math.max(1,Math.round((new Date(ultima+'T00:00:00')-new Date(primera+'T00:00:00'))/86400000)+1);
-  var mediaSem=(all.length/(dias/7)), mediaMes=(all.length/(dias/30.44));
+  var h=renderBodaSummary(all,todas,couples);
+  if(!todas.length)return '<div class="stats-stack stats-stack-wedding">'+h+renderBodaPackStats()+'</div>';
   var porFranja=BODA_SLOTS.map(function(sl){
     return {label:sl.label,color:sl.right,
       value:all.filter(function(ev){var s2=bodaSlot(ev.boda&&ev.boda.time);return s2&&s2.label===sl.label;}).length};
@@ -188,11 +174,6 @@ function _renderBodaStats(){
       var wd2=new Date(ev.start+'T00:00:00').getDay();
       return (wd2===0?6:wd2-1)===idx;}).length};
   }).filter(function(r){return r.value>0;});
-
-  h+=renderStatsCard('Ritmo programado',renderStatsMetrics([[bodaFmtRate(mediaSem),'clases / semana'],[bodaFmtRate(mediaMes),'clases / mes']]),'Del '+_bodaFmt(primera)+' al '+_bodaFmt(ultima),'boda-stats-pace');
-  }
-  h+=renderBodaCompliance(couples);
-  h+=renderBodaLead(couples);
   h+=renderBodaRecords(todas);
   h+=renderBodaHistoryCharts(todas,new Date());
   h+=renderBodaSeason(couples);

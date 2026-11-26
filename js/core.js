@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v565 — Wedding Moves: estadísticas por año, aviso de boda cercana y Duplicar';
+var APP_VERSION = 'v566 — Home sin destello y retoques de Wedding Moves';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
@@ -38,7 +38,7 @@ function addSwipe(el, onLeft, onRight){
   function startedInPanel(node){
     while(node&&node!==el){
       if(node.nodeType===1){
-        if(node._swipeAdded)return true;
+        if(node._swipeAdded||(node.hasAttribute&&node.hasAttribute('data-swipe-lock')))return true;
         var cl=node.classList;
         if(cl&&(cl.contains('ev-detail-overlay')||cl.contains('ev-form-overlay')
               ||cl.contains('ev-alarm-overlay')||cl.contains('bd-alarm-overlay')
@@ -480,6 +480,8 @@ function sendEmail(wkey){
   return openHoursReview(wkey);
 }
 function editPencilHtml(){return '<svg class="edit-pencil" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m16 3 5 5L8 21H3v-5L16 3Zm-2 2 5 5"/></svg>';}
+/* Ojo de «Consulta»: mismo trazo que el lápiz de «Edición». */
+function eyeIconHtml(){return '<svg class="edit-pencil eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>';}
 function prohibitionIconHtml(){return '<svg class="prohibition-icon week-action-icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" aria-hidden="true"><circle cx="24" cy="24" r="20"/><path d="m9.9 9.9 28.2 28.2"/></svg>';}
 function sendManualEmail(wkey){
   var state=hoursWeekState(wkey),previous=hoursWeekState(dk(ad(new Date(wkey+'T12:00:00'),-7)));
@@ -534,6 +536,15 @@ function render(){
   if(typeof syncHoursStatus==='function')syncHoursStatus(false);
 }
 
+/* Sustituye un elemento por el HTML dado solo si el resultado es distinto:
+   repintar lo mismo provocaba destellos al llegar respuestas asíncronas. */
+function replaceIfChanged(el,html){
+  var t=document.createElement('template');t.innerHTML=html.trim();
+  var next=t.content.firstElementChild;
+  if(!next){el.remove();return null;}
+  if(el.isEqualNode(next))return el;
+  el.replaceWith(next);return next;
+}
 /* El mismo calendario se ensambla en la Home y en una previsualización inerte. */
 function buildHomeCalendar(c){
   var wks=weeks(CY,CM),submission=homeSubmissionStatus(CY,CM);

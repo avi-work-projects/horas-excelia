@@ -85,3 +85,12 @@ test('una confirmación pendiente no oculta el aviso si la semana se programa o 
   page.once('dialog',d=>{message=d.message();return d.dismiss();});await page.locator('.hour-chip-day[data-h="8"]').click();
   expect(message).toContain('ya está enviada');expect(await page.evaluate(()=>ST['2027-02-02'])).toBeUndefined();
 });
+
+test('repintar el estado de Kairo sin cambios no reconstruye acciones, resumen ni factura',async({page})=>{
+  const card=await setup(page);
+  await page.evaluate(()=>{window._keep=[document.querySelector('.week-card[data-week="2027-02-01"] .week-actions button'),document.querySelector('.home-submission'),document.getElementById('homeInvoiceStatus')];});
+  await page.evaluate(()=>paintHoursStatus());
+  expect(await page.evaluate(()=>window._keep.map(n=>!n||n.isConnected))).toEqual([true,true,true]);
+  await card.getByRole('button',{name:'Acciones',exact:true}).click();
+  await expect(card.locator('.week-actions').getByRole('button')).toHaveCount(3);
+});

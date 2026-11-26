@@ -340,8 +340,10 @@ function _renderBodaCalendario(){
   });
   /* La leyenda solo lista las parejas con ensayo o boda este mes; si la pareja
      resaltada ya no esta, se limpia el resaltado */
-  var leyenda=BODA_COUPLES.filter(function(c){return enMes[c.id];});
-  if(BODA_CAL_HL&&!enMes[BODA_CAL_HL])BODA_CAL_HL=null;
+  /* La pareja elegida sigue elegida en meses sin clases suyas: su chip se
+     mantiene para poder soltarla. */
+  if(BODA_CAL_HL&&!bodaCouple(BODA_CAL_HL))BODA_CAL_HL=null;
+  var leyenda=BODA_COUPLES.filter(function(c){return enMes[c.id]||c.id===BODA_CAL_HL;});
   var hlC=BODA_CAL_HL?bodaCouple(BODA_CAL_HL):null;
   var dayCouples={};
   (bodasDia[BODA_CAL_DAY]||[]).forEach(function(c){dayCouples[c.id]=true;});
@@ -399,16 +401,16 @@ function _renderBodaCalendario(){
     h+='<div class="boda-day boda-cal-daylist" data-day="'+BODA_CAL_DAY+'"><div class="boda-day-hd">'+_bodaFmtCorto(BODA_CAL_DAY)
       +(clsSel.length?'<span class="boda-day-n">'+clsSel.length+' clase'+(clsSel.length>1?'s':'')+'</span>':'')+'</div>';
     (bodasDia[BODA_CAL_DAY]||[]).forEach(function(c){
-      h+='<div class="boda-cal-dayw"><span class="ev-bpunto" style="background:'+c.color+'"></span>&#128141; Boda de '+escHtml(c.name)+'</div>';
+      h+='<div class="boda-cal-dayw boda-cal-pick'+(BODA_CAL_HL===c.id?' on':'')+'" data-hl="'+c.id+'" role="button" tabindex="0"><span class="ev-bpunto" style="background:'+c.color+'"></span>&#128141; Boda de '+escHtml(c.name)+'</div>';
     });
-    clsSel.forEach(function(ev){h+=bodaClassRoHtml(ev);});
+    clsSel.forEach(function(ev){h+=bodaClassRoHtml(ev,true);});
     h+='</div>';
   }
   /* Parejas del mes: chips pulsables que resaltan sus días */
   h+='<div class="boda-cal-legend">';
   if(!leyenda.length)h+='<div class="sy-note">Sin ensayos ni bodas este mes.</div>';
   leyenda.forEach(function(c){
-    var on=BODA_CAL_DAY?!!dayCouples[c.id]:(BODA_CAL_HL===c.id);
+    var on=BODA_CAL_HL?BODA_CAL_HL===c.id:(BODA_CAL_DAY?!!dayCouples[c.id]:false);
     h+='<button class="boda-cal-lg'+(on?' on':'')+'" data-hl="'+c.id+'"'
       +(on?' style="border-color:'+c.color+';background:'+c.color+'1f"':'')+'>'
       +'<i style="background:'+c.color+'"></i>'
@@ -434,7 +436,7 @@ function _renderBodasBody(){
   if(BODA_SUBTAB==='clases'){
     var edit=(BODA_CLASS_MODE==='editar');
     h+='<div class="boda-mode-row">';
-    h+='<button class="boda-mode-btn'+(edit?'':' active')+'" data-bmode="ver">&#128065; Consulta</button>';
+    h+='<button class="boda-mode-btn'+(edit?'':' active')+'" data-bmode="ver">'+eyeIconHtml()+' Consulta</button>';
     h+='<button class="boda-mode-btn'+(edit?' active':'')+'" data-bmode="editar">'+editPencilHtml()+' Edición</button>';
     h+='</div>';
   }
@@ -559,10 +561,14 @@ function _renderBodaParejas(){
 }
 function _bodaFmt(ds){return ds?ds.slice(8)+'/'+ds.slice(5,7)+'/'+ds.slice(0,4):'';}
 /* Fila de una clase en modo consulta: la comparten Clases y el día del Calendario. */
-function bodaClassRoHtml(ev){
+/* Iconos de los botones de añadir: aspa de clase y anillos de pareja, con un «+». */
+var BODA_ICON_CLASS='<svg class="boda-add-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 5l9 9M13 5l-9 9"/><path d="M19 13v8M15 17h8" stroke-width="2"/></svg>';
+var BODA_ICON_COUPLE='<svg class="boda-add-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="7.5" cy="11" r="4.5"/><circle cx="13.5" cy="11" r="4.5"/><path d="M19 15v8M15 19h8" stroke-width="2" stroke-linecap="round"/></svg>';
+function bodaClassRoHtml(ev,pick){
   var b=bodaEff(ev),c=bodaCouple(b.coupleId);
   var falta=!!(b.coupleId&&(!b.time||!bodaPlaceOf(ev)));
-  return '<div class="boda-class boda-class-ro'+(falta?' incompleta':'')+'" data-id="'+ev.id+'">'
+  /* pick: en el Calendario, tocar la fila resalta a la pareja (data-hl). */
+  return '<div class="boda-class boda-class-ro'+(falta?' incompleta':'')+(pick&&c?' boda-cal-pick'+(BODA_CAL_HL===c.id?' on':''):'')+'" data-id="'+ev.id+'"'+(pick&&c?' data-hl="'+c.id+'" role="button" tabindex="0"':'')+'>'
     +'<span class="boda-class-mark">'+evBodaSvg(ev)+'</span>'
     +'<span class="boda-ro-time'+(b.time?'':' none')+'">'+(b.time||'--:--')+'</span>'
     +'<span class="boda-ro-couple">'
@@ -600,13 +606,13 @@ function _renderBodaClases(){
   h+='<div class="bday-search-wrap boda-search"><input class="bday-search-input" id="bodaClSearch" '
     +'type="text" placeholder="Buscar pareja\u2026" value="'+escHtml(BODA_CLASES_SEARCH)+'"></div>';
   h+='</div>';
-  h+='<div class="boda-create-actions" aria-label="Añadir a Wedding Moves"><button class="bday-io-btn io-primaria boda-create-button" id="bodaAddClass">+ Añadir clase</button><button class="bday-io-btn io-primaria boda-create-button" id="bodaAddCouple">+ Añadir pareja</button></div>';
-  /* Mismo formato que "Excluir pasados" o "Solo libres" de Vacaciones Festivos */
-  h+='<div class="excl-row">';
-  h+='<label class="excl-item"><input type="checkbox" id="bodaShowPast"'+(BODA_HIDE_PAST?'':' checked')+'> Ver pasadas</label>';
-  /* La casilla se pinta del verde de las tarjetas que destapa. */
-  h+='<label class="excl-item"><input type="checkbox" style="--chk:var(--wm-wine)" id="bodaShowClosed"'
-    +(BODA_HIDE_CLOSED?'':' checked')+'> Ver días cerrados</label>';
+  /* Añadir y los dos filtros «Ver», en una sola fila compacta. */
+  h+='<div class="boda-create-actions" aria-label="Añadir a Wedding Moves">';
+  h+='<button class="bday-io-btn io-primaria boda-create-button boda-add-class" id="bodaAddClass" aria-label="Añadir clase">'+BODA_ICON_CLASS+'<span>Clase</span></button>';
+  h+='<button class="bday-io-btn io-primaria boda-create-button boda-add-couple" id="bodaAddCouple" aria-label="Añadir pareja">'+BODA_ICON_COUPLE+'<span>Pareja</span></button>';
+  h+='<label class="boda-see-chip"><input type="checkbox" id="bodaShowPast"'+(BODA_HIDE_PAST?'':' checked')+'> Pasadas</label>';
+  h+='<label class="boda-see-chip"><input type="checkbox" style="--chk:var(--wm-wine)" id="bodaShowClosed"'
+    +(BODA_HIDE_CLOSED?'':' checked')+'> Cerrados</label>';
   h+='</div>';
   h+='</div>';
   if(!list.length){

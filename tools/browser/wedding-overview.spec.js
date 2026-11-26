@@ -12,11 +12,13 @@ test.beforeEach(async({page})=>{
 });
 
 test('acciones de Clases y Parejas comparten acento y abren sus formularios',async({page})=>{
-  await expect(page.locator('.boda-create-actions button')).toHaveText(['+ Añadir clase','+ Añadir pareja']);
+  await expect(page.locator('.boda-create-actions button')).toHaveText(['Clase','Pareja']);
+  await expect(page.locator('#bodaAddClass')).toHaveAccessibleName('Añadir clase');await expect(page.locator('#bodaAddCouple')).toHaveAccessibleName('Añadir pareja');
   for(const width of [320,400]){
     await page.setViewportSize({width,height:880});
     const boxes=await page.locator('.boda-create-actions button').evaluateAll(es=>es.map(el=>{const r=el.getBoundingClientRect();return {y:r.y,width:r.width,height:r.height,bg:getComputedStyle(el).backgroundColor};}));
-    expect(boxes[0].y).toBe(boxes[1].y);expect(boxes[0].width).toBe(boxes[1].width);expect(boxes[0].height).toBe(boxes[1].height);expect(boxes[0].bg).toBe(boxes[1].bg);
+    // Mismo tamaño y fila; Pareja lleva un marrón algo distinto al granate de Clase (v566).
+    expect(boxes[0].y).toBe(boxes[1].y);expect(boxes[0].width).toBeCloseTo(boxes[1].width,0);expect(boxes[0].height).toBe(boxes[1].height);expect(boxes[0].bg).not.toBe(boxes[1].bg);
   }
   const color=await page.locator('#bodaAddClass').evaluate(el=>getComputedStyle(el).backgroundColor);
   const wine=await page.locator('[data-bsub=clases]').evaluate(el=>getComputedStyle(el).color);
@@ -46,10 +48,11 @@ test('acciones de Clases y Parejas comparten acento y abren sus formularios',asy
 
 test('resumen coherente, distribución con cero clases y enlaces por estado',async({page})=>{
   await page.locator('[data-bsub=stats]').click();
-  await expect(page.locator('[aria-label="Resumen de parejas"] .boda-overview-total b')).toHaveText('4');
-  await expect(page.locator('[aria-label="Resumen de parejas"] .boda-overview-grid b')).toHaveText(['1','2','1']);
-  await expect(page.locator('[aria-label="Resumen de clases"] .boda-overview-grid b')).toHaveText(['2','3','1']);
-  await expect(page.locator('[aria-label="Resumen de clases"] .boda-overview-total b')).toHaveText('6');
+  const rows=page.locator('.boda-stats-summary .boda-sum-row');
+  await expect(page.locator('#bodaStatsCouples b')).toHaveText('4');
+  await expect(rows.nth(0).locator('.boda-sum-part b')).toHaveText(['1','2','1']);
+  await expect(rows.nth(1).locator('.boda-sum-part b')).toHaveText(['2','3','1']);
+  await expect(rows.nth(1).locator('.boda-sum-main b')).toHaveText('6');
   await expect(page.locator('.boda-distribution-row')).toHaveText(['Sin empezar2','1 clase2']);
   await page.screenshot({path:'test-results/wedding-estadisticas.png'});
   await page.locator('.boda-distribution').scrollIntoViewIfNeeded();await page.screenshot({path:'test-results/wedding-distribucion.png'});

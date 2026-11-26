@@ -192,16 +192,16 @@ function paintHoursStatus(){
   var container=document.getElementById('weeksContainer');if(!container)return;
   paintHomeSyncDate();
   if(typeof paintHomeInvoiceStatus==='function')paintHomeInvoiceStatus();
-  var summary=container.querySelector('.home-submission');if(summary)summary.outerHTML=renderHomeSubmissionStatus(CY,CM);
+  var summary=container.querySelector('.home-submission');if(summary)replaceIfChanged(summary,renderHomeSubmissionStatus(CY,CM));
   container.querySelectorAll('.week-card[data-week]').forEach(function(card){
     var key=card.dataset.week,state=homeMailState(key,CY,CM),covered=homeWeekCovered(key),open=homeWeekUnlocked(key),badge=card.querySelector('.hours-week-badge,.hours-unrecorded');
     card.dataset.mailState=state;card.classList.toggle('sent',covered&&!open);
     if(badge&&state==='unrecorded'){var label=document.createElement('span');label.className='sent-badge hours-unrecorded';label.textContent='Sin registro';badge.replaceWith(label);badge=null;}
     else if(badge&&badge.classList.contains('hours-unrecorded')){var button=document.createElement('button');button.type='button';button.dataset.hoursWeek=key;badge.replaceWith(button);badge=button;}
-    if(badge){badge.textContent=state==='missing'||state==='ready'?'Programar semana':hoursWeekBadge(state);badge.className='sent-badge hours-week-badge '+(covered?'covered':state?'attention':'unknown');badge.setAttribute('aria-label',state==='sent'?'Ver estado':state==='scheduled'?'Ver programación':state==='changed'?'Revisar cambios':'Programar semana');}
+    if(badge){var badgeText=state==='missing'||state==='ready'?'Programar semana':hoursWeekBadge(state),badgeClass='sent-badge hours-week-badge '+(covered?'covered':state?'attention':'unknown');if(badge.textContent!==badgeText)badge.textContent=badgeText;if(badge.className!==badgeClass)badge.className=badgeClass;badge.setAttribute('aria-label',state==='sent'?'Ver estado':state==='scheduled'?'Ver programación':state==='changed'?'Revisar cambios':'Programar semana');}
     var note=card.querySelector('.hours-week-readonly'),date=hoursWeekDate(key,state);
     if(date&&!note){note=document.createElement('div');note.className='hours-week-readonly';card.querySelector('.week-info').appendChild(note);}
-    if(note){note.textContent=date?'Envío '+date:'';note.hidden=!date;}
+    if(note){var noteText=date?'Envío '+date:'';if(note.textContent!==noteText)note.textContent=noteText;if(note.hidden!==!date)note.hidden=!date;}
     renderHomeWeekActions(card,key);
   });
 }

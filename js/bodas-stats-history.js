@@ -74,9 +74,11 @@ function renderBodaRecords(all){
 /* Barras con scroll horizontal: anchura fija por barra y foco en el periodo actual. */
 function bodaScrollBarChart(items,labelOf,color,label){
   if(!items.length)return '<div class="sy-note">Sin datos.</div>';
-  var slot=30,bw=20,H=96,PT=14,PB=30,W=items.length*slot,max=1,focus=0;
+  var slot=30,bw=20,H=106,PT=26,PB=30,W=items.length*slot,max=1,focus=0;
   items.forEach(function(it,i){if(it.value>max)max=it.value;if(it.current)focus=i;});
   var svg='<svg class="boda-scroll-svg" width="'+W+'" height="'+(H+PB)+'" viewBox="0 0 '+W+' '+(H+PB)+'" xmlns="http://www.w3.org/2000/svg">';
+  /* Récord: línea discontinua a lo ancho de toda la serie, por detrás de las barras. */
+  svg+='<line class="boda-record-line" x1="0" y1="'+PT+'.5" x2="'+W+'" y2="'+PT+'.5" stroke="currentColor" stroke-opacity=".45" stroke-dasharray="4 4"/>';
   items.forEach(function(it,i){
     var x=i*slot+(slot-bw)/2,bh=it.value>0?Math.max(2,Math.round(it.value/max*(H-PT))):0,l=labelOf(it,i);
     svg+='<line x1="'+(x-.5)+'" y1="'+H+'.5" x2="'+(x+bw+.5)+'" y2="'+H+'.5" stroke="currentColor" stroke-opacity=".18"/>';
@@ -86,7 +88,9 @@ function bodaScrollBarChart(items,labelOf,color,label){
     if(l[1])svg+='<text x="'+(x+bw/2)+'" y="'+(H+25)+'" text-anchor="middle" font-size="9" font-weight="600" fill="currentColor" fill-opacity=".6">'+escHtml(l[1])+'</text>';
   });
   svg+='</svg>';
-  return '<div class="boda-scroll-chart" role="img" aria-label="'+escHtml(label)+'" tabindex="0" data-focus="'+focus+'" data-slot="'+slot+'">'+svg+'</div>';
+  /* La leyenda del récord va fuera de la serie: siempre a la vista y sin tapar cifras. */
+  return '<div class="boda-scroll-wrap" data-swipe-lock><span class="boda-record-tag"><i aria-hidden="true"></i>Récord '+max+'</span>'
+    +'<div class="boda-scroll-chart" role="img" aria-label="'+escHtml(label)+'. Récord: '+max+'" tabindex="0" data-focus="'+focus+'" data-slot="'+slot+'">'+svg+'</div></div>';
 }
 function renderBodaHistoryCharts(all,today){
   var months=bodaMonthSeries(all,today),weeks=bodaWeekSeries(all,today);

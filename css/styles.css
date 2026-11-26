@@ -2363,25 +2363,27 @@ button.stats-metric{cursor:pointer}
 [data-theme="dark"] :is(.boda-sec,.ev-detail-overlay[id^="boda"],.ev-form-overlay[id^="boda"]){--io-primary-ink:#231719}
 .boda-sec .ev-btn.primary,:is(.ev-detail-overlay,.ev-form-overlay)[id^="boda"] .ev-btn.primary,.boda-sec .boda-save-ok{color:var(--io-primary-ink)}
 .boda-create-button{--io-primary:color-mix(in srgb,var(--wm-wine) 10%,var(--surface));--io-primary-border:color-mix(in srgb,var(--wm-wine) 35%,var(--border));--io-primary-ink:var(--wm-wine);}
-.boda-create-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:4px 0}
-.boda-create-actions .bday-io-btn{width:100%;min-width:0;min-height:42px;padding:10px 6px;font-size:.75rem;white-space:normal}
+.boda-create-actions{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:2px 0}
+.boda-create-actions .bday-io-btn{flex:1 1 0;display:inline-flex;align-items:center;justify-content:center;gap:5px;min-width:0;min-height:36px;padding:6px 8px;font-size:.74rem;white-space:nowrap}
+.boda-add-icon{width:16px;height:16px;flex:none}
+/* Pareja en marrón, para distinguirla de Clase (granate). */
+.boda-create-button.boda-add-couple{--io-primary:color-mix(in srgb,#8b5e34 12%,var(--surface));--io-primary-border:color-mix(in srgb,#8b5e34 40%,var(--border));--io-primary-ink:#8b5e34}
+.boda-see-chip{flex:none;display:inline-flex;align-items:center;gap:5px;min-height:36px;padding:0 8px;border:1px solid var(--border);border-radius:999px;background:var(--surface);color:var(--text-muted);font-size:.72rem;cursor:pointer}
 .boda-sec .boda-det-btn{color:var(--wm-wine);border-color:var(--wm-wine);background:color-mix(in srgb,var(--wm-wine) 8%,var(--surface))}
-.boda-overview-total{display:flex;align-items:baseline;gap:6px;padding:0;border:0;background:none;color:var(--stats-tone);font:inherit}
-button.boda-overview-total{cursor:pointer}.boda-overview-total b{font-size:1.5rem;font-variant-numeric:tabular-nums}.boda-overview-total span{font-size:.66rem}
 .boda-distribution-head{display:flex;justify-content:space-between;font-size:.63rem;color:var(--text-muted);margin:12px 0 5px}
 .boda-distribution-row{display:grid;grid-template-columns:82px minmax(0,1fr) 30px;align-items:center;gap:10px;font-size:.73rem;padding:7px 0}
 .boda-distribution-row strong{text-align:right;font-variant-numeric:tabular-nums}.boda-distribution-track{height:8px;border-radius:4px;background:var(--surface2);overflow:hidden}.boda-distribution-track i{display:block;height:100%;border-radius:inherit;background:var(--wm-wine)}
 /* Tarjetas de avisos (huecos / parejas pendientes / info incompleta) */
 .boda-issues{display:flex;gap:8px}
-.boda-issue{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:1px;padding:9px 4px;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:var(--surface);cursor:pointer;transition:all .15s;text-align:center}
-.boda-issue b{font-size:1.25rem;line-height:1.1;color:var(--text)}
+.boda-issue{flex:1;min-width:0;display:grid;grid-template-columns:auto minmax(0,1fr);grid-template-rows:auto auto;align-items:center;column-gap:6px;text-align:left;padding:6px 8px;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:var(--surface);cursor:pointer;transition:all .15s;text-align:center}
+.boda-issue b{grid-row:1 / span 2;font-size:1.15rem;line-height:1;color:var(--text)}
 .boda-issue span{font-size:.6rem;color:var(--text-muted);line-height:1.15}
 .boda-issue em{font-style:normal;font-size:.53rem;color:var(--text-dim);line-height:1.15}
 .boda-issue:disabled{opacity:.55;cursor:default}
 .boda-issue.tono-azul{border-color:rgba(96,165,250,.5)}
 .boda-issue.tono-azul b{color:#60a5fa}
-.boda-issue.tono-rojo{border-color:rgba(255,107,107,.6);background:rgba(255,107,107,.08)}
-.boda-issue.tono-rojo b{color:var(--c-red)}
+.boda-issue.tono-vino{border-color:color-mix(in srgb,var(--wm-wine) 45%,var(--border));background:color-mix(in srgb,var(--wm-wine) 6%,var(--surface))}
+.boda-issue.tono-vino b{color:var(--wm-wine)}
 .boda-issue.tono-naranja{border-color:rgba(251,146,60,.6);background:rgba(251,146,60,.08)}
 .boda-issue.tono-naranja b{color:var(--c-orange)}
 .boda-issue.ok b{color:var(--c-green)}
@@ -2465,8 +2467,8 @@ button.boda-overview-total{cursor:pointer}.boda-overview-total b{font-size:1.5re
 .boda-falta{color:var(--c-orange,#fb923c);font-weight:600}
 .boda-falta.urgente{color:var(--c-red)}
 /* Ficha de una clase: cabecera centrada con Eliminar a la derecha, como Editar pareja. */
-#bodaFormOv .boda-form-header{grid-template-columns:64px minmax(0,1fr) 64px;align-items:center;margin-bottom:12px}
-#bodaFormOv .boda-form-header h2{font-size:.9rem;margin:0}
+#bodaFormOv .boda-form-header,#bodaPackPkOv .boda-form-header{grid-template-columns:64px minmax(0,1fr) 64px;align-items:center;margin-bottom:12px}
+#bodaFormOv .boda-form-header h2,#bodaPackPkOv .boda-form-header h2{font-size:.9rem;margin:0}
 #bodaFormOv .boda-form-header .danger{justify-self:end}
 .boda-ok{color:var(--c-green,#34d399);font-weight:600}
 .boda-sobra{color:#c084fc;font-weight:600}
@@ -2617,6 +2619,8 @@ button.boda-overview-total{cursor:pointer}.boda-overview-total b{font-size:1.5re
 /* Leyenda: una pareja por linea y pulsable para resaltar sus dias */
 .boda-cal-legend{display:flex;flex-wrap:wrap;gap:6px;font-size:.68rem;color:var(--text-muted);margin-top:10px}
 .boda-cal-daylist{margin-top:10px}
+.boda-cal-pick{cursor:pointer;border-radius:6px}
+.boda-cal-pick.on{background:color-mix(in srgb,#8b5e34 10%,var(--surface));box-shadow:inset 3px 0 0 #8b5e34}
 .boda-cal-dayw{display:flex;align-items:center;gap:6px;font-size:.75rem;font-weight:600;padding:5px 0;border-top:1px solid var(--border)}
 .boda-cal-lg{display:inline-flex;align-items:center;gap:6px;width:auto;max-width:100%;padding:5px 10px;border:1.5px solid var(--border);border-radius:999px;background:var(--surface2);color:var(--text-muted);cursor:pointer;text-align:left;transition:all .15s}
 .boda-cal-lg i{width:11px;height:11px;border-radius:50%;display:inline-block;flex-shrink:0;border:1px solid rgba(0,0,0,.4)}
@@ -2687,10 +2691,12 @@ button.boda-overview-total{cursor:pointer}.boda-overview-total b{font-size:1.5re
 .boda-card.abierta{border-color:var(--border-light);box-shadow:0 2px 10px var(--shadow)}
 .boda-card-open{margin-top:8px;padding-top:8px;border-top:1px solid var(--border)}
 .boda-card-open .boda-det-actions{margin-top:10px}
-/* Editar pareja: interruptor de «Pareja futura» y pack/boda en la misma fila. */
-.boda-switch-row{margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:44px;padding:0 12px;border:1px solid var(--border);border-radius:10px;background:var(--surface2);color:#a0703f;font-size:.82rem;font-weight:600;cursor:pointer}
-/* El interruptor hereda el color de la fila (Eventos fuerza color:inherit en las casillas). */
-.boda-switch-row>span{color:var(--text)}
+/* Editar pareja: «Futura» a la derecha del nombre; el color del interruptor llega por currentColor. */
+.boda-cform-name{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:end;gap:12px;margin-bottom:12px}
+.boda-cform-name .ev-field{margin:0}
+.boda-future-toggle{display:flex;flex-direction:column;align-items:center;gap:6px;padding-bottom:9px;color:#a0703f;font-size:.72rem;font-weight:600;cursor:pointer}
+.boda-future-toggle>span{color:var(--text-muted)}
+.boda-pack-btn{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;text-align:left;cursor:pointer}
 input[type="checkbox"].boda-switch{position:relative;flex:none;width:42px;height:24px;margin:0;border:0;border-radius:999px;background:var(--border);transition:background .18s}
 input[type="checkbox"].boda-switch::after{content:'';position:absolute;top:3px;left:3px;width:18px;height:18px;border:0;border-radius:50%;background:#fff;box-shadow:0 1px 3px #0003;transform:none;transition:transform .18s}
 input[type="checkbox"].boda-switch:checked{background:#a0703f}
@@ -2709,6 +2715,10 @@ input[type="checkbox"].boda-switch:focus-visible{outline:2px solid #8b5e34;outli
 .boda-asg-jump{flex:none;min-height:30px;padding:4px 10px;border:1px dashed #8b5e34;border-radius:999px;background:var(--surface);color:var(--text);font:600 .7rem var(--font);font-variant-numeric:tabular-nums;cursor:pointer}
 .boda-asg-jump.here{border-style:solid;background:color-mix(in srgb,#8b5e34 14%,var(--surface))}
 /* Estadísticas: histórico deslizable y récords. */
+/* Gráficos de Estadísticas: el gesto horizontal nunca cambia de subpestaña (data-swipe-lock). */
+.boda-scroll-wrap{display:flex;flex-direction:column}
+.boda-record-tag{align-self:flex-end;display:inline-flex;align-items:center;gap:5px;margin:-4px 0 2px;color:var(--text-muted);font-size:.6rem;font-weight:600}
+.boda-record-tag i{width:16px;border-top:1.5px dashed currentColor;opacity:.7}
 .boda-scroll-chart{overflow-x:auto;overflow-y:hidden;padding:4px 0 2px;color:var(--text-muted);scrollbar-width:thin;overscroll-behavior-x:contain}
 .boda-scroll-chart:focus-visible{outline:2px solid #8b5e34;outline-offset:2px;border-radius:8px}
 .boda-scroll-svg{display:block}
@@ -2721,7 +2731,26 @@ input[type="checkbox"].boda-switch:focus-visible{outline:2px solid #8b5e34;outli
 .boda-record .boda-record-rate{color:#8b5e34;font-weight:600}
 
 /* Estadísticas (v565): filtro por año y mapa de día × franja. */
-.boda-stats-years{margin-bottom:2px}
+/* Resumen compacto (v566): una fila por tema y el año en un desplegable. */
+.boda-stats-summary .stats-head{position:relative}
+.boda-sum-row{display:grid;grid-template-columns:76px 56px minmax(0,1fr);align-items:center;gap:8px;padding:9px 0;border-top:1px solid var(--border)}
+.boda-sum-row:first-of-type{border-top:0}
+.boda-sum-lbl{font-size:.7rem;font-weight:600;color:var(--text-muted)}
+.boda-sum-main{display:flex;align-items:baseline;gap:3px;padding:0;border:0;background:none;color:var(--stats-tone);font:inherit;text-align:left}
+button.boda-sum-main{cursor:pointer}
+.boda-sum-main b{font-size:1.25rem;font-variant-numeric:tabular-nums;line-height:1.1}
+.boda-sum-main small{font-size:.6rem;color:var(--text-muted)}
+.boda-sum-parts{display:flex;flex-wrap:wrap;align-items:center;gap:4px 6px;min-width:0}
+.boda-sum-part{display:inline-flex;align-items:baseline;gap:3px;padding:3px 8px;border:1px solid color-mix(in srgb,var(--stats-tone) 20%,var(--border));border-radius:999px;background:color-mix(in srgb,var(--stats-tone) 5%,var(--surface));color:var(--text-muted);font:inherit;font-size:.66rem;white-space:nowrap}
+button.boda-sum-part{cursor:pointer}
+.boda-sum-part b{color:var(--text);font-variant-numeric:tabular-nums}
+.boda-sum-parts small{flex-basis:100%;font-size:.62rem;color:var(--text-dim)}
+.boda-year-pick{position:relative}
+.boda-year-btn{display:inline-flex;white-space:nowrap;align-items:center;gap:6px;padding:6px 10px;border:1px solid color-mix(in srgb,var(--stats-tone) 35%,var(--border));border-radius:999px;background:var(--surface);color:var(--stats-tone);font:inherit;font-size:.74rem;font-weight:600;cursor:pointer}
+.boda-year-list{position:absolute;right:0;top:calc(100% + 6px);z-index:5;display:flex;flex-direction:column;width:150px;max-height:172px;overflow-y:auto;scroll-snap-type:y mandatory;padding:4px;border:1px solid var(--border);border-radius:12px;background:var(--surface);box-shadow:0 8px 24px #0002}
+.boda-year-list[hidden]{display:none}
+.boda-year-opt{flex:none;scroll-snap-align:center;min-height:40px;padding:0 12px;border:0;border-radius:8px;background:none;color:var(--text);font:inherit;font-size:.82rem;text-align:left;cursor:pointer}
+.boda-year-opt.on{background:color-mix(in srgb,var(--stats-tone) 14%,var(--surface));color:var(--stats-tone);font-weight:700}
 .boda-heat{display:grid;gap:3px;font-size:.66rem}
 .boda-heat-row{display:grid;grid-template-columns:34px repeat(var(--heat-cols),minmax(0,1fr));gap:3px;align-items:center}
 .boda-heat-h{text-align:center;color:var(--text-dim);font-size:.6rem;white-space:nowrap}
@@ -4653,8 +4682,10 @@ body:has(#invoiceOv.open) .tasks-fab{visibility:hidden}
 @media(prefers-reduced-motion:reduce){.home-panel.pending,.home-panel.unsent,.home-panel.urgent,.home-invoice-alert{animation:none}}
 .week-actions.home-week-actions{justify-content:center;gap:8px;min-height:64px;box-sizing:border-box}
 .home-week-actions .action-btn{flex:0 1 auto;min-height:38px;padding:8px 13px;font-size:.7rem}
-.home-week-actions .home-week-more,.home-week-actions .home-week-edit,.home-week-actions .home-week-cancel{border-color:var(--home-tone);color:var(--text);background:var(--surface)}
-.home-week-actions .home-week-more svg{color:var(--home-tone)}
+.home-week-actions .home-week-edit,.home-week-actions .home-week-cancel{border-color:var(--home-tone);color:var(--text);background:var(--surface)}
+/* v566: Acciones se integra con el verde de la semana enviada o programada. */
+.home-week-actions .home-week-more{border-color:var(--sent-border);color:var(--sent-text);background:color-mix(in srgb,var(--sent-border) 45%,var(--surface));font-weight:600}
+.home-week-actions .home-week-more svg{color:var(--sent-text)}
 .home-week-actions .home-week-edit{background:#f4a066;border-color:#f4a066;color:#fff;font-weight:700}
 .home-week-actions .home-week-cancel{background:color-mix(in srgb,var(--c-red) 10%,var(--surface));border:1.5px solid color-mix(in srgb,var(--c-red) 55%,transparent);color:var(--c-red)}
 .home-week-actions .home-week-edit svg,.home-week-actions .home-week-cancel svg{color:inherit}

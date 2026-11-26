@@ -7,7 +7,11 @@
 <button class="econ-sub-tab boda-config-btn" data-bsub="config" id="bodaConfigBtn" aria-label="Configurar Bodas">&#9881;</button>
 </div>
 <div class="boda-mode-row">
-<button class="boda-mode-btn" data-bmode="ver">&#128065; Consulta</button>
+<button class="boda-mode-btn" data-bmode="ver">
+<svg class="edit-pencil eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/>
+<circle cx="12" cy="12" r="3"/>
+</svg> Consulta</button>
 <button class="boda-mode-btn active" data-bmode="editar">
 <svg class="edit-pencil" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
 <path d="m16 3 5 5L8 21H3v-5L16 3Zm-2 2 5 5"/>
@@ -20,7 +24,7 @@
 <b>1</b>
 <span>huecos sin asignar</span>
 </button>
-<button class="boda-issue tono-rojo" data-issue="pendientes">
+<button class="boda-issue tono-vino" data-issue="pendientes">
 <b>3</b>
 <span>parejas pendientes</span>
 <em>10 clases por programar</em>
@@ -38,14 +42,25 @@
 </div>
 </div>
 <div class="boda-create-actions" aria-label="Añadir a Wedding Moves">
-<button class="bday-io-btn io-primaria boda-create-button" id="bodaAddClass">+ Añadir clase</button>
-<button class="bday-io-btn io-primaria boda-create-button" id="bodaAddCouple">+ Añadir pareja</button>
-</div>
-<div class="excl-row">
-<label class="excl-item">
-<input type="checkbox" id="bodaShowPast"> Ver pasadas</label>
-<label class="excl-item">
-<input type="checkbox" style="--chk:var(--wm-wine)" id="bodaShowClosed" checked> Ver días cerrados</label>
+<button class="bday-io-btn io-primaria boda-create-button boda-add-class" id="bodaAddClass" aria-label="Añadir clase">
+<svg class="boda-add-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true">
+<path d="M4 5l9 9M13 5l-9 9"/>
+<path d="M19 13v8M15 17h8" stroke-width="2"/>
+</svg>
+<span>Clase</span>
+</button>
+<button class="bday-io-btn io-primaria boda-create-button boda-add-couple" id="bodaAddCouple" aria-label="Añadir pareja">
+<svg class="boda-add-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+<circle cx="7.5" cy="11" r="4.5"/>
+<circle cx="13.5" cy="11" r="4.5"/>
+<path d="M19 15v8M15 19h8" stroke-width="2" stroke-linecap="round"/>
+</svg>
+<span>Pareja</span>
+</button>
+<label class="boda-see-chip">
+<input type="checkbox" id="bodaShowPast"> Pasadas</label>
+<label class="boda-see-chip">
+<input type="checkbox" style="--chk:var(--wm-wine)" id="bodaShowClosed" checked> Cerrados</label>
 </div>
 </div>
 <div class="boda-day" data-day="2026-08-24">
