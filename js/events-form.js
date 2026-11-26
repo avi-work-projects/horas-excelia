@@ -94,8 +94,7 @@ function renderEvForm(ev){
   var isOtros=!!EV_FREE_SHAPE[curKey];
   var showColorPicker=!!EV_FREE_COLOR[curKey];
   h+='<div class="ev-field ev-form-color-section" id="evFColorSection" style="display:'+(showColorPicker?'block':'none')+'">';
-  h+='<label>\uD83C\uDFA8 Paleta de colores</label>';
-  h+=_renderColorPicker(color,false,false,'evFCp');
+  h+=renderColorRow(color,'evFCp','Color');
   h+='</div>';
   /* Secci\u00f3n extra para Otros: forma del marcador + selector multi-d\u00eda */
   var curShape=isEdit&&ev.shape?ev.shape:'circle';

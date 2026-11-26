@@ -324,6 +324,15 @@ function getEvDisplayColor(ev){
 }
 
 // Render color picker reutilizable (paleta 6×6 + color libre + preview)
+/* Color contraído (v572, norma de Ángel para todos los menús): una fila con la
+   muestra; la paleta solo se despliega al tocarla. _bindColorPicker engancha
+   la fila y mantiene la muestra al día. */
+function renderColorRow(selHex,prefix,label){
+  prefix=prefix||'evCp';
+  return '<div class="ev-bficha color-row-ficha"><button type="button" class="ev-bfila color-row" id="'+prefix+'Row" aria-expanded="false" aria-controls="'+prefix+'Panel">'
+    +'<span class="ev-bfila-lbl">'+escHtml(label||'Color')+'</span><span class="ev-bfila-val"><i class="color-row-swatch" id="'+prefix+'Swatch" style="background:'+selHex+'"></i><span class="ev-tax-chevron" aria-hidden="true"></span></span></button>'
+    +'<div class="color-row-panel" id="'+prefix+'Panel" hidden>'+_renderColorPicker(selHex,false,false,prefix)+'</div></div>';
+}
 function _renderColorPicker(selHex,_unusedShowLock,_unusedIsLocked,prefix){
   prefix=prefix||'evCp';
   var h='<div class="ev-color-picker" id="'+prefix+'Wrap">';
@@ -373,8 +382,12 @@ function _bindColorPicker(container,prefix,onChange){
     if(code)code.textContent=hex;
     if(previews[0])previews[0].style.background=hex;
     if(previews[1])previews[1].style.background=fakeTrans(hex,0.65);
+    var swatch=container.querySelector('#'+prefix+'Swatch');
+    if(swatch)swatch.style.background=hex;
     if(onChange)onChange(hex);
   }
+  var row=container.querySelector('#'+prefix+'Row'),panel=container.querySelector('#'+prefix+'Panel');
+  if(row&&panel)row.addEventListener('click',function(){panel.hidden=!panel.hidden;row.setAttribute('aria-expanded',String(!panel.hidden));});
   wrap.addEventListener('click',function(e){
     var dot=e.target.closest('.ev-color-dot');
     if(dot&&dot.dataset.hex){updatePreview(dot.dataset.hex);}

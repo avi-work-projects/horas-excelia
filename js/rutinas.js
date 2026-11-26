@@ -387,11 +387,11 @@ function _rutWeekPick(r,opts){
   var y=RUT_WEEK_CAL.y,m=RUT_WEEK_CAL.m;
   var h='<div class="ev-detail-overlay" id="rutWkOv"><div class="ev-detail-sheet rut-week-picker-sheet">';
   h+='<div class="ev-detail-handle"></div>';
-  h+='<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">';
-  h+='<button class="sy-back" id="rutWkClose">&#8592;</button>';
-  h+='<div style="flex:1;font-size:.88rem;font-weight:600;text-align:center;color:'+rutDisplayColor(r)+'">'
-    +escHtml(r.name)+' \u2014 elige la semana</div>';
-  h+='<div style="width:36px"></div></div>';
+  /* Misma cabecera que «Cambiar horario»: nombre en negro, subtítulo e icono. */
+  h+='<div class="rut-week-heading">';
+  h+='<button class="sy-back" id="rutWkClose" aria-label="Volver">&#8592;</button>';
+  h+='<div class="rut-week-title"><strong>'+escHtml(r.name)+'</strong><span>'+escHtml(opts.subtitle||'Elige la semana')+'</span></div>';
+  h+='<span class="rut-week-icon" aria-hidden="true">'+rutIconSvg(rutIconOf(r),rutDisplayColor(r))+'</span></div>';
   h+='<div class="boda-asg-nav">';
   h+='<button class="sy-nav" id="rutWkMPrev">&#9664;</button>';
   h+='<div class="boda-asg-month">'+MN[m]+' '+y+'</div>';
@@ -404,7 +404,6 @@ function _rutWeekPick(r,opts){
   var cal=renderEvCalMonth({remaining:false});
   EV_YEAR=_y0;EV_MONTH=_m0;
   h+='<div class="rut-wpick-real">'+cal+'</div>';
-  h+='<div class="sy-note rut-week-help">'+(opts.hint||'Pulsa cualquier semana para cambiarla. Las que ya tienen un cambio guardado salen recuadradas.')+'</div>';
   h+='</div></div>';
   var back=function(){closeRutWeek();if(opts.onClose)opts.onClose();};
   abrirPanel('rutWkWrap',h,{overlay:'rutWkOv',alCerrar:back,reutilizar:true});

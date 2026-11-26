@@ -291,6 +291,7 @@ cualquier cambio visual/funcional definida el 25/10.
 
 - Por defecto, el título de cada menú o panel nuevo se centra respecto al ancho completo de su contenedor, no al espacio sobrante tras la flecha. Reutilizar `.bd-panel-header.panel-header-centered`, con columnas laterales simétricas; si hay acciones más anchas, reservar el mismo ancho en ambos lados. Preferencia de Ángel del 11/10/2026.
 - Menús minimalistas: no explicar opciones que ya se entienden por su título. Sin subtítulos, notas ni textos de ayuda bajo cada opción; si hay que elegir entre alternativas, usar un conmutador con títulos claros (por ejemplo «Solo esta semana | Desde esta semana»). Norma de Ángel del 26/11/2026.
+- Elegir color: siempre contraído con `renderColorRow(hex,prefijo,'Color')`, una fila con la muestra que despliega la paleta al tocarla; `_bindColorPicker` engancha la fila y mantiene la muestra al día. No pintar la paleta completa abierta en un formulario. Norma de Ángel del 26/11/2026.
 
 - En desplegables, reutilizar los indicadores dibujados de la aplicación (`.ev-tax-chevron` o el chevrón de `details > summary`). No usar caracteres de texto como `⌄` para representar la flecha. Preferencia de Ángel del 11/10/2026.
 - En el editor de cumpleaños, nombre y fecha comparten un panel blanco; categorías tiene su propio panel con acento suave. En la ficha, el resumen queda abierto, sin recuadro interior, y categorías conserva su panel.

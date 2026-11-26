@@ -114,6 +114,12 @@
 .ev-category-single>.ev-color-swatch.selected::after{visibility:visible}
 /* Color picker avanzado (paleta 6×8 + color libre) */
 .ev-color-picker{padding:4px 0}
+/* Color contraído: fila con muestra que despliega la paleta (renderColorRow). */
+.color-row-ficha{margin:0}
+.color-row-ficha .ev-bfila{min-height:46px}
+.color-row-swatch{display:inline-block;width:22px;height:22px;border-radius:50%;border:1px solid #0002}
+.color-row[aria-expanded="true"] .ev-tax-chevron{transform:rotate(225deg);margin-bottom:0}
+.color-row-panel{padding:4px 11px 10px;border-top:1px solid var(--border)}
 .ev-color-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:5px;margin-bottom:10px}
 .ev-color-dot{width:26px;height:26px;border-radius:50%;border:2px solid transparent;cursor:pointer;transition:transform .1s,box-shadow .1s;-webkit-tap-highlight-color:transparent}
 .ev-color-dot:hover{transform:scale(1.15)}

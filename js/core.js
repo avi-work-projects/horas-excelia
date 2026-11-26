@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v571 — Editar pareja con el formato de las fichas de Wedding Moves';
+var APP_VERSION = 'v572 — Deslizamientos sin copias solapadas y color contraído';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
@@ -15,6 +15,11 @@ function normalizeMacroBase(url){
 }
 
 // ── Swipe horizontal (umbral 50px, ignora si el gesto es más vertical) ─────
+/* Animación de deslizamiento en curso, sea del elemento que sea. Al confirmar un
+   cambio muchas vistas se repintan y el elemento con swipe se sustituye: el
+   gesto siguiente lo recibe el nuevo y debe cancelar la animación del viejo, o
+   conviven dos copias y el contenido real parpadea. */
+var SWIPE_ACTIVE_STOP=null;
 function addSwipe(el, onLeft, onRight){
   if(!el||el._swipeAdded)return;
   el._swipeAdded=true;
@@ -49,7 +54,7 @@ function addSwipe(el, onLeft, onRight){
     return false;
   }
   el.addEventListener('touchstart',function(e){
-    if(stop)stop();if(live)live.cancel();stop=null;live=null;offset=0;
+    if(stop)stop();if(live)live.cancel();if(SWIPE_ACTIVE_STOP){var prev=SWIPE_ACTIVE_STOP;SWIPE_ACTIVE_STOP=null;prev();}stop=null;live=null;offset=0;
     _sx=e.touches[0].clientX;_sy=e.touches[0].clientY;
     _skip=e.touches.length!==1||startedInScrollX(e.target)||startedInPanel(e.target);
   },{passive:true});
@@ -67,11 +72,11 @@ function addSwipe(el, onLeft, onRight){
     var dx=e.changedTouches[0].clientX-_sx;
     var dy=e.changedTouches[0].clientY-_sy;
     var commit=Math.abs(dx)>=50&&Math.abs(dx)>Math.abs(dy),change=dx<0?onLeft:onRight;
-    if(live){live.finish(commit,change);stop=live.cancel;live=null;return;}
+    if(live){live.finish(commit,change);stop=SWIPE_ACTIVE_STOP=live.cancel;live=null;return;}
     if(!commit)return;
-    stop=animateContentSwipe(resolve,dx<0?onLeft:onRight,dx<0?-1:1,offset);
+    stop=SWIPE_ACTIVE_STOP=animateContentSwipe(resolve,dx<0?onLeft:onRight,dx<0?-1:1,offset);
   },{passive:true});
-  el.addEventListener('touchcancel',function(){_skip=true;if(live){live.finish(false);stop=live.cancel;live=null;}});
+  el.addEventListener('touchcancel',function(){_skip=true;if(live){live.finish(false);stop=SWIPE_ACTIVE_STOP=live.cancel;live=null;}});
 }
 
 // ── Pulsación larga (500 ms) ─────────────────────────────────

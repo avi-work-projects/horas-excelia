@@ -17,12 +17,15 @@ function renderBodaCoupleForm(c){
   h+='</header><div class="bd-panel-body ev-fixed-form-body">';
   /* Mismo patrón que Editar clase: el nombre como campo y el resto en fichas de
      filas (etiqueta a la izquierda, valor a la derecha), con un solo acento. */
-  h+='<div class="ev-field"><label for="bodaCName">Pareja</label><input class="ev-input" id="bodaCName" type="text" maxlength="40" placeholder="Ej: Marta y Juan" value="'+(isEdit?escHtml(c.name):'')+'"></div>';
-  var wed=isEdit&&c.weddingDate?c.weddingDate:'';
-  h+='<div class="ev-bficha boda-date-ficha boda-cform-ficha">';
-  h+='<label class="ev-bfila" for="bodaCWed"><span class="ev-bfila-lbl boda-wed-lbl"><span>&#128141; Día de la boda</span><small class="boda-wed-hint" id="bodaCWedHint">'+(wed?bodaWedHint(wed):'')+'</small></span><input id="bodaCWed" type="date" value="'+wed+'"></label>';
+  /* La pareja: nombre y «Pareja futura» en la misma ficha. */
+  h+='<div class="ev-field boda-cform-group"><label for="bodaCName">Pareja</label><div class="ev-bficha boda-cform-ficha">';
+  h+='<div class="ev-bfila boda-name-row"><input class="boda-name-input" id="bodaCName" type="text" maxlength="40" placeholder="Ej: Marta y Juan" value="'+(isEdit?escHtml(c.name):'')+'"></div>';
   h+='<label class="ev-bfila" for="bodaCFuture"><span class="ev-bfila-lbl">Pareja futura</span><span class="ev-bfila-val boda-switch-cell"><input type="checkbox" role="switch" class="boda-switch" id="bodaCFuture"'+(c&&c.future?' checked':'')+'></span></label>';
-  h+='</div>';
+  h+='</div></div>';
+  /* Día de la boda: la fecha a la derecha y la cuenta atrás debajo de ella. */
+  var wed=isEdit&&c.weddingDate?c.weddingDate:'';
+  h+='<div class="ev-bficha boda-date-ficha boda-cform-ficha"><label class="ev-bfila" for="bodaCWed"><span class="ev-bfila-lbl">Día de la boda</span>'
+    +'<span class="boda-wed-val"><input id="bodaCWed" type="date" value="'+wed+'"><small class="boda-wed-hint" id="bodaCWedHint">'+(wed?bodaWedHint(wed):'')+'</small></span></label></div>';
   var selected=isEdit?bodaPackOf(c):(BODA_CONFIG.packs.find(function(p){return p.active!==false&&p.classes===4;})||BODA_CONFIG.packs.find(function(p){return p.active!==false;}));
   /* La pareja conserva sus clases contratadas mientras mantenga el mismo pack. */
   var kept=isEdit?(c.packClasses==null?c.contracted:c.packClasses):null;
@@ -36,8 +39,7 @@ function renderBodaCoupleForm(c){
   h+='<div class="ev-field"><label for="bodaCNote">Notas <span id="bodaCCnt" class="boda-cform-count">'+((isEdit&&c.note?c.note.length:0))+'/200</span></label>';
   h+='<textarea class="ev-textarea" id="bodaCNote" maxlength="200" placeholder="Notas de la pareja">'+(isEdit&&c.note?escHtml(c.note):'')+'</textarea></div>';
   /* Color: una fila con la muestra; la paleta solo se despliega al tocarla. */
-  h+='<div class="ev-bficha boda-cform-ficha"><button type="button" class="ev-bfila" id="bodaCColorRow" aria-expanded="false" aria-controls="bodaCColorPanel"><span class="ev-bfila-lbl">Color</span><span class="ev-bfila-val"><i class="boda-color-swatch" id="bodaCSwatch" style="background:'+col+'"></i><span class="ev-tax-chevron" aria-hidden="true"></span></span></button>';
-  h+='<div class="boda-color-panel" id="bodaCColorPanel" hidden>'+_renderColorPicker(col,false,false,'bodaCp')+'</div></div>';
+  h+=renderColorRow(col,'bodaCp','Color');
   h+='</div><footer class="bd-panel-footer ev-fixed-form-actions"><button class="ev-btn" id="bodaCCancel">Cancelar</button><button class="ev-btn primary" id="bodaCSave">Guardar</button></footer>';
   h+='</div></div>';
   return h;
@@ -57,10 +59,6 @@ function openBodaCoupleForm(c){
   });
   var wedIn=document.getElementById('bodaCWed');
   wedIn.addEventListener('input',function(){document.getElementById('bodaCWedHint').textContent=wedIn.value?bodaWedHint(wedIn.value):'';});
-  var colorRow=document.getElementById('bodaCColorRow'),colorPanel=document.getElementById('bodaCColorPanel'),swatch=document.getElementById('bodaCSwatch');
-  colorRow.addEventListener('click',function(){colorPanel.hidden=!colorPanel.hidden;colorRow.setAttribute('aria-expanded',String(!colorPanel.hidden));});
-  function paintSwatch(){setTimeout(function(){swatch.style.background=cp.getColor();},0);}
-  colorPanel.addEventListener('click',paintSwatch);colorPanel.addEventListener('input',paintSwatch);colorPanel.addEventListener('change',paintSwatch);
   document.getElementById('bodaCCancel').addEventListener('click',closeBodaCoupleForm);
   var del=document.getElementById('bodaCDel');
   if(del)del.addEventListener('click',function(){

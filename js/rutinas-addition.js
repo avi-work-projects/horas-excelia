@@ -20,7 +20,7 @@ function openRutAddition(r){
 }
 function rutAdditionPickWeek(r,mode){
   if(!RUT_WEEK_CAL){var d=new Date();RUT_WEEK_CAL={y:d.getFullYear(),m:d.getMonth()};}
-  _rutWeekPick(r,{hint:mode==='recover'?'Elige la semana de la clase cancelada que quieres recuperar.':'Elige la semana de la clase que quieres cancelar y recuperar.',
+  _rutWeekPick(r,{subtitle:mode==='recover'?'Semana de la clase a recuperar':'Semana de la clase a cancelar',
     onClose:function(){openRutAddition(r);},onWeek:function(wk){closeRutWeek();rutAdditionPickSession(r,mode,wk);}});
 }
 function rutAdditionPickSession(r,mode,wk){

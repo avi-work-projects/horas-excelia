@@ -181,3 +181,22 @@ test('Calendario: Hoy vuelve al mes actual y el mes se escribe con el año debaj
   await expect(page.locator('.boda-cal-month')).toHaveText('Octubre2026');
   await expect(page.locator('.boda-cal-month .sy-year-sub')).toHaveText('2026');
 });
+
+test('dos deslizamientos seguidos en el Calendario no dejan copias solapadas (v572)',async({page})=>{
+  await page.evaluate(()=>{BODA_SUBTAB='calendario';BODA_CAL_YEAR=2026;BODA_CAL_MONTH=9;refreshEvents(false);});
+  const max=await page.evaluate(async()=>{
+    let worst=0,run=true;(function tick(){if(!run)return;worst=Math.max(worst,document.querySelectorAll('.swipe-content-preview').length);requestAnimationFrame(tick);})();
+    for(const step of [-20,-20]){
+      const el=document.querySelector('#bodaCalBody'),r=el.getBoundingClientRect(),x0=r.left+r.width/2,y=r.top+60;
+      const t=x=>new Touch({identifier:1,target:el,clientX:x,clientY:y});
+      el.dispatchEvent(new TouchEvent('touchstart',{touches:[t(x0)],changedTouches:[t(x0)],bubbles:true,cancelable:true}));
+      for(let i=1;i<=10;i++){await new Promise(r=>requestAnimationFrame(r));el.dispatchEvent(new TouchEvent('touchmove',{touches:[t(x0+step*i)],changedTouches:[t(x0+step*i)],bubbles:true,cancelable:true}));}
+      el.dispatchEvent(new TouchEvent('touchend',{touches:[],changedTouches:[t(x0+step*10)],bubbles:true,cancelable:true}));
+      await new Promise(r=>setTimeout(r,90));
+    }
+    await new Promise(r=>setTimeout(r,600));run=false;return worst;
+  });
+  expect(max).toBeLessThanOrEqual(2);
+  await expect(page.locator('.boda-cal-month')).toHaveText('Diciembre2026');
+  await expect(page.locator('.swipe-content-preview')).toHaveCount(0);
+});

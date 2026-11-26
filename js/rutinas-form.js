@@ -122,7 +122,7 @@ function renderRutForm(r){
   }
   if(!locked||_ic==='gen'){
   h+='<div class="ev-field" id="rutFColorField"'+(_ic==='gen'?'':' style="display:none"')+'>'
-    +'<label>🎨 Color</label>'+_renderColorPicker(col,false,false,'rutCp')+'</div>';
+    +renderColorRow(col,'rutCp','Color')+'</div>';
   }
   if(isEdit){
     var susp=r.suspend&&r.suspend.from;
