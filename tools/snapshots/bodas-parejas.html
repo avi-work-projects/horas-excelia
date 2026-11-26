@@ -9,8 +9,7 @@
 </div>
 <div class="boda-sec">
 <div class="boda-pfilters">
-<div class="boda-filter-label">Estado de la pareja</div>
-<div class="boda-chips">
+<div class="boda-chips" role="group" aria-label="Estado de la pareja">
 <button class="boda-chip" data-pfilter="activas">Activas<b>3</b>
 </button>
 <button class="boda-chip" data-pfilter="futuras">Futuras<b>0</b>
@@ -20,13 +19,23 @@
 <button class="boda-chip active" data-pfilter="todas">Todas<b>3</b>
 </button>
 </div>
-<div class="boda-filter-label">Asignaci&oacute;n de clases <span>(opcional)</span>
+<div class="boda-pfilters-row">
+<div class="boda-chips" role="group" aria-label="Asignación de clases">
+<button class="boda-chip" data-pclasses="incompletas" aria-pressed="false">Por asignar<b>3</b>
+</button>
+<button class="boda-chip" data-pclasses="completas" aria-pressed="false">Cerradas<b>0</b>
+</button>
 </div>
-<div class="boda-chips">
-<button class="boda-chip" data-pclasses="incompletas" aria-pressed="false">Clases por asignar<b>3</b>
-</button>
-<button class="boda-chip" data-pclasses="completas" aria-pressed="false">Clases Cerradas<b>0</b>
-</button>
+<select class="ev-input boda-sort-select" id="bodaPSort" aria-label="Ordenar parejas">
+<option value="boda" selected>Boda ↑</option>
+<option value="boda-desc">Boda ↓</option>
+<option value="clase">1.ª clase ↑</option>
+<option value="clase-desc">1.ª clase ↓</option>
+<option value="az">A–Z</option>
+<option value="za">Z–A</option>
+<option value="new">Recientes</option>
+<option value="old">Antiguas</option>
+</select>
 </div>
 </div>
 <div class="boda-buscar-bar">
@@ -34,12 +43,6 @@
 <input class="bday-search-input" id="bodaPSearch" type="text" placeholder="Buscar pareja…" value="">
 </div>
 <button class="bday-io-btn io-primaria boda-create-button" id="bodaAddCouple">+ Añadir pareja</button>
-</div>
-<div class="boda-chips boda-sort-chips">
-<button class="boda-chip" data-psort="alfa">Alfabético</button>
-<button class="boda-chip" data-psort="fecha">Creación</button>
-<button class="boda-chip active" data-psort="boda">Boda ↑</button>
-<button class="boda-chip" data-psort="clase">1.ª clase</button>
 </div>
 <div class="boda-card boda-card-tap" data-cid="fx-pareja-1">
 <div class="boda-card-hd">

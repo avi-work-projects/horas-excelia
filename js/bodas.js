@@ -301,9 +301,8 @@ var BODA_HIDE_PAST = true;
 var BODA_HIDE_CLOSED = false;
 var BODA_CARD_OPEN = null;   /* id de la pareja desplegada en su tarjeta */
 var BODA_PAREJAS_SEARCH = '';
-/* null = como siempre (las mas recientes arriba). Cada chip da la vuelta:
-   A-Z -> Z-A -> sin orden. Solo puede haber una regla a la vez. */
-var BODA_PAREJAS_SORT = 'boda';   /* 'az' | 'za' | 'new' | 'old' | null */
+/* Se elige en el desplegable de Parejas (BODA_PAREJAS_SORTS); null = recientes arriba. */
+var BODA_PAREJAS_SORT = 'boda';   /* boda | boda-desc | clase | clase-desc | az | za | new | old | null */
 var BODA_PAREJAS_CLASSES = null; /* null | incompletas | completas */
 var BODA_PAREJAS_FILTER = 'activas';  /* 'incompletas' | 'todas' | 'completas' */
 var BODA_CAL_DAY = null; /* dia seleccionado para resaltar sus parejas */
@@ -313,12 +312,12 @@ var BODA_CAL_MONTH = new Date().getMonth();
 
 /* Leyenda de franjas: dos cuadraditos por franja (brazo izquierdo y derecho) */
 function _bodaLegendHtml(){
-  var h='<div class="boda-legend"><span class="boda-legend-t">Brazos de abajo del aspa (franja horaria):</span>';
+  var h='<details class="boda-legend-box"><summary>Franjas horarias</summary><div class="boda-legend">';
   BODA_SLOTS.forEach(function(s){
     h+='<span class="boda-legend-i"><i style="background:'+s.left+'"></i><i style="background:'+s.right+'"></i>'+s.label+'</span>';
   });
   h+='<span class="boda-legend-i"><i style="background:'+BODA_NO_TIME_COLOR+'"></i>sin hora</span>';
-  h+='</div>';
+  h+='</div></details>';
   return h;
 }
 
@@ -447,30 +446,35 @@ function _bodaCmpFecha(x,y,desc){
   if(!y)return -1;
   return x<y?(desc?1:-1):x>y?(desc?-1:1):0;
 }
+/* Opciones del desplegable de orden; null equivale a «Recientes». */
+var BODA_PAREJAS_SORTS=[['boda','Boda ↑'],['boda-desc','Boda ↓'],['clase','1.ª clase ↑'],['clase-desc','1.ª clase ↓'],
+  ['az','A–Z'],['za','Z–A'],['new','Recientes'],['old','Antiguas']];
+/* «Faltan» solo se pinta en rojo si la boda llega en 30 días o menos. */
+function bodaFaltaUrgente(c){
+  if(!c||!c.weddingDate)return false;
+  var dias=Math.round((new Date(c.weddingDate+'T00:00:00')-new Date(evDk(new Date())+'T00:00:00'))/86400000);
+  return dias>=0&&dias<=30;
+}
+function bodaFaltaHtml(c,falta){
+  return '<span class="boda-falta'+(bodaFaltaUrgente(c)?' urgente':'')+'">faltan '+falta+'</span>';
+}
 function _renderBodaParejas(){
-  var h='<div class="boda-pfilters"><div class="boda-filter-label">Estado de la pareja</div><div class="boda-chips">';
+  var h='<div class="boda-pfilters"><div class="boda-chips" role="group" aria-label="Estado de la pareja">';
   [['activas','Activas'],['futuras','Futuras'],['pasadas','Pasadas'],['todas','Todas']].forEach(function(o){
     var count=BODA_COUPLES.filter(function(c){return bodaMatchesDate(c,o[0]);}).length;
     h+='<button class="boda-chip'+(BODA_PAREJAS_FILTER===o[0]?' active':'')+'" data-pfilter="'+o[0]+'">'+o[1]+'<b>'+count+'</b></button>';
   });
-  h+='</div><div class="boda-filter-label">Asignaci&oacute;n de clases <span>(opcional)</span></div><div class="boda-chips">';
-  [['incompletas','Clases por asignar'],['completas','Clases Cerradas']].forEach(function(o){
+  h+='</div><div class="boda-pfilters-row"><div class="boda-chips" role="group" aria-label="Asignación de clases">';
+  [['incompletas','Por asignar'],['completas','Cerradas']].forEach(function(o){
     var count=BODA_COUPLES.filter(function(c){return bodaMatchesDate(c,BODA_PAREJAS_FILTER)&&bodaMatchesClasses(c,o[0]);}).length;
     h+='<button class="boda-chip'+(BODA_PAREJAS_CLASSES===o[0]?' active':'')+'" data-pclasses="'+o[0]+'" aria-pressed="'+(BODA_PAREJAS_CLASSES===o[0])+'">'+o[1]+'<b>'+count+'</b></button>';
   });
-  h+='</div></div>';
+  h+='</div><select class="ev-input boda-sort-select" id="bodaPSort" aria-label="Ordenar parejas">';
+  var _sel=BODA_PAREJAS_SORT||'new';
+  BODA_PAREJAS_SORTS.forEach(function(o){h+='<option value="'+o[0]+'"'+(o[0]===_sel?' selected':'')+'>'+o[1]+'</option>';});
+  h+='</select></div></div>';
   h+='<div class="boda-buscar-bar"><div class="bday-search-wrap boda-search"><input class="bday-search-input" id="bodaPSearch" type="text" '
-    +'placeholder="Buscar pareja\u2026" value="'+escHtml(BODA_PAREJAS_SEARCH)+'"></div><button class="bday-io-btn io-primaria boda-create-button" id="bodaAddCouple">+ Añadir pareja</button></div>';
-  h+='<div class="boda-chips boda-sort-chips">';
-  var _sa=(BODA_PAREJAS_SORT==='az')?' A\u2191':(BODA_PAREJAS_SORT==='za')?' Z\u2193':'';
-  var _sf=(BODA_PAREJAS_SORT==='new')?' recientes' : (BODA_PAREJAS_SORT==='old')?' antiguas' : '';
-  var _sb=(BODA_PAREJAS_SORT==='boda')?' \u2191':(BODA_PAREJAS_SORT==='boda-desc')?' \u2193':'';
-  var _sc=(BODA_PAREJAS_SORT==='clase')?' \u2191':(BODA_PAREJAS_SORT==='clase-desc')?' \u2193':'';
-  h+='<button class="boda-chip'+(_sa?' active':'')+'" data-psort="alfa">Alfab\u00e9tico'+_sa+'</button>';
-  h+='<button class="boda-chip'+(_sf?' active':'')+'" data-psort="fecha">Creaci\u00f3n'+_sf+'</button>';
-  h+='<button class="boda-chip'+(_sb?' active':'')+'" data-psort="boda">Boda'+_sb+'</button>';
-  h+='<button class="boda-chip'+(_sc?' active':'')+'" data-psort="clase">1.\u00aa clase'+_sc+'</button>';
-  h+='</div>';
+    +'placeholder="Buscar pareja…" value="'+escHtml(BODA_PAREJAS_SEARCH)+'"></div><button class="bday-io-btn io-primaria boda-create-button" id="bodaAddCouple">+ Añadir pareja</button></div>';
   var _q=BODA_PAREJAS_SEARCH.trim().toLowerCase();
   var list=BODA_COUPLES.filter(function(c){
     var p=bodaProgress(c);
@@ -497,7 +501,7 @@ function _renderBodaParejas(){
   list.forEach(function(c){
     var p=bodaProgress(c);
     var pct=p.total?Math.min(100,Math.round(p.done*100/p.total)):0;
-    var falta=p.falta>0?('<span class="boda-falta">faltan '+p.falta+'</span>')
+    var falta=p.falta>0?bodaFaltaHtml(c,p.falta)
       :(p.total&&p.done>p.total?'<span class="boda-sobra">+'+(p.done-p.total)+' extra</span>':'<span class="boda-ok">completa</span>');
     h+='<div class="boda-card boda-card-tap'+(BODA_CARD_OPEN===c.id?' abierta':'')+'" data-cid="'+c.id+'">';
     h+='<div class="boda-card-hd">';

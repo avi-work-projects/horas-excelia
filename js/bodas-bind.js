@@ -166,15 +166,8 @@ function bindBodasEvents(){
       if(el){el.focus();el.setSelectionRange(el.value.length,el.value.length);}
     },250);
   });
-  document.querySelectorAll('.boda-chip[data-psort]').forEach(function(b){
-    b.addEventListener('click',function(){
-      /* Cada chip da la vuelta: asc -> desc -> sin orden */
-      var ciclos={alfa:['az','za'],fecha:['new','old'],boda:['boda','boda-desc'],clase:['clase','clase-desc']};
-      var c=ciclos[b.dataset.psort];
-      BODA_PAREJAS_SORT=(BODA_PAREJAS_SORT===c[0])?c[1]:(BODA_PAREJAS_SORT===c[1])?null:c[0];
-      refreshEvents();
-    });
-  });
+  var sortSel=document.getElementById('bodaPSort');
+  if(sortSel)sortSel.addEventListener('change',function(){BODA_PAREJAS_SORT=sortSel.value;refreshEvents();});
   var addC=document.getElementById('bodaAddCouple');
   if(addC)addC.addEventListener('click',function(){openBodaCoupleForm(null);});
   /* Tarjeta de pareja: se despliega en su sitio y se vuelve a plegar al

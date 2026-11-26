@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v560 — Ver factura, Editar pareja y récords de Wedding Moves';
+var APP_VERSION = 'v561 — Wedding Moves más limpio: filtros, avisos y Eliminar en cabecera';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){

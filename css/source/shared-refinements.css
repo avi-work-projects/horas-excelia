@@ -55,9 +55,6 @@
 
 
 .boda-pfilters{padding:10px;border:1px solid var(--border);border-radius:12px;background:var(--surface)}
-.boda-filter-label{font-size:.65rem;font-weight:600;color:var(--text-muted);margin-bottom:6px}
-.boda-filter-label:not(:first-child){margin-top:12px}
-.boda-filter-label span{font-weight:400}
 .boda-pfilters .boda-chips{margin-bottom:0}
 
 /* Controles tactiles: mismo minimo en filtros y navegacion, sin agrandar marcadores. */

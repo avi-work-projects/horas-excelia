@@ -57,3 +57,22 @@ test('Editar pareja: interruptor de pareja futura sin textos explicativos',async
   await page.locator('#bodaCSave').click();
   await expect.poll(()=>page.evaluate(()=>BODA_COUPLES[1].future)).toBe(true);
 });
+
+test('Parejas: orden en desplegable, «faltan» rojo solo con boda cercana y Eliminar en la cabecera de la clase',async({page})=>{
+  await page.evaluate(()=>{BODA_COUPLES[1].weddingDate='2026-11-10';BODA_PAREJAS_FILTER='todas';BODA_PAREJAS_SORT='boda';BODA_SUBTAB='parejas';saveBodas();refreshEvents(false);});
+  const names=page.locator('.boda-card .boda-name');
+  await expect(names).toHaveText(['Pareja Antigua','Pareja Actual']);
+  await page.locator('#bodaPSort').selectOption('za');
+  await expect(names).toHaveText(['Pareja Antigua','Pareja Actual']);
+  await page.locator('#bodaPSort').selectOption('az');
+  await expect(names).toHaveText(['Pareja Actual','Pareja Antigua']);
+  await expect(page.locator('.boda-falta.urgente')).toHaveText('faltan 2');
+  await page.evaluate(()=>{BODA_COUPLES[1].weddingDate='2026-12-12';refreshEvents(false);});
+  await expect(page.locator('.boda-falta')).toHaveCount(1);
+  await expect(page.locator('.boda-falta.urgente')).toHaveCount(0);
+  await page.evaluate(()=>openBodaClaseForm(EVENTS.find(e=>e.id==='cl8')));
+  const header=page.locator('#bodaFormOv .boda-form-header');
+  await expect(header.locator('h2')).toHaveText('Editar clase');
+  await header.locator('#bodaFormDel').click();
+  await expect.poll(()=>page.evaluate(()=>EVENTS.some(e=>e.id==='cl8'))).toBe(false);
+});

@@ -34,10 +34,10 @@ function _renderBodaIssueCards(){
   function card(k,n,titulo,sub,tono){
     return '<button class="boda-issue'+(n?(' '+tono):' ok')+'" data-issue="'+k+'"'+(n?'':' disabled')+'>'
       +'<b>'+n+'</b><span>'+titulo+'</span>'
-      +'<em>'+(n?sub:'todo en orden')+'</em></button>';
+      +(n&&sub?'<em>'+sub+'</em>':'')+'</button>';
   }
   var h='<div class="boda-issues">';
-  h+=card('huecos',is.huecos.length,'huecos sin asignar','pulsa para asignarlos o borrarlos','tono-azul');
+  h+=card('huecos',is.huecos.length,'huecos sin asignar','','tono-azul');
   h+=card('pendientes',is.pendientes.length,'parejas pendientes',faltan+' clase'+(faltan===1?'':'s')+' por programar','tono-rojo');
   var _sinHora=0,_sinSala=0;
   is.incompletas.forEach(function(ev){
@@ -68,7 +68,7 @@ function openBodaIssue(kind){
       h+='<div class="boda-iss-row">';
       h+='<span class="boda-dot" style="background:'+c.color+'"></span>';
       h+='<span class="boda-iss-main">'+escHtml(c.name)+'<em>'+p.done+' / '+p.total+'</em></span>';
-      h+='<span class="boda-falta">faltan '+p.falta+'</span>';
+      h+=bodaFaltaHtml(c,p.falta);
       h+='<button class="boda-mini-btn" data-iss-assign="'+c.id+'" title="Asignar clases">&#128197;</button>';
       h+='</div>';
     });
@@ -156,10 +156,10 @@ function bodaStatsOverview(all){
 function renderBodaStatsOverview(s){
   var h='<section class="stats-section boda-overview" aria-label="Resumen de parejas"><header class="stats-head"><h3>Parejas</h3><button id="bodaStatsCouples" class="boda-overview-total" data-stats-couples="todas"><b>'+s.couples+'</b><span>en total →</span></button></header><div class="stats-metrics stats-metrics-three boda-overview-grid">';
   [['pasadas','Pasadas',s.past],['activas','En curso',s.active],['futuras','Próximas',s.future]].forEach(function(x){h+='<button type="button" class="stats-metric" data-stats-couples="'+x[0]+'"><b>'+x[2]+'</b><span>'+x[1]+'</span></button>';});
-  h+='</div><p class="stats-note">'+s.taught+' '+(s.taught===1?'pareja con clases impartidas':'parejas con clases impartidas')+'. Próximas: reservas marcadas como futuras.</p></section>';
+  h+='</div><p class="stats-note">'+s.taught+' '+(s.taught===1?'pareja con clases impartidas':'parejas con clases impartidas')+'</p></section>';
   h+='<section class="stats-section boda-overview" aria-label="Resumen de clases"><header class="stats-head"><h3>Clases</h3><div class="boda-overview-total"><b>'+s.total+'</b><span>registradas</span></div></header><div class="stats-metrics stats-metrics-three boda-overview-grid">';
   [['Impartidas',s.taken],['Pendientes',s.pending],['Sin pareja',s.unassigned]].forEach(function(x){h+='<div class="stats-metric"><b>'+x[1]+'</b><span>'+x[0]+'</span></div>';});
-  return h+'</div><p class="stats-note">Impartidas: con pareja y finalizadas. Pendientes: asignadas, aún sin finalizar.</p></section>';
+  return h+'</div></section>';
 }
 function _renderBodaStats(){
   var all=bodaSortClasses(bodaClasses());
@@ -184,7 +184,7 @@ function _renderBodaStats(){
   }).filter(function(r){return r.value>0;});
 
   var h=overview;
-  h+=renderStatsCard('Ritmo programado',renderStatsMetrics([[mediaSem.toFixed(1),'clases / semana'],[mediaMes.toFixed(1),'clases / mes']]),'Del '+_bodaFmt(primera)+' al '+_bodaFmt(ultima)+'. Incluye todas las clases registradas, también futuras y sin pareja.','boda-stats-pace');
+  h+=renderStatsCard('Ritmo programado',renderStatsMetrics([[bodaFmtRate(mediaSem),'clases / semana'],[bodaFmtRate(mediaMes),'clases / mes']]),'Del '+_bodaFmt(primera)+' al '+_bodaFmt(ultima),'boda-stats-pace');
   h+=renderBodaRecords(all);
   h+=renderBodaHistoryCharts(all,new Date());
   h+=renderBodaPackStats();

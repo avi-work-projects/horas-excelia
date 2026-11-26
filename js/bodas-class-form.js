@@ -26,11 +26,11 @@ function _bodaFormRender(){
   var pl=b.place;
   var h='<div class="ev-detail-overlay" id="bodaFormOv"><div class="ev-detail-sheet">';
   h+='<div class="ev-detail-handle"></div>';
-  h+='<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">';
+  h+='<header class="bd-panel-header panel-header-centered boda-form-header">';
   h+='<button class="sy-back" id="bodaFormClose">&#8592;</button>';
-  h+='<div style="flex:1;font-size:.9rem;font-weight:600;text-align:center">'
-    +(F.nuevo?'Nueva clase':'Editar clase')+'</div>';
-  h+='<div style="width:36px"></div></div>';
+  h+='<h2>'+(F.nuevo?'Nueva clase':'Editar clase')+'</h2>';
+  if(!F.nuevo)h+='<button class="ev-btn danger" id="bodaFormDel" style="flex:none;padding:6px 12px;font-size:.75rem">Eliminar</button>';
+  h+='</header>';
   var _multi=(F.dates&&F.dates.length)?F.dates.slice().sort():null;
   h+='<div class="ev-bficha boda-date-ficha"><label class="ev-bfila"><span class="ev-bfila-lbl">\ud83d\udcc5 Día del ensayo</span>';
 
@@ -61,7 +61,6 @@ function _bodaFormRender(){
   h+='<button type="button" class="ev-bfila" id="bodaFormTeachers"><span class="ev-bfila-lbl">Profesores</span><span class="ev-bfila-val">'+bodaTeachersLabel(b.teachers)+'</span></button>';
   h+='<button type="button" class="ev-bfila" id="bodaFormDuration"><span class="ev-bfila-lbl">Duración</span><span class="ev-bfila-val">'+b.duration+' min</span></button></div>';
   h+='<div class="ev-detail-actions">';
-  if(!F.nuevo)h+='<button class="ev-btn danger" id="bodaFormDel">Eliminar</button>';
   h+='<button class="ev-btn primary" id="bodaFormSave">Guardar</button>';
   h+='</div>';
   h+='</div></div>';
