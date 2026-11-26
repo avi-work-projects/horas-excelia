@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v568 — Calendario de Wedding Moves con Hoy y textos más claros';
+var APP_VERSION = 'v569 — Selector de planes compacto y símbolos corregidos';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){

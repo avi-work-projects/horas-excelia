@@ -1,5 +1,12 @@
 # Mapa visual de Gestify
 
+v569 (26/11/2026). El [selector compacto](captures/plan-picker.png)
+reduce las tarjetas a 72 px y agrupa celebraciones, juegos y deportes junto a
+exterior. Se corrigen cuatro iconos recortados, Fiesta usa un gorro con confeti
+y Hacer deporte conserva recipiente y rayo sin asa. Solo se renuevan los tres
+estados de este menú y sus láminas; las imágenes nuevas quedan pendientes de
+revisión de Ángel. Las referencias de v559 descritas debajo son históricas.
+
 v559. El [selector](captures/plan-picker.png) muestra la interrogación de Sorpresa
 y «Ir a casa de» con una casa. Las [opciones inferiores](captures/plan-picker-new-plans.png)
 incluyen «Hacer deporte»; el [estado romántico](captures/plan-picker-romantic.png)

@@ -1,8 +1,8 @@
 {
   "schemaVersion": 2,
   "title": "Gestify · mapa visual",
-  "generatedAt": "2026-11-26T12:05:04.807Z",
-  "referenceCommit": "dfec87899e32aff4854d829c40f56a31b5954ebb",
+  "generatedAt": "2026-11-26T12:21:08.570Z",
+  "referenceCommit": "e17f7491677298e1c436e51b1df5767c5eca5df2",
   "date": "2026-08-21T10:00:00+02:00",
   "viewport": {
     "width": 400,
@@ -8952,7 +8952,7 @@
       ],
       "region": "#evPlanPickerOv .ev-plan-options",
       "image": "captures/plan-picker.png",
-      "imageHash": "2a7bec044457cbc1aca7e693cea6a8f4f32d443bd7a49d4125d7c51f527b4617",
+      "imageHash": "23827ccded1230dd21af9ca9a8c95ac9155596a369edb41d1b1a6edcf45573f1",
       "anchors": {
         "plan-picker-new-plans": {
           "x": 370,
@@ -8971,7 +8971,7 @@
       "dependencies": [
         {
           "file": "index.html",
-          "hash": "6f811d259bc8b1b1efcfcf488f3a5d265acd7280e57530eaea32da28e0dee149"
+          "hash": "09ac87933ec05a956418d68d2e3545b4f5456ce33eb8c16136cf54919a03042c"
         },
         {
           "file": "js/nav-icons.js",
@@ -8980,7 +8980,7 @@
         {
           "file": "js/core.js",
           "part": "core-runtime",
-          "hash": "cf0adf093b04cb625864280ca6355e946dc89063307e5116d80ec3c59805d3cb"
+          "hash": "270a79e6bd6c7a10cfbc62a6d47a38e1af91d082fd5d99078980b4391d8c9579"
         },
         {
           "file": "js/data-integrity.js",
@@ -8996,7 +8996,7 @@
         },
         {
           "file": "css/source/base.css",
-          "hash": "76192f32c58655ef3f58b9d2464020845fe85d70447300a360fc5fa80caaed4b"
+          "hash": "b3339a2b388140a7f034d30838bcdebe79a91b3c3899a2c0731e9edd3801e1c7"
         },
         {
           "file": "css/source/navigation-controls.css",
@@ -9012,7 +9012,7 @@
         },
         {
           "file": "css/source/event-calendar.css",
-          "hash": "4e3ad557e1163941e9c90a58ba6e88f004155202dbdef369cc070adb52ee8912"
+          "hash": "ff359e29018b9020f3d1d402e7f140f94b54157bab364c056a0588c54f5dd4f4"
         },
         {
           "file": "css/source/navigation-alarms.css",
@@ -9020,7 +9020,7 @@
         },
         {
           "file": "css/source/event-panels.css",
-          "hash": "0fbf3071bb0e85df489e7a697165ed0f900ba9ca7d60f6fecb7a4da71374ebb1"
+          "hash": "33c329e05c9563811b90011372baf2f45bd7c7ca954e2ddc01064d25c228453c"
         },
         {
           "file": "css/source/dialogs-responsive.css",
@@ -9028,23 +9028,23 @@
         },
         {
           "file": "css/source/wedding-moves.css",
-          "hash": "5b43e0e0a12fb300f91f7f493ec6b55868daa63844184bf44d7df40a0bd2ed9a"
+          "hash": "6287c90bdfe18d4fc9539d10fcb1f3c17cd94f096632685c6dc9237813031ff2"
         },
         {
           "file": "css/source/routines.css",
-          "hash": "43b1089a41b86a4bf8f03383befef13171eae05beabf4ae35a37ee7e746d2e9e"
+          "hash": "966063d9d1e6cabd64209deef8d15609e36c5462d1bbb5892f3756323108f274"
         },
         {
           "file": "css/source/shared-refinements.css",
-          "hash": "734db873b39c183e1fe8acca32b6150c34901acd36c274065e85c09ecfe1acef"
+          "hash": "e82d7b0a77acb66030f9a9b0766d071af7e04fe46d0d25505348fd85392297c1"
         },
         {
           "file": "css/source/home-sharing.css",
-          "hash": "8d2556639e8223d19d2670108fb6d7cebf353e25c2b4561bed3bdcf33d48f001"
+          "hash": "7c9b08e516a182e15beef9a45ce4755377a23d1bcdfd0c6bbaf3ba28330e6e12"
         },
         {
           "file": "css/source/energy-refinements.css",
-          "hash": "ad85d3b26f5f8df5ee36ff93be1fc959a75319d21835eb64572b248eb8e89965"
+          "hash": "3f8fcdea508f0e30361069c4ac096cfca544deebb91d586745c773843d7f0d93"
         },
         {
           "file": "css/source/home-reminders.css",
@@ -9056,7 +9056,7 @@
         },
         {
           "file": "css/source/home-status.css",
-          "hash": "ce05d6d8c773b5469b79234aea1904b90a46b633172f6743b0e206b53c577499"
+          "hash": "c986cbaf604cec2e65dde5952c147d377fb385a66691736b19bffdd7dc4a6d6c"
         },
         {
           "file": "css/source/invoices-calendar.css",
@@ -9076,7 +9076,7 @@
         },
         {
           "file": "js/home-week-actions.js",
-          "hash": "11fea26112f37e6a41f54e84d3293a041b91a5bf12d0eca5cfca2f27309e2421"
+          "hash": "79a34ab8728a245b3899524b6c035195267098ee6fe0e23a717c9efec16e8802"
         },
         {
           "file": "js/events-cal.js",
@@ -9112,7 +9112,7 @@
         },
         {
           "file": "js/events-plan-picker.js",
-          "hash": "c35ed477262fd9a5bf5cac6d0bc8b96a7e4f605f6eb7efde7dd4801b24ec9d2f"
+          "hash": "a229eda10712fb4231178c56b146aa3e33a5a302ea099a0223b446995a66b0fd"
         },
         {
           "file": "tools/visual-map/capture.cjs",
@@ -9121,11 +9121,11 @@
         {
           "file": "tools/visual-map/catalog.cjs",
           "part": "scene:plan-picker",
-          "hash": "e663a945b8ca3de00859d89cf2cf393259790f392106ea206cdf7c97d2ef8456"
+          "hash": "83ff9e10f62d86935fb1db4e9945da0d82c3b616246b88ac0b58c68bf3d13a85"
         }
       ],
       "dependencyVersion": 2,
-      "commit": "b7403b4c66ce7b63f4fbb70bddd7bd0bc0e1d393",
+      "commit": "e17f7491677298e1c436e51b1df5767c5eca5df2",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -9144,11 +9144,11 @@
         "plan-picker-new-plans",
         "plan-picker-romantic"
       ],
-      "fresh": false
+      "fresh": true
     },
     {
       "id": "plan-picker-new-plans",
-      "title": "Planes · nuevas opciones",
+      "title": "Planes · juegos, exterior y deporte",
       "group": "Eventos",
       "route": [
         "#eventsBtn",
@@ -9168,13 +9168,13 @@
       ],
       "region": "#evPlanPickerOv .ev-plan-options",
       "image": "captures/plan-picker-new-plans.png",
-      "imageHash": "8f63ce167bf76417434dd73bf0c954976d124573e8dff01c63858e429350bd02",
+      "imageHash": "b2afb0ca9bfff14e8b336ec610ec30c646da70e03be7c899b8684333f408119d",
       "anchors": {},
       "entryBox": null,
       "dependencies": [
         {
           "file": "index.html",
-          "hash": "6f811d259bc8b1b1efcfcf488f3a5d265acd7280e57530eaea32da28e0dee149"
+          "hash": "09ac87933ec05a956418d68d2e3545b4f5456ce33eb8c16136cf54919a03042c"
         },
         {
           "file": "js/nav-icons.js",
@@ -9183,7 +9183,7 @@
         {
           "file": "js/core.js",
           "part": "core-runtime",
-          "hash": "cf0adf093b04cb625864280ca6355e946dc89063307e5116d80ec3c59805d3cb"
+          "hash": "270a79e6bd6c7a10cfbc62a6d47a38e1af91d082fd5d99078980b4391d8c9579"
         },
         {
           "file": "js/data-integrity.js",
@@ -9199,7 +9199,7 @@
         },
         {
           "file": "css/source/base.css",
-          "hash": "76192f32c58655ef3f58b9d2464020845fe85d70447300a360fc5fa80caaed4b"
+          "hash": "b3339a2b388140a7f034d30838bcdebe79a91b3c3899a2c0731e9edd3801e1c7"
         },
         {
           "file": "css/source/navigation-controls.css",
@@ -9215,7 +9215,7 @@
         },
         {
           "file": "css/source/event-calendar.css",
-          "hash": "4e3ad557e1163941e9c90a58ba6e88f004155202dbdef369cc070adb52ee8912"
+          "hash": "ff359e29018b9020f3d1d402e7f140f94b54157bab364c056a0588c54f5dd4f4"
         },
         {
           "file": "css/source/navigation-alarms.css",
@@ -9223,7 +9223,7 @@
         },
         {
           "file": "css/source/event-panels.css",
-          "hash": "0fbf3071bb0e85df489e7a697165ed0f900ba9ca7d60f6fecb7a4da71374ebb1"
+          "hash": "33c329e05c9563811b90011372baf2f45bd7c7ca954e2ddc01064d25c228453c"
         },
         {
           "file": "css/source/dialogs-responsive.css",
@@ -9231,23 +9231,23 @@
         },
         {
           "file": "css/source/wedding-moves.css",
-          "hash": "5b43e0e0a12fb300f91f7f493ec6b55868daa63844184bf44d7df40a0bd2ed9a"
+          "hash": "6287c90bdfe18d4fc9539d10fcb1f3c17cd94f096632685c6dc9237813031ff2"
         },
         {
           "file": "css/source/routines.css",
-          "hash": "43b1089a41b86a4bf8f03383befef13171eae05beabf4ae35a37ee7e746d2e9e"
+          "hash": "966063d9d1e6cabd64209deef8d15609e36c5462d1bbb5892f3756323108f274"
         },
         {
           "file": "css/source/shared-refinements.css",
-          "hash": "734db873b39c183e1fe8acca32b6150c34901acd36c274065e85c09ecfe1acef"
+          "hash": "e82d7b0a77acb66030f9a9b0766d071af7e04fe46d0d25505348fd85392297c1"
         },
         {
           "file": "css/source/home-sharing.css",
-          "hash": "8d2556639e8223d19d2670108fb6d7cebf353e25c2b4561bed3bdcf33d48f001"
+          "hash": "7c9b08e516a182e15beef9a45ce4755377a23d1bcdfd0c6bbaf3ba28330e6e12"
         },
         {
           "file": "css/source/energy-refinements.css",
-          "hash": "ad85d3b26f5f8df5ee36ff93be1fc959a75319d21835eb64572b248eb8e89965"
+          "hash": "3f8fcdea508f0e30361069c4ac096cfca544deebb91d586745c773843d7f0d93"
         },
         {
           "file": "css/source/home-reminders.css",
@@ -9259,7 +9259,7 @@
         },
         {
           "file": "css/source/home-status.css",
-          "hash": "ce05d6d8c773b5469b79234aea1904b90a46b633172f6743b0e206b53c577499"
+          "hash": "c986cbaf604cec2e65dde5952c147d377fb385a66691736b19bffdd7dc4a6d6c"
         },
         {
           "file": "css/source/invoices-calendar.css",
@@ -9279,7 +9279,7 @@
         },
         {
           "file": "js/home-week-actions.js",
-          "hash": "11fea26112f37e6a41f54e84d3293a041b91a5bf12d0eca5cfca2f27309e2421"
+          "hash": "79a34ab8728a245b3899524b6c035195267098ee6fe0e23a717c9efec16e8802"
         },
         {
           "file": "js/events-cal.js",
@@ -9315,7 +9315,7 @@
         },
         {
           "file": "js/events-plan-picker.js",
-          "hash": "c35ed477262fd9a5bf5cac6d0bc8b96a7e4f605f6eb7efde7dd4801b24ec9d2f"
+          "hash": "a229eda10712fb4231178c56b146aa3e33a5a302ea099a0223b446995a66b0fd"
         },
         {
           "file": "tools/visual-map/capture.cjs",
@@ -9328,10 +9328,10 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "b7403b4c66ce7b63f4fbb70bddd7bd0bc0e1d393",
+      "commit": "e17f7491677298e1c436e51b1df5767c5eca5df2",
       "review": "Sin revisar",
       "verifiedEdges": [],
-      "fresh": false
+      "fresh": true
     },
     {
       "id": "plan-picker-romantic",
@@ -9354,13 +9354,12 @@
       ],
       "region": "#evPlanPickerOv .ev-plan-options",
       "image": "captures/plan-picker-romantic.png",
-      "imageHash": "deecc260fa678b5d5d175baf680377377788b02d4147bd71506aab86a930fdad",
       "anchors": {},
       "entryBox": null,
       "dependencies": [
         {
           "file": "index.html",
-          "hash": "6f811d259bc8b1b1efcfcf488f3a5d265acd7280e57530eaea32da28e0dee149"
+          "hash": "09ac87933ec05a956418d68d2e3545b4f5456ce33eb8c16136cf54919a03042c"
         },
         {
           "file": "js/nav-icons.js",
@@ -9369,7 +9368,7 @@
         {
           "file": "js/core.js",
           "part": "core-runtime",
-          "hash": "cf0adf093b04cb625864280ca6355e946dc89063307e5116d80ec3c59805d3cb"
+          "hash": "270a79e6bd6c7a10cfbc62a6d47a38e1af91d082fd5d99078980b4391d8c9579"
         },
         {
           "file": "js/data-integrity.js",
@@ -9385,7 +9384,7 @@
         },
         {
           "file": "css/source/base.css",
-          "hash": "76192f32c58655ef3f58b9d2464020845fe85d70447300a360fc5fa80caaed4b"
+          "hash": "b3339a2b388140a7f034d30838bcdebe79a91b3c3899a2c0731e9edd3801e1c7"
         },
         {
           "file": "css/source/navigation-controls.css",
@@ -9401,7 +9400,7 @@
         },
         {
           "file": "css/source/event-calendar.css",
-          "hash": "4e3ad557e1163941e9c90a58ba6e88f004155202dbdef369cc070adb52ee8912"
+          "hash": "ff359e29018b9020f3d1d402e7f140f94b54157bab364c056a0588c54f5dd4f4"
         },
         {
           "file": "css/source/navigation-alarms.css",
@@ -9409,7 +9408,7 @@
         },
         {
           "file": "css/source/event-panels.css",
-          "hash": "0fbf3071bb0e85df489e7a697165ed0f900ba9ca7d60f6fecb7a4da71374ebb1"
+          "hash": "33c329e05c9563811b90011372baf2f45bd7c7ca954e2ddc01064d25c228453c"
         },
         {
           "file": "css/source/dialogs-responsive.css",
@@ -9417,23 +9416,23 @@
         },
         {
           "file": "css/source/wedding-moves.css",
-          "hash": "5b43e0e0a12fb300f91f7f493ec6b55868daa63844184bf44d7df40a0bd2ed9a"
+          "hash": "6287c90bdfe18d4fc9539d10fcb1f3c17cd94f096632685c6dc9237813031ff2"
         },
         {
           "file": "css/source/routines.css",
-          "hash": "43b1089a41b86a4bf8f03383befef13171eae05beabf4ae35a37ee7e746d2e9e"
+          "hash": "966063d9d1e6cabd64209deef8d15609e36c5462d1bbb5892f3756323108f274"
         },
         {
           "file": "css/source/shared-refinements.css",
-          "hash": "734db873b39c183e1fe8acca32b6150c34901acd36c274065e85c09ecfe1acef"
+          "hash": "e82d7b0a77acb66030f9a9b0766d071af7e04fe46d0d25505348fd85392297c1"
         },
         {
           "file": "css/source/home-sharing.css",
-          "hash": "8d2556639e8223d19d2670108fb6d7cebf353e25c2b4561bed3bdcf33d48f001"
+          "hash": "7c9b08e516a182e15beef9a45ce4755377a23d1bcdfd0c6bbaf3ba28330e6e12"
         },
         {
           "file": "css/source/energy-refinements.css",
-          "hash": "ad85d3b26f5f8df5ee36ff93be1fc959a75319d21835eb64572b248eb8e89965"
+          "hash": "3f8fcdea508f0e30361069c4ac096cfca544deebb91d586745c773843d7f0d93"
         },
         {
           "file": "css/source/home-reminders.css",
@@ -9445,7 +9444,7 @@
         },
         {
           "file": "css/source/home-status.css",
-          "hash": "ce05d6d8c773b5469b79234aea1904b90a46b633172f6743b0e206b53c577499"
+          "hash": "c986cbaf604cec2e65dde5952c147d377fb385a66691736b19bffdd7dc4a6d6c"
         },
         {
           "file": "css/source/invoices-calendar.css",
@@ -9465,7 +9464,7 @@
         },
         {
           "file": "js/home-week-actions.js",
-          "hash": "11fea26112f37e6a41f54e84d3293a041b91a5bf12d0eca5cfca2f27309e2421"
+          "hash": "79a34ab8728a245b3899524b6c035195267098ee6fe0e23a717c9efec16e8802"
         },
         {
           "file": "js/events-cal.js",
@@ -9501,11 +9500,11 @@
         },
         {
           "file": "js/events-plan-picker.js",
-          "hash": "c35ed477262fd9a5bf5cac6d0bc8b96a7e4f605f6eb7efde7dd4801b24ec9d2f"
+          "hash": "a229eda10712fb4231178c56b146aa3e33a5a302ea099a0223b446995a66b0fd"
         },
         {
           "file": "js/events-picker-color.js",
-          "hash": "0f420a8b538d47bfeea68e4f6ac5a9ac838a605251ab3d3dc4eb993f37ae79bb"
+          "hash": "bc260d339700805035c3ec90fbe6a50c6e27c8f266c1a4f18401b0dca1e52351"
         },
         {
           "file": "tools/visual-map/capture.cjs",
@@ -9518,10 +9517,11 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "b7403b4c66ce7b63f4fbb70bddd7bd0bc0e1d393",
-      "review": "Sin revisar",
+      "commit": "e17f7491677298e1c436e51b1df5767c5eca5df2",
       "verifiedEdges": [],
-      "fresh": false
+      "imageHash": "34cddfdcd4cf4f018739d472cbbd4ec2a8ec295267e40857ed58f27f85031335",
+      "review": "Sin revisar",
+      "fresh": true
     },
     {
       "id": "weddings",
@@ -10189,6 +10189,7 @@
         "js/bodas-bind.js"
       ],
       "image": "captures/wedding-calendar.png",
+      "imageHash": "291a143ad1404cda0b31bb13ef7cc70567846299673daa75bd23ffe6a0a68d63",
       "anchors": {},
       "entryBox": null,
       "dependencies": [
@@ -10353,8 +10354,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "dfec87899e32aff4854d829c40f56a31b5954ebb",
-      "verifiedEdges": [],
-      "imageHash": "291a143ad1404cda0b31bb13ef7cc70567846299673daa75bd23ffe6a0a68d63",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -10369,7 +10368,8 @@
           }
         }
       ],
-      "fresh": true
+      "verifiedEdges": [],
+      "fresh": false
     },
     {
       "id": "wedding-stats",
@@ -33574,7 +33574,7 @@
       "from": "plan-picker",
       "to": "plan-picker-new-plans",
       "selector": "#evPlanPickerOv .ev-plan-options",
-      "label": "Deslizar · nuevos planes",
+      "label": "Deslizar · exterior y deporte",
       "view": "area",
       "action": "scroll",
       "step": {
@@ -35582,7 +35582,7 @@
     },
     {
       "group": "Eventos",
-      "title": "Planes · nuevas opciones",
+      "title": "Planes · juegos, exterior y deporte",
       "file": "js/events-plan-picker.js",
       "scene": "plan-picker-new-plans",
       "status": "Capturada · Sin revisar"

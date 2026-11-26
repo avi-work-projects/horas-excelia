@@ -8,7 +8,7 @@ for(const width of [320,400,440])test('Cinco planes nuevos, bailar renombrado y 
  await page.setViewportSize({width,height:880});await page.locator('#evAdd').click();await page.locator('[data-picker="plans"]').click();
  await expect(page.locator('#evPlanPickerOv [data-type="Salir a bailar"]')).toHaveCount(1);await expect(page.locator('#evPlanPickerOv [data-type="Baile"]')).toHaveCount(0);
  for(const type of ['Fiesta','Plan exterior','Navidad','Torneo','Fútbol']){
-  const option=page.locator('#evPlanPickerOv [data-type="'+type+'"]');await option.scrollIntoViewIfNeeded();await expect(option).toBeInViewport();await expect(option.locator('svg')).toHaveCount(1);expect((await option.boundingBox()).height).toBeGreaterThanOrEqual(80);await option.click();await page.locator('#evPlanConfirm').click();
+  const option=page.locator('#evPlanPickerOv [data-type="'+type+'"]');await option.scrollIntoViewIfNeeded();await expect(option).toBeInViewport();await expect(option.locator('svg')).toHaveCount(1);expect((await option.boundingBox()).height).toBeGreaterThanOrEqual(72);await option.click();await page.locator('#evPlanConfirm').click();
   await expect(page.locator('#evFTitle')).toHaveValue(type);await expect(page.locator('.ev-kind-picker')).toHaveAttribute('data-cur-type',type);await page.locator('[data-picker="plans"]').click();
  }
  await page.locator('#evPlanPickerOv [data-type="Fútbol"]').scrollIntoViewIfNeeded();await page.screenshot({path:info.outputPath('planes-nuevos-'+width+'.png'),animations:'disabled'});
@@ -116,6 +116,26 @@ for(const width of [320,400,440])test('Interrogación, Ir a casa de y Hacer depo
  await page.locator('#evFSave').click();await expect(page.locator('#evFWrap')).toHaveCount(0);
  await page.reload();expect(await page.evaluate(()=>EVENTS.find(ev=>ev.type==='Hacer deporte'))).toMatchObject({title:'Hacer deporte',romantic:true});
 });
+test('los símbolos corregidos caben completos dentro del marco del marcador',async({page})=>{
+ await page.locator('#evAdd').click();await page.locator('[data-picker="plans"]').click();
+ for(const type of ['Desayunar','¡Sorpresa!','Cine','Boda','Fiesta','Hacer deporte']){
+  const pixels=await page.locator('#evPlanPickerOv [data-type="'+type+'"] svg').evaluate(async original=>{
+   const svg=original.cloneNode(true),nodes=[original,...original.querySelectorAll('*')],copies=[svg,...svg.querySelectorAll('*')];
+   nodes.forEach((node,i)=>{const style=getComputedStyle(node);for(const key of ['fill','stroke','stroke-width','color'])copies[i].style.setProperty(key,style.getPropertyValue(key));});
+   // Ampliar el marco revela cualquier trazo que el SVG habitual recortaría.
+   svg.setAttribute('viewBox','-12 -12 24 24');svg.setAttribute('width','240');svg.setAttribute('height','240');
+   const image=new Image(),url=URL.createObjectURL(new Blob([new XMLSerializer().serializeToString(svg)],{type:'image/svg+xml'}));
+   try{
+    image.src=url;await image.decode();const canvas=document.createElement('canvas');canvas.width=canvas.height=240;
+    const ctx=canvas.getContext('2d');ctx.drawImage(image,0,0);const data=ctx.getImageData(0,0,240,240).data;let outside=0,painted=0;
+    for(let y=0;y<240;y++)for(let x=0;x<240;x++)if(data[(y*240+x)*4+3]){painted++;if(x<20||x>=220||y<20||y>=220)outside++;}
+    return {outside,painted};
+   }finally{URL.revokeObjectURL(url);}
+  });
+  expect(pixels.painted,type).toBeGreaterThan(100);expect(pixels.outside,type).toBe(0);
+ }
+});
+
 test('Copas antiguo conserva datos, corazón y orden al convertirse en Ir a casa de',async({page})=>{
  const legacy={id:'old-copas',kind:'puntual',type:'Copas',title:'Visita a una amiga',note:'Conservar',start:'2026-08-22',end:'2026-08-22',time:'22:30',color:'#9f62bc',romantic:true};
  const order=[{type:'Copas',time:'21:45'},{type:'Cena',time:'23:00'}];

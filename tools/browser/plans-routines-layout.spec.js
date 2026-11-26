@@ -46,14 +46,20 @@ test('arrastre cancelado y teclado mantienen el borrador y Guardar explícito',a
  await grip.focus();await page.keyboard.press('ArrowUp');expect(await page.locator('.ev-order-row').first().getAttribute('data-order-type')).toBe('Desayunar');expect(await page.evaluate(()=>appStorage.getItem(EV_PLAN_ORDER_KEY))).toBeNull();
  await page.locator('#evOrderClose').click();await expect(page.locator('#evPlanOrderWrap')).toHaveCount(0);await page.locator('#evUpcomingOrder').click();expect(await page.locator('.ev-order-row').first().getAttribute('data-order-type')).toBe('Montaña');
 });
-test('planes ampliados: orden visual, scroll interior y actividades sin marco',async({page},info)=>{
+test('planes compactos: grupos contiguos, scroll interior y actividades sin marco',async({page},info)=>{
  await page.locator('#evAdd').click();
  for(const width of [320,400,440]){
   await page.setViewportSize({width,height:800});await page.locator('[data-picker="plans"]').click();
   expect((await page.locator('.ev-plan-options [data-type]').evaluateAll(els=>els.map(el=>el.dataset.type))).slice(0,8)).toEqual(['Comida','Tomar algo','Cena','Barbacoa','Desayunar','Brunch','Merendar','Cumpleaños']);
-  expect(await page.locator('.ev-plan-options [data-type]').evaluateAll(es=>[es[11].dataset.type,es[15].dataset.type,es[22].dataset.type])).toEqual(['Salir a bailar','Cine','Ping pong']);
-  for(const type of ['Salir a Correr','Pádel','Salir a bailar']){const option=page.locator('#evPlanPickerOv [data-type="'+type+'"]');await option.scrollIntoViewIfNeeded();await expect(option).toBeInViewport();expect((await option.boundingBox()).height).toBeGreaterThanOrEqual(80);}
-  expect(await page.locator('.ev-plan-options').evaluate(el=>el.scrollHeight-el.clientHeight)).toBeGreaterThan(1);await expect(page.locator('#evPlanConfirm')).toBeInViewport();
+  const types=await page.locator('.ev-plan-options [data-type]').evaluateAll(es=>es.map(el=>el.dataset.type));
+  for(const group of [['Navidad','Fiesta','Boda'],['Juegos de mesa','Torneo'],['Montaña','Plan exterior','Salir a Correr','Carrera','Pádel','Ping pong','Fútbol','Hacer deporte']])expect(types.slice(types.indexOf(group[0]),types.indexOf(group[0])+group.length)).toEqual(group);
+  await expect(page.locator('#evPlanPickerOv')).toHaveClass(/open/);await expect(page.locator('.ev-plan-sheet')).toBeVisible();
+  await page.locator('.ev-plan-sheet').evaluate(el=>Promise.all(el.getAnimations().map(a=>a.finished)));
+  const frame=await page.locator('.ev-plan-sheet').boundingBox(),footer=await page.locator('.ev-plan-footer').boundingBox();
+  const layout=await page.locator('.ev-plan-options').evaluate(el=>{const r=el.getBoundingClientRect();return {visible:[...el.querySelectorAll('button')].filter(b=>{const box=b.getBoundingClientRect();return box.top>=r.top&&box.bottom<=r.bottom;}).length,overflow:el.scrollWidth-el.clientWidth,clipped:[...el.querySelectorAll('.ev-type-name')].some(label=>label.scrollWidth>label.clientWidth+1||label.scrollHeight>label.clientHeight+1)};});
+  expect(layout.visible).toBeGreaterThanOrEqual(20);expect(layout.overflow).toBe(0);expect(layout.clipped).toBe(false);
+  for(const type of ['Salir a Correr','Pádel','Salir a bailar']){const option=page.locator('#evPlanPickerOv [data-type="'+type+'"]');await option.scrollIntoViewIfNeeded();await expect(option).toBeInViewport();expect((await option.boundingBox()).height).toBeGreaterThanOrEqual(72);expect((await option.boundingBox()).height).toBeLessThan(80);}
+  expect(await page.locator('.ev-plan-options').evaluate(el=>el.scrollHeight-el.clientHeight)).toBeGreaterThan(1);await expect(page.locator('#evPlanConfirm')).toBeInViewport();expect(await page.locator('.ev-plan-sheet').boundingBox()).toEqual(frame);expect(await page.locator('.ev-plan-footer').boundingBox()).toEqual(footer);
   for(const type of ['Pádel','Salir a bailar'])await expect(page.locator('#evPlanPickerOv [data-type="'+type+'"] svg>rect[fill="#fff"]')).toHaveCount(0);
   await page.screenshot({path:info.outputPath('planes-'+width+'.png'),animations:'disabled'});await page.locator('#evPlanCancel').click();await expect(page.locator('#evPlanPickerWrap')).toHaveCount(0);
  }
