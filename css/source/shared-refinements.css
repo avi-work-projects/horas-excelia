@@ -145,8 +145,8 @@ button.action-edit.active,button.action-edit:active{background:rgba(251,146,60,.
 
 .boda-cfg-section-head>.ev-io-btn{flex:0 0 auto}
 
-.boda-date-ficha #bodaFormDia{flex:1;min-width:0;width:0;text-align:right;font-weight:700;border:0;background:transparent;padding:0;color:var(--text);font-size:.78rem}
-.boda-date-ficha #bodaFormDia::-webkit-datetime-edit{text-align:right}
+.boda-date-ficha input[type="date"]{flex:1;min-width:0;width:0;text-align:right;font-weight:700;border:0;background:transparent;padding:0;color:var(--text);font-size:.78rem}
+.boda-date-ficha input[type="date"]::-webkit-datetime-edit{text-align:right}
 .boda-date-ficha .boda-multi-btn{margin:0 10px 10px;max-width:calc(100% - 20px)}
 #bodaTeachersOv #bodaTeacherName{margin-top:12px}
 
@@ -160,10 +160,10 @@ button.action-edit.active,button.action-edit:active{background:rgba(251,146,60,.
 .bday-hdr-sub .ev-view-toggle:not(.active){color:var(--birthday-tone);border-color:var(--birthday-tone);background:color-mix(in srgb,var(--birthday-tone) 8%,transparent)}
 .bday-hdr-sub .ev-view-toggle.active{color:var(--birthday-tone)!important;border-color:var(--birthday-tone)!important;background:color-mix(in srgb,var(--birthday-tone) 17%,transparent)!important}
 
-.boda-date-ficha #bodaFormDia{margin-left:auto;flex:0 1 146px;width:146px;max-width:50%}
-.boda-date-ficha #bodaFormDia::-webkit-date-and-time-value{text-align:right}
-.boda-date-ficha #bodaFormDia::-webkit-datetime-edit{padding:0;text-align:right;display:inline-flex;justify-content:flex-end}
-.boda-date-ficha #bodaFormDia::-webkit-calendar-picker-indicator{margin-left:4px;padding:0}
+.boda-date-ficha input[type="date"]{margin-left:auto;flex:0 1 146px;width:146px;max-width:50%}
+.boda-date-ficha input[type="date"]::-webkit-date-and-time-value{text-align:right}
+.boda-date-ficha input[type="date"]::-webkit-datetime-edit{padding:0;text-align:right;display:inline-flex;justify-content:flex-end}
+.boda-date-ficha input[type="date"]::-webkit-calendar-picker-indicator{margin-left:4px;padding:0}
 
 /* Text edits retain the solid orange; only standalone pencils use a tint. */
 button.action-edit.action-edit-text,button.settings-edit-btn,button.hip-edit-btn,button.bday-vip-edit-btn:not(.active){background:#fb923c!important;color:#fff!important;border-color:#fb923c!important}

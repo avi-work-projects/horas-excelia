@@ -8,49 +8,62 @@
 <button class="ev-btn danger" id="bodaCDel" style="flex:none;padding:6px 12px;font-size:.75rem">Eliminar</button>
 </header>
 <div class="bd-panel-body ev-fixed-form-body">
-<div class="boda-cform-name">
 <div class="ev-field">
 <label for="bodaCName">Pareja</label>
 <input class="ev-input" id="bodaCName" type="text" maxlength="40" placeholder="Ej: Marta y Juan" value="Pareja Uno">
 </div>
-<label class="boda-future-toggle" for="bodaCFuture">
-<span>Futura</span>
-<input type="checkbox" role="switch" class="boda-switch" id="bodaCFuture" aria-label="Pareja futura">
+<div class="ev-bficha boda-date-ficha boda-cform-ficha">
+<label class="ev-bfila" for="bodaCWed">
+<span class="ev-bfila-lbl boda-wed-lbl">
+<span>&#128141; Día de la boda</span>
+<small class="boda-wed-hint" id="bodaCWedHint">en 50 días</small>
+</span>
+<input id="bodaCWed" type="date" value="2026-10-10">
+</label>
+<label class="ev-bfila" for="bodaCFuture">
+<span class="ev-bfila-lbl">Pareja futura</span>
+<span class="ev-bfila-val boda-switch-cell">
+<input type="checkbox" role="switch" class="boda-switch" id="bodaCFuture">
+</span>
 </label>
 </div>
-<div class="ev-field">
+<div class="ev-field boda-cform-pack">
 <label>Pack</label>
 <input type="hidden" id="bodaCPack" value="pack-4">
 <div class="boda-pack-tiles" role="group" aria-label="Pack">
 <button type="button" class="boda-pack-tile" data-pack="pack-2" aria-pressed="false">
-<b>2</b>
-<small>clases</small>
 <span>Esencia</span>
+<small>
+<b>2</b> clases</small>
 </button>
 <button type="button" class="boda-pack-tile on" data-pack="pack-4" aria-pressed="true">
-<b>4</b>
-<small>clases</small>
 <span>Latido</span>
+<small>
+<b>4</b> clases</small>
 </button>
 <button type="button" class="boda-pack-tile" data-pack="pack-6" aria-pressed="false">
-<b>6</b>
-<small>clases</small>
 <span>Eternidad</span>
+<small>
+<b>6</b> clases</small>
 </button>
 </div>
 </div>
-<label class="boda-wed-box" for="bodaCWed">
-<span class="boda-wed-lbl">&#128141; Día de la boda</span>
-<input class="boda-wed-input" id="bodaCWed" type="date" value="2026-10-10">
-<span class="boda-wed-hint" id="bodaCWedHint">En 50 días</span>
-</label>
 <div class="ev-field">
 <label for="bodaCNote">Notas <span id="bodaCCnt" class="boda-cform-count">8/200</span>
 </label>
 <textarea class="ev-textarea" id="bodaCNote" maxlength="200" placeholder="Notas de la pareja">una nota</textarea>
 </div>
-<div class="ev-field">
-<label>Color</label>
+<div class="ev-bficha boda-cform-ficha">
+<button type="button" class="ev-bfila" id="bodaCColorRow" aria-expanded="false" aria-controls="bodaCColorPanel">
+<span class="ev-bfila-lbl">Color</span>
+<span class="ev-bfila-val">
+<i class="boda-color-swatch" id="bodaCSwatch" style="background:#0ca678">
+</i>
+<span class="ev-tax-chevron" aria-hidden="true">
+</span>
+</span>
+</button>
+<div class="boda-color-panel" id="bodaCColorPanel" hidden>
 <div class="ev-color-picker" id="bodaCpWrap">
 <div class="ev-color-grid">
 <div class="ev-color-dot" data-hex="#ff6b6b" style="background:#ff6b6b;border-color:#ff6b6b">
@@ -166,6 +179,7 @@
 </div>
 </div>
 <div class="ev-color-preview-hex" id="bodaCpCode">#0ca678</div>
+</div>
 </div>
 </div>
 </div>

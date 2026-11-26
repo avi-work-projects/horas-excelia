@@ -83,8 +83,8 @@ b.EVENTS=[];b.bodaLoadConfig();
 assert.equal(b.BODA_CONFIG.packs.map(p=>p.name).join(','),'Esencia,Latido,Eternidad');
 b.BODA_CONFIG.packs[0].name='Pack 2';b.BODA_CONFIG.packs[1].name='Personalizado';b.saveBodaConfig();b.bodaLoadConfig();
 assert.equal(b.BODA_CONFIG.packs[0].name,'Esencia');assert.equal(b.BODA_CONFIG.packs[1].name,'Personalizado');
-// El pack se elige con tarjetas (v570): la del pack por defecto sale marcada con sus clases.
-assert.ok(/class="boda-pack-tile on"[^>]*><b>4<\/b><small>clases<\/small><span>Personalizado<\/span>/.test(b.renderBodaCoupleForm(null)));
+// El pack se elige con tarjetas: la del pack por defecto sale marcada con sus clases.
+assert.ok(/class="boda-pack-tile on"[^>]*><span>Personalizado<\/span><small><b>4<\/b> clases<\/small>/.test(b.renderBodaCoupleForm(null)));
 
 for(let i=0;i<3;i++)b.EVENTS.push({id:'cls'+i,kind:'puntual',type:'Ensayos boda',start:'2020-01-0'+(i+1),end:'2020-01-0'+(i+1),boda:{coupleId:'p2',time:'18:00',place:'casa'}});
 assert.equal(b.bodaPackStats().counts[3],1);assert.equal(b.bodaPackStats().extras,1);assert.equal(b.bodaPackStats().byPack['pack-2'].classes,1);

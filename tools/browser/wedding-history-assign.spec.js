@@ -143,14 +143,14 @@ test('v566: gráficos sin cambio de subpestaña, línea de récord, calendario c
   await expect(page.locator('.boda-cal-day.hl')).toHaveCount(2);
   // Editar pareja: Futura junto al nombre y selector de pack propio.
   await page.evaluate(()=>openBodaCoupleForm(BODA_COUPLES[1]));
-  await expect(page.locator('.boda-cform-name').getByRole('switch',{name:'Pareja futura'})).toHaveCount(1);
+  await expect(page.locator('.boda-cform-ficha').getByRole('switch',{name:'Pareja futura'})).toHaveCount(1);
   // Pack con tarjetas (v570): se elige directamente y queda marcada.
   const tiles=page.locator('.boda-pack-tile[data-pack]');await expect(tiles.first()).toBeVisible();
   await tiles.last().click();
   const last=await page.evaluate(()=>BODA_CONFIG.packs.filter(p=>p.active!==false).slice(-1)[0]);
   await expect(page.locator('.boda-pack-tile.on')).toContainText(last.name);await expect(tiles.last()).toHaveAttribute('aria-pressed','true');
-  await expect(page.locator('#bodaCWedHint')).toHaveText('En 49 días');
-  await page.locator('#bodaCWed').fill('2026-10-25');await expect(page.locator('#bodaCWedHint')).toHaveText('Mañana');
+  await expect(page.locator('#bodaCWedHint')).toHaveText('en 49 días');
+  await page.locator('#bodaCWed').fill('2026-10-25');await expect(page.locator('#bodaCWedHint')).toHaveText('mañana');
   await page.locator('#bodaCWed').fill('2026-12-12');
   await page.locator('#bodaCSave').click();
   await expect.poll(()=>page.evaluate(()=>BODA_COUPLES[1].packId)).toBe(last.id);

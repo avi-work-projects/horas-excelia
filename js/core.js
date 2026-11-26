@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v570 — Editar pareja renovado y calendario de Wedding Moves sin saltos';
+var APP_VERSION = 'v571 — Editar pareja con el formato de las fichas de Wedding Moves';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){

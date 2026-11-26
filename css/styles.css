@@ -2460,7 +2460,6 @@ button.stats-metric{cursor:pointer}
 .boda-card-hd{display:flex;align-items:center;gap:8px}
 .boda-dot{width:14px;height:14px;border-radius:50%;flex-shrink:0;border:1.5px solid rgba(0,0,0,.5)}
 .boda-name{flex:1;font-size:.85rem;font-weight:600;color:var(--text)}
-.boda-wed-tag{font-size:.6rem;color:var(--text-dim);border:1px solid var(--border);border-radius:8px;padding:1px 6px;white-space:nowrap}
 .boda-prog{height:6px;border-radius:3px;background:var(--surface3,var(--surface2));overflow:hidden}
 .boda-prog-bar{height:100%;border-radius:3px;transition:width .2s}
 .boda-card-ft{display:flex;justify-content:space-between;font-size:.68rem;color:var(--text-muted)}
@@ -2697,25 +2696,6 @@ button.stats-metric{cursor:pointer}
 .boda-card.abierta{border-color:var(--border-light);box-shadow:0 2px 10px var(--shadow)}
 .boda-card-open{margin-top:8px;padding-top:8px;border-top:1px solid var(--border)}
 .boda-card-open .boda-det-actions{margin-top:10px}
-/* Editar pareja: «Futura» a la derecha del nombre; el color del interruptor llega por currentColor. */
-.boda-cform-name{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:end;gap:12px;margin-bottom:12px}
-.boda-cform-name .ev-field{margin:0}
-/* «Futura»: recuadro marrón que se rellena al activarse; el interruptor toma su color. */
-.boda-future-toggle{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;min-width:72px;min-height:44px;padding:6px 10px;border:1.5px solid color-mix(in srgb,#a0703f 55%,var(--border));border-radius:12px;background:color-mix(in srgb,#a0703f 7%,var(--surface));color:#a0703f;font-size:.72rem;font-weight:700;cursor:pointer;box-sizing:border-box}
-.boda-future-toggle:has(input:checked){border-color:#a0703f;background:color-mix(in srgb,#a0703f 18%,var(--surface))}
-/* Pack: tarjetas con el número de clases en grande. */
-.boda-pack-tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(86px,1fr));gap:8px}
-.boda-pack-tile{position:relative;display:flex;flex-direction:column;align-items:center;gap:1px;padding:9px 6px 8px;border:1.5px solid var(--border);border-radius:12px;background:var(--surface);color:var(--text);font:inherit;cursor:pointer}
-.boda-pack-tile b{font-size:1.35rem;line-height:1.1;color:var(--wm-wine);font-variant-numeric:tabular-nums}
-.boda-pack-tile small{font-size:.62rem;color:var(--text-muted)}
-.boda-pack-tile span{margin-top:3px;font-size:.74rem;font-weight:600}
-.boda-pack-tile.on{border-color:var(--wm-wine);background:color-mix(in srgb,var(--wm-wine) 9%,var(--surface))}
-.boda-pack-tile.on::after{content:'✓';position:absolute;top:4px;right:7px;font-size:.7rem;font-weight:700;color:var(--wm-wine)}
-/* Día de la boda: recuadro tintado con la fecha destacada y la cuenta atrás. */
-.boda-wed-box{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:'lbl hint' 'date date';align-items:center;gap:6px 10px;margin:0 0 12px;padding:10px 12px;border:1.5px solid color-mix(in srgb,var(--wm-wine) 35%,var(--border));border-radius:12px;background:color-mix(in srgb,var(--wm-wine) 5%,var(--surface));cursor:pointer}
-.boda-wed-lbl{grid-area:lbl;font-size:.74rem;font-weight:600;color:var(--text-muted)}
-.boda-wed-hint{grid-area:hint;font-size:.7rem;font-weight:600;color:var(--wm-wine)}
-.boda-wed-input{grid-area:date;width:100%;min-height:40px;padding:4px 8px;border:1px solid color-mix(in srgb,var(--wm-wine) 25%,var(--border));border-radius:10px;background:var(--surface);color:var(--text);font-family:var(--mono);font-size:1.05rem;font-weight:700;box-sizing:border-box}
 input[type="checkbox"].boda-switch{position:relative;flex:none;width:42px;height:24px;margin:0;border:0;border-radius:999px;background:var(--border);transition:background .18s}
 input[type="checkbox"].boda-switch::after{content:'';position:absolute;top:3px;left:3px;width:18px;height:18px;border:0;border-radius:50%;background:#fff;box-shadow:0 1px 3px #0003;transform:none;transition:transform .18s}
 input[type="checkbox"].boda-switch:checked{background:#a0703f}
@@ -2773,6 +2753,25 @@ button.boda-sum-part{cursor:pointer}
 .boda-heat-d{color:var(--text-muted)}
 .boda-heat-c{display:flex;align-items:center;justify-content:center;height:24px;border-radius:6px;background:color-mix(in srgb,#8b5e34 var(--heat,0%),var(--surface2));color:var(--text);font-weight:600;font-variant-numeric:tabular-nums}
 .boda-heat-c.strong{color:#fff}
+
+/* Editar pareja (v571): fichas de filas como Editar clase y un solo acento granate. */
+.boda-cform-ficha{margin:0 0 12px}
+.boda-cform-ficha .ev-bfila{min-height:46px}
+.boda-wed-lbl{flex-direction:column;align-items:flex-start;gap:1px}
+.boda-wed-hint{font-size:.68rem;font-weight:500;color:var(--text-muted);white-space:nowrap}
+.boda-wed-hint:empty{display:none}
+.boda-switch-cell{color:var(--wm-wine)}
+.boda-cform-pack{margin-bottom:12px}
+.boda-pack-tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(86px,1fr));gap:8px}
+.boda-pack-tile{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:54px;padding:7px 6px;border:1px solid var(--border);border-radius:12px;background:var(--surface2);color:var(--text);font:inherit;cursor:pointer}
+.boda-pack-tile span{font-size:.78rem;font-weight:600}
+.boda-pack-tile small{font-size:.68rem;color:var(--text-muted)}
+.boda-pack-tile small b{color:var(--text);font-variant-numeric:tabular-nums}
+.boda-pack-tile.on{border-color:var(--wm-wine);background:color-mix(in srgb,var(--wm-wine) 9%,var(--surface));box-shadow:inset 0 0 0 1px var(--wm-wine)}
+.boda-pack-tile.on span,.boda-pack-tile.on small b{color:var(--wm-wine)}
+.boda-color-swatch{display:inline-block;width:22px;height:22px;border-radius:50%;border:1px solid #0002}
+#bodaCColorRow[aria-expanded="true"] .ev-tax-chevron{transform:rotate(225deg);margin-bottom:0}
+.boda-color-panel{padding:4px 11px 10px;border-top:1px solid var(--border)}
 
 /* Fuente: css/source/routines.css */
 /* Horario distinto segun el dia */
@@ -3061,8 +3060,8 @@ button.action-edit.active,button.action-edit:active{background:rgba(251,146,60,.
 
 .boda-cfg-section-head>.ev-io-btn{flex:0 0 auto}
 
-.boda-date-ficha #bodaFormDia{flex:1;min-width:0;width:0;text-align:right;font-weight:700;border:0;background:transparent;padding:0;color:var(--text);font-size:.78rem}
-.boda-date-ficha #bodaFormDia::-webkit-datetime-edit{text-align:right}
+.boda-date-ficha input[type="date"]{flex:1;min-width:0;width:0;text-align:right;font-weight:700;border:0;background:transparent;padding:0;color:var(--text);font-size:.78rem}
+.boda-date-ficha input[type="date"]::-webkit-datetime-edit{text-align:right}
 .boda-date-ficha .boda-multi-btn{margin:0 10px 10px;max-width:calc(100% - 20px)}
 #bodaTeachersOv #bodaTeacherName{margin-top:12px}
 
@@ -3076,10 +3075,10 @@ button.action-edit.active,button.action-edit:active{background:rgba(251,146,60,.
 .bday-hdr-sub .ev-view-toggle:not(.active){color:var(--birthday-tone);border-color:var(--birthday-tone);background:color-mix(in srgb,var(--birthday-tone) 8%,transparent)}
 .bday-hdr-sub .ev-view-toggle.active{color:var(--birthday-tone)!important;border-color:var(--birthday-tone)!important;background:color-mix(in srgb,var(--birthday-tone) 17%,transparent)!important}
 
-.boda-date-ficha #bodaFormDia{margin-left:auto;flex:0 1 146px;width:146px;max-width:50%}
-.boda-date-ficha #bodaFormDia::-webkit-date-and-time-value{text-align:right}
-.boda-date-ficha #bodaFormDia::-webkit-datetime-edit{padding:0;text-align:right;display:inline-flex;justify-content:flex-end}
-.boda-date-ficha #bodaFormDia::-webkit-calendar-picker-indicator{margin-left:4px;padding:0}
+.boda-date-ficha input[type="date"]{margin-left:auto;flex:0 1 146px;width:146px;max-width:50%}
+.boda-date-ficha input[type="date"]::-webkit-date-and-time-value{text-align:right}
+.boda-date-ficha input[type="date"]::-webkit-datetime-edit{padding:0;text-align:right;display:inline-flex;justify-content:flex-end}
+.boda-date-ficha input[type="date"]::-webkit-calendar-picker-indicator{margin-left:4px;padding:0}
 
 /* Text edits retain the solid orange; only standalone pencils use a tint. */
 button.action-edit.action-edit-text,button.settings-edit-btn,button.hip-edit-btn,button.bday-vip-edit-btn:not(.active){background:#fb923c!important;color:#fff!important;border-color:#fb923c!important}

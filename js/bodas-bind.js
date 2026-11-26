@@ -1,8 +1,8 @@
 /* Días hasta la boda, en texto corto para el recuadro de la fecha. */
 function bodaWedHint(ds){
-  if(!ds)return 'Sin fecha';
+  if(!ds)return '';
   var d=Math.round((new Date(ds+'T00:00:00')-new Date(evDk(new Date())+'T00:00:00'))/86400000);
-  return d===0?'Hoy':d===1?'Mañana':d>0?'En '+d+' días':'Hace '+(-d)+(d===-1?' día':' días');
+  return d===0?'hoy':d===1?'mañana':d>0?'en '+d+' días':'hace '+(-d)+(d===-1?' día':' días');
 }
 function renderBodaCoupleForm(c){
   var isEdit=!!c;
@@ -15,29 +15,29 @@ function renderBodaCoupleForm(c){
   if(isEdit)h+='<button class="ev-btn danger" id="bodaCDel" style="flex:none;padding:6px 12px;font-size:.75rem">Eliminar</button>';
   else h+='<div style="width:36px"></div>';
   h+='</header><div class="bd-panel-body ev-fixed-form-body">';
-  /* «Pareja futura» va a la derecha del nombre, en la misma fila. */
-  h+='<div class="boda-cform-name"><div class="ev-field"><label for="bodaCName">Pareja</label><input class="ev-input" id="bodaCName" type="text" maxlength="40" placeholder="Ej: Marta y Juan" value="'+(isEdit?escHtml(c.name):'')+'"></div>';
-  h+='<label class="boda-future-toggle" for="bodaCFuture"><span>Futura</span><input type="checkbox" role="switch" class="boda-switch" id="bodaCFuture" aria-label="Pareja futura"'+(c&&c.future?' checked':'')+'></label></div>';
+  /* Mismo patrón que Editar clase: el nombre como campo y el resto en fichas de
+     filas (etiqueta a la izquierda, valor a la derecha), con un solo acento. */
+  h+='<div class="ev-field"><label for="bodaCName">Pareja</label><input class="ev-input" id="bodaCName" type="text" maxlength="40" placeholder="Ej: Marta y Juan" value="'+(isEdit?escHtml(c.name):'')+'"></div>';
+  var wed=isEdit&&c.weddingDate?c.weddingDate:'';
+  h+='<div class="ev-bficha boda-date-ficha boda-cform-ficha">';
+  h+='<label class="ev-bfila" for="bodaCWed"><span class="ev-bfila-lbl boda-wed-lbl"><span>&#128141; Día de la boda</span><small class="boda-wed-hint" id="bodaCWedHint">'+(wed?bodaWedHint(wed):'')+'</small></span><input id="bodaCWed" type="date" value="'+wed+'"></label>';
+  h+='<label class="ev-bfila" for="bodaCFuture"><span class="ev-bfila-lbl">Pareja futura</span><span class="ev-bfila-val boda-switch-cell"><input type="checkbox" role="switch" class="boda-switch" id="bodaCFuture"'+(c&&c.future?' checked':'')+'></span></label>';
+  h+='</div>';
   var selected=isEdit?bodaPackOf(c):(BODA_CONFIG.packs.find(function(p){return p.active!==false&&p.classes===4;})||BODA_CONFIG.packs.find(function(p){return p.active!==false;}));
   /* La pareja conserva sus clases contratadas mientras mantenga el mismo pack. */
   var kept=isEdit?(c.packClasses==null?c.contracted:c.packClasses):null;
-  /* Pack: tarjetas que se eligen directamente, con las clases en grande (como las
-     categorías de Nuevo evento). La pareja conserva sus clases si mantiene su pack. */
-  h+='<div class="ev-field"><label>Pack</label><input type="hidden" id="bodaCPack" value="'+(selected?selected.id:'')+'">';
+  h+='<div class="ev-field boda-cform-pack"><label>Pack</label><input type="hidden" id="bodaCPack" value="'+(selected?selected.id:'')+'">';
   h+='<div class="boda-pack-tiles" role="group" aria-label="Pack">';
   BODA_CONFIG.packs.filter(function(p){return p.active!==false||(selected&&p.id===selected.id);}).forEach(function(p){
     var mine=selected&&selected.id===p.id,n=mine&&kept!=null?kept:p.classes;
-    h+='<button type="button" class="boda-pack-tile'+(mine?' on':'')+'" data-pack="'+p.id+'" aria-pressed="'+!!mine+'"><b>'+n+'</b><small>clases</small><span>'+escHtml(p.name)+(p.active===false?' (inactivo)':'')+'</span></button>';
+    h+='<button type="button" class="boda-pack-tile'+(mine?' on':'')+'" data-pack="'+p.id+'" aria-pressed="'+!!mine+'"><span>'+escHtml(p.name)+(p.active===false?' (inactivo)':'')+'</span><small><b>'+n+'</b> clases</small></button>';
   });
   h+='</div></div>';
-  /* Día de la boda destacado, con la cuenta atrás debajo. */
-  var wed=isEdit&&c.weddingDate?c.weddingDate:'';
-  h+='<label class="boda-wed-box" for="bodaCWed"><span class="boda-wed-lbl">&#128141; Día de la boda</span><input class="boda-wed-input" id="bodaCWed" type="date" value="'+wed+'"><span class="boda-wed-hint" id="bodaCWedHint">'+bodaWedHint(wed)+'</span></label>';
   h+='<div class="ev-field"><label for="bodaCNote">Notas <span id="bodaCCnt" class="boda-cform-count">'+((isEdit&&c.note?c.note.length:0))+'/200</span></label>';
   h+='<textarea class="ev-textarea" id="bodaCNote" maxlength="200" placeholder="Notas de la pareja">'+(isEdit&&c.note?escHtml(c.note):'')+'</textarea></div>';
-  h+='<div class="ev-field"><label>Color</label>';
-  h+=_renderColorPicker(col,false,false,'bodaCp');
-  h+='</div>';
+  /* Color: una fila con la muestra; la paleta solo se despliega al tocarla. */
+  h+='<div class="ev-bficha boda-cform-ficha"><button type="button" class="ev-bfila" id="bodaCColorRow" aria-expanded="false" aria-controls="bodaCColorPanel"><span class="ev-bfila-lbl">Color</span><span class="ev-bfila-val"><i class="boda-color-swatch" id="bodaCSwatch" style="background:'+col+'"></i><span class="ev-tax-chevron" aria-hidden="true"></span></span></button>';
+  h+='<div class="boda-color-panel" id="bodaCColorPanel" hidden>'+_renderColorPicker(col,false,false,'bodaCp')+'</div></div>';
   h+='</div><footer class="bd-panel-footer ev-fixed-form-actions"><button class="ev-btn" id="bodaCCancel">Cancelar</button><button class="ev-btn primary" id="bodaCSave">Guardar</button></footer>';
   h+='</div></div>';
   return h;
@@ -56,7 +56,11 @@ function openBodaCoupleForm(c){
     });
   });
   var wedIn=document.getElementById('bodaCWed');
-  wedIn.addEventListener('input',function(){document.getElementById('bodaCWedHint').textContent=bodaWedHint(wedIn.value);});
+  wedIn.addEventListener('input',function(){document.getElementById('bodaCWedHint').textContent=wedIn.value?bodaWedHint(wedIn.value):'';});
+  var colorRow=document.getElementById('bodaCColorRow'),colorPanel=document.getElementById('bodaCColorPanel'),swatch=document.getElementById('bodaCSwatch');
+  colorRow.addEventListener('click',function(){colorPanel.hidden=!colorPanel.hidden;colorRow.setAttribute('aria-expanded',String(!colorPanel.hidden));});
+  function paintSwatch(){setTimeout(function(){swatch.style.background=cp.getColor();},0);}
+  colorPanel.addEventListener('click',paintSwatch);colorPanel.addEventListener('input',paintSwatch);colorPanel.addEventListener('change',paintSwatch);
   document.getElementById('bodaCCancel').addEventListener('click',closeBodaCoupleForm);
   var del=document.getElementById('bodaCDel');
   if(del)del.addEventListener('click',function(){
