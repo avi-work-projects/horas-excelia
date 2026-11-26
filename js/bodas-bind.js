@@ -105,6 +105,9 @@ function bindBodasEvents(){
   var exp=document.getElementById('evCalendarExport');if(exp)exp.onclick=openEvCalendarExport;
   bindBodaConfig();
   if(typeof bindBodaHistoryCharts==='function')bindBodaHistoryCharts();
+  document.querySelectorAll('.boda-chip[data-bstats-year]').forEach(function(b){
+    b.addEventListener('click',function(){BODA_STATS_YEAR=b.dataset.bstatsYear?+b.dataset.bstatsYear:null;refreshEvents();});
+  });
   /* Al salir de la lista se guarda lo pendiente para no perderlo sin avisar */
   function _guardaPendientes(){
     if(bodaPendingCount())showToast(bodaPendingApply(true)+' cambios guardados','success');

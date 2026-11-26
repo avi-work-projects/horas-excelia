@@ -162,9 +162,15 @@ function renderBodaStatsOverview(s){
   return h+'</div></section>';
 }
 function _renderBodaStats(){
-  var all=bodaSortClasses(bodaClasses());
-  var overview=renderBodaStatsOverview(bodaStatsOverview(all));
-  if(!all.length)return '<div class="stats-stack stats-stack-wedding">'+overview+renderBodaPackStats()+'</div>';
+  var todas=bodaSortClasses(bodaClasses());
+  /* El año elegido filtra clases y parejas (por fecha de boda); Récords y el
+     histórico deslizable siguen contando todas las clases registradas. */
+  var years=renderBodaYearChips(todas);
+  var all=todas.filter(function(ev){return bodaStatsInYear(ev.start);}),couples=bodaStatsCouples();
+  var overview=years+renderBodaStatsOverview(bodaStatsOverview(all));
+  if(!todas.length)return '<div class="stats-stack stats-stack-wedding">'+overview+renderBodaPackStats()+'</div>';
+  var h=overview;
+  if(all.length){
   /* Medias sobre el periodo real con clases */
   var primera=all[0].start, ultima=all[all.length-1].start;
   var dias=Math.max(1,Math.round((new Date(ultima+'T00:00:00')-new Date(primera+'T00:00:00'))/86400000)+1);
@@ -183,17 +189,22 @@ function _renderBodaStats(){
       return (wd2===0?6:wd2-1)===idx;}).length};
   }).filter(function(r){return r.value>0;});
 
-  var h=overview;
   h+=renderStatsCard('Ritmo programado',renderStatsMetrics([[bodaFmtRate(mediaSem),'clases / semana'],[bodaFmtRate(mediaMes),'clases / mes']]),'Del '+_bodaFmt(primera)+' al '+_bodaFmt(ultima),'boda-stats-pace');
-  h+=renderBodaRecords(all);
-  h+=renderBodaHistoryCharts(all,new Date());
+  }
+  h+=renderBodaCompliance(couples);
+  h+=renderBodaLead(couples);
+  h+=renderBodaRecords(todas);
+  h+=renderBodaHistoryCharts(todas,new Date());
+  h+=renderBodaSeason(couples);
   h+=renderBodaPackStats();
+  if(!all.length)return '<div class="stats-stack stats-stack-wedding">'+h+'</div>';
   if(porFranja.length){
     h+=renderStatsCard('Por franja horaria',hBarRows(porFranja));
   }
   if(porDia.length){
     h+=renderStatsCard('Por día de la semana',hBarRows(porDia,{}));
   }
+  h+=renderBodaHeatmap(all);
   if(porLugar.length){
     h+=renderStatsCard('Por lugar',hBarRows(porLugar,{}));
   }

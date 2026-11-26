@@ -19,6 +19,17 @@ function openBodaClaseForm(ev,alTerminar){
   var count=bodaTeacherCount(BODA_FORM.tmp.boda.teachers);if(count<1||count>2)BODA_FORM.tmp.boda.teachers={celia:true,angel:true,substitute:null};
   _bodaFormRender();
 }
+/* Duplicar: abre una clase nueva una semana después con la misma hora, sala,
+   pareja, profesores y duración (los de la ficha, aunque no se hayan guardado). */
+function bodaDuplicarClase(b,ds){
+  var d=new Date(ds+'T00:00:00');d.setDate(d.getDate()+7);
+  var day=evDk(d),alTerminar=BODA_FORM&&BODA_FORM.alTerminar;
+  openBodaClaseForm(null,alTerminar);
+  var F=BODA_FORM;F.ds=day;F.tmp.start=day;
+  ['time','coupleId','place','duration','durationId'].forEach(function(k){F.tmp.boda[k]=b[k]===undefined?null:b[k];});
+  F.tmp.boda.teachers=JSON.parse(JSON.stringify(b.teachers||{celia:true,angel:true,substitute:null}));
+  _bodaFormRender();
+}
 function _bodaFormRender(){
   var F=BODA_FORM;if(!F)return;
   var b=F.tmp.boda;
@@ -61,6 +72,7 @@ function _bodaFormRender(){
   h+='<button type="button" class="ev-bfila" id="bodaFormTeachers"><span class="ev-bfila-lbl">Profesores</span><span class="ev-bfila-val">'+bodaTeachersLabel(b.teachers)+'</span></button>';
   h+='<button type="button" class="ev-bfila" id="bodaFormDuration"><span class="ev-bfila-lbl">Duración</span><span class="ev-bfila-val">'+b.duration+' min</span></button></div>';
   h+='<div class="ev-detail-actions">';
+  if(!F.nuevo)h+='<button class="ev-btn" id="bodaFormDup">Duplicar</button>';
   h+='<button class="ev-btn primary" id="bodaFormSave">Guardar</button>';
   h+='</div>';
   h+='</div></div>';
@@ -99,6 +111,8 @@ function _bodaFormRender(){
       else openBodaCouplePicker(F.tmp,opts);
     });
   });
+  var dup=document.getElementById('bodaFormDup');
+  if(dup)dup.addEventListener('click',function(){bodaDuplicarClase(F.tmp.boda,F.ds);});
   var del=document.getElementById('bodaFormDel');
   if(del)del.addEventListener('click',function(){
     var quitada=F.ev;

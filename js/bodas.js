@@ -468,6 +468,11 @@ function bodaFaltaUrgente(c){
 function bodaFaltaHtml(c,falta){
   return '<span class="boda-falta'+(bodaFaltaUrgente(c)?' urgente':'')+'">faltan '+falta+'</span>';
 }
+/* Parejas con la boda en 30 días o menos y clases sin asignar (aviso de Recordatorios). */
+function bodaUrgentCouples(){
+  return BODA_COUPLES.filter(function(c){return bodaFaltaUrgente(c)&&bodaProgress(c).falta>0;})
+    .sort(function(a,b){return a.weddingDate<b.weddingDate?-1:a.weddingDate>b.weddingDate?1:0;});
+}
 function _renderBodaParejas(){
   var h='<div class="boda-pfilters"><div class="boda-chips" role="group" aria-label="Estado de la pareja">';
   [['activas','Activas'],['futuras','Futuras'],['pasadas','Pasadas'],['todas','Todas']].forEach(function(o){

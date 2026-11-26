@@ -98,3 +98,25 @@ test('Calendario: pulsar un día lista sus clases y Configuración usa interrupt
     expect(await page.locator('#bodaConfigContent .boda-cfg-row').evaluateAll(rows=>rows.every(r=>r.scrollWidth<=r.clientWidth+1))).toBe(true);
   }
 });
+
+test('Estadísticas por año, aviso de boda cercana en Recordatorios y Duplicar clase',async({page})=>{
+  // Por año: 2025 deja solo las clases de la pareja antigua; Récords sigue contándolas todas.
+  await expect(page.locator('.boda-stats-years .boda-chip')).toHaveText(['Todos','2026','2025']);
+  await page.locator('[data-bstats-year="2025"]').click();
+  await expect(page.locator('.boda-overview-total').nth(1)).toContainText('7');
+  await expect(page.locator('.boda-stats-compliance')).toContainText('7');
+  await expect(page.locator('.boda-record').nth(2)).toContainText('7 clases');
+  await expect(page.locator('.boda-stats-heat .boda-heat-c.strong')).toHaveCount(1);
+  await page.locator('[data-bstats-year=""]').click();
+  await expect(page.locator('.boda-overview-total').nth(1)).toContainText('12');
+  // Duplicar: misma pareja y hora, una semana después, sin tocar el original hasta Guardar.
+  await page.evaluate(()=>{BODA_SUBTAB='clases';refreshEvents(false);openBodaClaseForm(EVENTS.find(e=>e.id==='cl8'));});
+  await page.locator('#bodaFormDup').click();
+  await expect(page.locator('#bodaFormOv h2')).toHaveText('Nueva clase');
+  await expect(page.locator('#bodaFormDia')).toHaveValue('2026-10-09');
+  await page.locator('#bodaFormSave').click();
+  await expect.poll(()=>page.evaluate(()=>EVENTS.filter(e=>e.start==='2026-10-09').map(e=>[e.boda.coupleId,e.boda.time,e.id!=='cl8']))).toEqual([['b','18:00',true]]);
+  // Recordatorios: pareja con boda en 30 días o menos y clases por asignar.
+  await page.evaluate(()=>{BODA_COUPLES[1].contracted=6;BODA_COUPLES[1].weddingDate='2026-11-10';saveBodas();closeEvents();openHomePopup(true);});
+  await expect(page.locator('#homePopupContent')).toContainText('Pareja Actual boda el 10/11 · faltan 3 clases por asignar');
+});

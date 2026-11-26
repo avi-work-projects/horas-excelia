@@ -154,6 +154,10 @@ function openHomePopup(force){
   try{if(!force&&sessionStorage.getItem('excelia-popup-dismissed')&&!csvWarnings.length&&!routineWarnings.length&&!pendingTasks.length)return;}catch(e){}
   var items=csvWarnings.map(function(it){return {type:'warn',text:'&#9888; '+escHtml(it.text)};});
   routineWarnings.forEach(function(it){items.push({type:'warn',text:'&#128197; '+escHtml(it.text)});});
+  if(typeof bodaUrgentCouples==='function')bodaUrgentCouples().forEach(function(c){
+    var falta=bodaProgress(c).falta;
+    items.push({type:'warn',text:'&#128141; <strong>'+escHtml(c.name)+'</strong> boda el '+_bodaFmtCorto(c.weddingDate).slice(4)+' · '+(falta===1?'falta 1 clase':'faltan '+falta+' clases')+' por asignar'});
+  });
   var today=new Date();today.setHours(0,0,0,0);
   homeSubmissionWarnings(today.getFullYear(),today.getMonth()).forEach(function(row){
     var review=['changed','duplicate','uncertain','draft','unverified','ambiguous-thread'].includes(row.state);
