@@ -200,3 +200,12 @@ test('dos deslizamientos seguidos en el Calendario no dejan copias solapadas (v5
   await expect(page.locator('.boda-cal-month')).toHaveText('Diciembre2026');
   await expect(page.locator('.swipe-content-preview')).toHaveCount(0);
 });
+
+test('Editar pareja: la fecha de boda es texto editable sin icono y actualiza la cuenta atrás (v574)',async({page})=>{
+  await page.evaluate(()=>openBodaCoupleForm(BODA_COUPLES[1]));
+  await expect(page.locator('#bodaCWedText')).toHaveText('12/12/2026');await expect(page.locator('#bodaCWed')).toHaveCSS('opacity','0');
+  await page.locator('#bodaCWed').fill('2026-12-24');
+  await expect(page.locator('#bodaCWedText')).toHaveText('24/12/2026');await expect(page.locator('#bodaCWedHint')).toHaveText('en 61 días');
+  await page.locator('#bodaCSave').click();
+  await expect.poll(()=>page.evaluate(()=>BODA_COUPLES[1].weddingDate)).toBe('2026-12-24');
+});

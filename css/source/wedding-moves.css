@@ -419,8 +419,10 @@ button.boda-sum-part{cursor:pointer}
 .boda-wed-row:has(.boda-wed-hint:not(:empty)){padding-bottom:17px}
 .boda-wed-hint{position:absolute;right:11px;bottom:4px;font-size:.64rem;font-style:italic;font-weight:400;color:var(--text-muted);white-space:nowrap}
 .boda-wed-hint:empty{display:none}
-#bodaCWed::-webkit-calendar-picker-indicator{display:none}
-.boda-date-ficha #bodaCWed{flex:none;width:auto;max-width:none;cursor:pointer}
+.boda-wed-text{margin-left:auto;font-weight:700;color:var(--text);font-variant-numeric:tabular-nums}
+.boda-date-ficha #bodaCWed{position:absolute;inset:0;width:100%;height:100%;max-width:none;margin:0;opacity:0;cursor:pointer}
+/* Etiquetas de la ficha de pareja algo mayores que las de las fichas compactas. */
+.boda-cform-ficha .ev-bfila{font-size:.84rem}
 .boda-switch-cell{color:var(--wm-wine)}
 .boda-cform-pack{margin-bottom:12px}
 .boda-pack-tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(86px,1fr));gap:8px}

@@ -24,7 +24,7 @@ function renderBodaCoupleForm(c){
   h+='<div class="ev-field boda-cform-group"><label for="bodaCName">Pareja</label><div class="ev-bficha boda-cform-ficha boda-date-ficha">';
   h+='<div class="ev-bfila boda-name-row"><input class="boda-name-input" id="bodaCName" type="text" maxlength="40" placeholder="Ej: Marta y Juan" value="'+(isEdit?escHtml(c.name):'')+'"></div>';
   h+='<label class="ev-bfila" for="bodaCFuture"><span class="ev-bfila-lbl">Pareja futura</span><span class="ev-bfila-val boda-switch-cell"><input type="checkbox" role="switch" class="boda-switch" id="bodaCFuture"'+(c&&c.future?' checked':'')+'></span></label>';
-  h+='<label class="ev-bfila boda-wed-row" for="bodaCWed"><span class="ev-bfila-lbl">Día de la boda</span><input id="bodaCWed" type="date" value="'+wed+'"><small class="boda-wed-hint" id="bodaCWedHint">'+(wed?bodaWedHint(wed):'')+'</small></label>';
+  h+='<label class="ev-bfila boda-wed-row" for="bodaCWed"><span class="ev-bfila-lbl">Día de la boda</span><span class="boda-wed-text" id="bodaCWedText">'+(wed?_bodaFmt(wed):'Elegir')+'</span><input id="bodaCWed" type="date" value="'+wed+'" aria-label="Día de la boda"><small class="boda-wed-hint" id="bodaCWedHint">'+(wed?bodaWedHint(wed):'')+'</small></label>';
   h+='</div></div>';
   var selected=isEdit?bodaPackOf(c):(BODA_CONFIG.packs.find(function(p){return p.active!==false&&p.classes===4;})||BODA_CONFIG.packs.find(function(p){return p.active!==false;}));
   /* La pareja conserva sus clases contratadas mientras mantenga el mismo pack. */
@@ -58,9 +58,13 @@ function openBodaCoupleForm(c){
     });
   });
   var wedIn=document.getElementById('bodaCWed');
-  /* Sin icono de calendario: tocar la fecha abre el selector del sistema. */
+  /* La fecha se ve como texto; el campo nativo, transparente encima, abre el
+     selector del sistema al tocar (Android pintaba su propia flecha). */
   wedIn.addEventListener('click',function(){try{if(wedIn.showPicker)wedIn.showPicker();}catch(e){}});
-  wedIn.addEventListener('input',function(){document.getElementById('bodaCWedHint').textContent=wedIn.value?bodaWedHint(wedIn.value):'';});
+  wedIn.addEventListener('input',function(){
+    document.getElementById('bodaCWedText').textContent=wedIn.value?_bodaFmt(wedIn.value):'Elegir';
+    document.getElementById('bodaCWedHint').textContent=wedIn.value?bodaWedHint(wedIn.value):'';
+  });
   document.getElementById('bodaCCancel').addEventListener('click',closeBodaCoupleForm);
   var del=document.getElementById('bodaCDel');
   if(del)del.addEventListener('click',function(){
