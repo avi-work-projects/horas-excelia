@@ -53,6 +53,7 @@ test('planes compactos: grupos contiguos, scroll interior y actividades sin marc
   expect((await page.locator('.ev-plan-options [data-type]').evaluateAll(els=>els.map(el=>el.dataset.type))).slice(0,8)).toEqual(['Comida','Tomar algo','Cena','Barbacoa','Desayunar','Brunch','Merendar','Cumpleaños']);
   const types=await page.locator('.ev-plan-options [data-type]').evaluateAll(es=>es.map(el=>el.dataset.type));
   for(const group of [['Navidad','Fiesta','Boda'],['Juegos de mesa','Torneo'],['Montaña','Plan exterior','Salir a Correr','Carrera','Pádel','Ping pong','Fútbol','Hacer deporte']])expect(types.slice(types.indexOf(group[0]),types.indexOf(group[0])+group.length)).toEqual(group);
+  await expect(page.locator('#evPlanPickerOv')).toHaveClass(/open/);await expect(page.locator('.ev-plan-sheet')).toBeVisible();
   await page.locator('.ev-plan-sheet').evaluate(el=>Promise.all(el.getAnimations().map(a=>a.finished)));
   const frame=await page.locator('.ev-plan-sheet').boundingBox(),footer=await page.locator('.ev-plan-footer').boundingBox();
   const layout=await page.locator('.ev-plan-options').evaluate(el=>{const r=el.getBoundingClientRect();return {visible:[...el.querySelectorAll('button')].filter(b=>{const box=b.getBoundingClientRect();return box.top>=r.top&&box.bottom<=r.bottom;}).length,overflow:el.scrollWidth-el.clientWidth,clipped:[...el.querySelectorAll('.ev-type-name')].some(label=>label.scrollWidth>label.clientWidth+1||label.scrollHeight>label.clientHeight+1)};});
