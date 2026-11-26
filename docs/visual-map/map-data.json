@@ -1,8 +1,8 @@
 {
   "schemaVersion": 2,
   "title": "Gestify · mapa visual",
-  "generatedAt": "2026-11-26T15:40:30.686Z",
-  "referenceCommit": "69734d37e9acd2f153dc368e23cde9081b6aa728",
+  "generatedAt": "2026-11-26T18:46:37.356Z",
+  "referenceCommit": "acdc27c3b4aa73db0bada91da2cd4c4b36c598d5",
   "date": "2026-08-21T10:00:00+02:00",
   "viewport": {
     "width": 400,
@@ -29,7 +29,6 @@
       ],
       "region": "body",
       "image": "captures/home.png",
-      "imageHash": "af391e50c58200a1f55c8ed0e470ae07621e78953a9ba4ee3ff5fdd10325f64d",
       "anchors": {
         "household": {
           "x": 16,
@@ -75,7 +74,7 @@
         },
         "workday": {
           "x": 17,
-          "y": 559.890625,
+          "y": 535.296875,
           "width": 72.390625,
           "height": 85
         },
@@ -108,7 +107,7 @@
       "dependencies": [
         {
           "file": "index.html",
-          "hash": "63c2cb41d09407fe0449d180bf47374f8be7b99e5c5236d0771a5b646b4fd958"
+          "hash": "7907332341b9c79eca162474c99fc36058ab6d0d5f77d4ab60ef54a340560690"
         },
         {
           "file": "js/nav-icons.js",
@@ -117,31 +116,31 @@
         {
           "file": "js/core.js",
           "part": "core-runtime",
-          "hash": "d124ef6ea1eaeaf256310c89540ee69655a472155bcfaca01e7db575d4b8ecb9"
+          "hash": "21bc8b9b365f63482d7d7bf42947f99fa11fa35fb7b34254d1e0eccbfc67ba10"
         },
         {
           "file": "js/data-integrity.js",
-          "hash": "34bfc80472270238e11eb0e194fef19e56c7fbb81a35ff5fde23a8ae23e5e9f0"
+          "hash": "d2157923fc2762308f82aaa204c13133a0bfc1f8f2a4c02f32edba69cdb4e04c"
         },
         {
           "file": "tools/fixture.json",
-          "hash": "98d54e4adf481a811b8b05627515272fb623f8b78db75b294d07ceed739cd07d"
+          "hash": "0e5bcfb1693e1cc957d18bcf9d99b8db5eb013e6772baa9584fae76fa9d8f638"
         },
         {
           "file": "tools/visual-map/fixture.cjs",
-          "hash": "864d6ab429fdfd0fce7e683d4fbbad6525bb89a1e0d11bc99a2f6b2853dbb0d2"
+          "hash": "af6c24671b8c6a68da2fd637eae1a5a321ee8f462617770de61e6c182a59acf9"
         },
         {
           "file": "css/source/base.css",
-          "hash": "45c10a4326fcd88babebf8968fdd517c678b16f9c86cf0268fa1c1cf11f81408"
+          "hash": "7b4d6fed18f07402ca808be00874228042dfd2c1e5b267a19b83c043f79dde90"
         },
         {
           "file": "css/source/navigation-controls.css",
-          "hash": "dbc077d7421c40475885ad1ee8f146743a0e25ab5f6f0d4f0a9a050765add898"
+          "hash": "9176a83272a8784a53ace0e1bfa1079bc8aae1019124640cfd219dd382ae52a5"
         },
         {
           "file": "css/source/economics.css",
-          "hash": "0139ec7d50ccc8cc00bf4607bcf6563a2989cf20f9655d5d52fa2db223ca0bd8"
+          "hash": "a109ec1ee3ed81b6547643b4a52d0a59644f908118a3d116047f07fdefc40d74"
         },
         {
           "file": "css/source/birthdays.css",
@@ -149,7 +148,7 @@
         },
         {
           "file": "css/source/event-calendar.css",
-          "hash": "302e47126cc9555d8fb669c50ffe94f0665a59c8ef7cb772acd6aad45e2fd179"
+          "hash": "b5cff8385e7f3013b948896d87a62794d3912c096ac97e8821d94748ee49f15d"
         },
         {
           "file": "css/source/navigation-alarms.css",
@@ -157,7 +156,7 @@
         },
         {
           "file": "css/source/event-panels.css",
-          "hash": "cf04dfaf3dd263378f4d27e19c3e6b5b5b0f1386bbd86b881de725b5bbc92849"
+          "hash": "ed89eca7a41fbb9a5d3f0ae2c023970b451285157ad01dd4acd88236c38bc83f"
         },
         {
           "file": "css/source/dialogs-responsive.css",
@@ -165,35 +164,35 @@
         },
         {
           "file": "css/source/wedding-moves.css",
-          "hash": "5b43e0e0a12fb300f91f7f493ec6b55868daa63844184bf44d7df40a0bd2ed9a"
+          "hash": "9f307a0663d5ff96002efd3eec074b212699291eca02751d8654f31a1b27cee1"
         },
         {
           "file": "css/source/shared-refinements.css",
-          "hash": "36b8dc3c0069c98f2d5e975512e4885de2c4688c067c3a4c011812ed28318aa1"
+          "hash": "ce507f9860cef78679f964258d8c222a4bb646c9ed08d3388f5c9a67723cd41b"
         },
         {
           "file": "css/source/home-sharing.css",
-          "hash": "8d2556639e8223d19d2670108fb6d7cebf353e25c2b4561bed3bdcf33d48f001"
+          "hash": "7c9b08e516a182e15beef9a45ce4755377a23d1bcdfd0c6bbaf3ba28330e6e12"
         },
         {
           "file": "css/source/hours-kairo.css",
-          "hash": "8d3c959b1bd5fd3dc564cb3fccd52469335746284d63f9ae6bdbb6ed30d0b317"
+          "hash": "0424ce22cb6fb9144fd2015d49dfb7f71796f7ee8440fcc14c8050f97f00dc4b"
         },
         {
           "file": "css/source/energy-refinements.css",
-          "hash": "ad85d3b26f5f8df5ee36ff93be1fc959a75319d21835eb64572b248eb8e89965"
+          "hash": "3f8fcdea508f0e30361069c4ac096cfca544deebb91d586745c773843d7f0d93"
         },
         {
           "file": "css/source/home-reminders.css",
-          "hash": "38bdefdcfdfe66af20e803d5e0beabd19dab36551d01c0345bcdc61bd824853d"
+          "hash": "985fbb309c64ae0e557c6359cb7e8f570210fd125b76f50db1caad7d1e613453"
         },
         {
           "file": "css/source/invoices.css",
-          "hash": "f46218b0ea03bf6b6557f01dbea23f773800e41429fb34d5f22b2d76a44f7556"
+          "hash": "0c83cd625c58680cf850008dff125883a91efc999bb889594c23423a9a4b454e"
         },
         {
           "file": "css/source/home-status.css",
-          "hash": "e9a563483d60ce2861697a4f1bce47a4114418b1f61b9dccd7bb95ccb767bc2c"
+          "hash": "7f31221a928bd74784ecc30ecb52bd9624a9082d14bd366afc58ecd80a0ca65d"
         },
         {
           "file": "css/source/invoices-calendar.css",
@@ -217,7 +216,7 @@
         },
         {
           "file": "js/hours-kairo.js",
-          "hash": "f0d95bc9a22f56e59ac72b111329ba43780ac658d878ca3f246c182a0f09a302"
+          "hash": "1294ddffa3624fd8037826ffb70ed5b73647b53014b11c8a25cde4c92a4f0fac"
         },
         {
           "file": "js/hours-cache.js",
@@ -233,7 +232,7 @@
         },
         {
           "file": "js/invoices-home.js",
-          "hash": "26529402e4c198c38ddbf21ba621dbc93662bd727e327cc00c133d60f7225c3a"
+          "hash": "40a6c821ea04483b99e13be7c065afde6527cf15388c2aa86d8d64d8c9bcddb4"
         },
         {
           "file": "js/invoices-history.js",
@@ -249,11 +248,11 @@
         },
         {
           "file": "js/init.js",
-          "hash": "9c900a17529bbb74810fb1a8d7d8a3c025cca599dbcb1e944fde9b60a3b4c46b"
+          "hash": "27104380f774c39a82d4d6758d8bcee65b3fd293164fc516e330e5afd08c8c54"
         },
         {
           "file": "js/home-week-actions.js",
-          "hash": "b89a1df9bb2da306f3270a891cf6e26011f274a6dd710c1d19e96a453761eaa2"
+          "hash": "79a34ab8728a245b3899524b6c035195267098ee6fe0e23a717c9efec16e8802"
         },
         {
           "file": "tools/visual-map/capture.cjs",
@@ -266,20 +265,7 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "9c1f95f2435b40a82250339d4d9adbe450069239",
-      "review": "Sin revisar",
-      "reviewHistory": [
-        {
-          "imageHash": "3493bf6888e56c26aa0080cd30012227abc1b4f452587c63e94dd312106716b2",
-          "review": "Revisada visualmente",
-          "commit": "9532bfb2efdc60c9794c979ac25917fc7184c5c0",
-          "reviewEvidence": {
-            "referenceCommit": "9532bfb2efdc60c9794c979ac25917fc7184c5c0",
-            "reviewedAt": "2026-10-25",
-            "method": "InspecciÃ³n visual de las 150 capturas a escala de 400 px, en lÃ¡minas de cuatro imÃ¡genes; ampliaciÃ³n y reproducciÃ³n de los casos destacados."
-          }
-        }
-      ],
+      "commit": "acdc27c3b4aa73db0bada91da2cd4c4b36c598d5",
       "verifiedEdges": [
         "household",
         "study",
@@ -294,7 +280,21 @@
         "home-september",
         "tasks"
       ],
-      "fresh": false
+      "imageHash": "7d8e88d5f8b218c3f48738642f1305211feedce89bb955a5863acd3e51fd5bed",
+      "review": "Sin revisar",
+      "reviewHistory": [
+        {
+          "imageHash": "3493bf6888e56c26aa0080cd30012227abc1b4f452587c63e94dd312106716b2",
+          "review": "Revisada visualmente",
+          "commit": "9532bfb2efdc60c9794c979ac25917fc7184c5c0",
+          "reviewEvidence": {
+            "referenceCommit": "9532bfb2efdc60c9794c979ac25917fc7184c5c0",
+            "reviewedAt": "2026-10-25",
+            "method": "InspecciÃ³n visual de las 150 capturas a escala de 400 px, en lÃ¡minas de cuatro imÃ¡genes; ampliaciÃ³n y reproducciÃ³n de los casos destacados."
+          }
+        }
+      ],
+      "fresh": true
     },
     {
       "id": "household",
@@ -17882,6 +17882,7 @@
         "js/rutinas.js"
       ],
       "image": "captures/routine-week.png",
+      "imageHash": "62990efc216b2b08f7e36b9ccf1531a2ea5e2ca2a857a83547c341dfbeb3e38d",
       "anchors": {
         "routine-week-edit": {
           "x": 20,
@@ -18049,10 +18050,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "69734d37e9acd2f153dc368e23cde9081b6aa728",
-      "verifiedEdges": [
-        "routine-week-edit"
-      ],
-      "imageHash": "62990efc216b2b08f7e36b9ccf1531a2ea5e2ca2a857a83547c341dfbeb3e38d",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -18066,7 +18063,10 @@
           }
         }
       ],
-      "fresh": true
+      "verifiedEdges": [
+        "routine-week-edit"
+      ],
+      "fresh": false
     },
     {
       "id": "routine-week-edit",
@@ -36024,7 +36024,7 @@
     {
       "symbol": "openSheet",
       "file": "js/core.js",
-      "line": 601
+      "line": 615
     },
     {
       "symbol": "openEstudio",
@@ -36089,22 +36089,22 @@
     {
       "symbol": "openEvDayCarousel",
       "file": "js/events-detail.js",
-      "line": 241
+      "line": 246
     },
     {
       "symbol": "openEvDetail",
       "file": "js/events-detail.js",
-      "line": 256
+      "line": 261
     },
     {
       "symbol": "openEvAlarm",
       "file": "js/events-detail.js",
-      "line": 484
+      "line": 489
     },
     {
       "symbol": "openBdayAlarmFromEvents",
       "file": "js/events-detail.js",
-      "line": 503
+      "line": 508
     },
     {
       "symbol": "openEvForm",
@@ -36124,7 +36124,7 @@
     {
       "symbol": "openEvPlanPicker",
       "file": "js/events-plan-picker.js",
-      "line": 61
+      "line": 71
     },
     {
       "symbol": "openEvRoutineSession",
@@ -36145,6 +36145,11 @@
       "symbol": "openHomePopup",
       "file": "js/home-popup.js",
       "line": 151
+    },
+    {
+      "symbol": "openWeekDoubt",
+      "file": "js/home-week-doubt.js",
+      "line": 41
     },
     {
       "symbol": "openHousehold",

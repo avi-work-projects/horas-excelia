@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v575 — Plan de cumpleaños, estilo de Editar/Eliminar y ajustes de calendario';
+var APP_VERSION = 'v576 — Botón Atrás dentro de Gestify y semanas en duda';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){
@@ -505,6 +505,7 @@ function sendManualEmail(wkey){
   var notes=[];
   if(!previous&&hoursRemoteConfigured())notes.push('Comprueba que la semana anterior ya está enviada o programada.');
   if(['sent','scheduled','changed'].includes(state))notes.push('Esta semana ya tiene un correo enviado o programado; otro borrador podría duplicarlo.');
+  if(typeof weekDoubtConfirm==='function'&&!weekDoubtConfirm([wkey]))return;
   if(notes.length&&!window.confirm(notes.join(' ')+' ¿Quieres abrir Outlook?'))return;
   var wd=getWD(wkey),url='mailto:'+TO+'?cc='+encodeURIComponent(CC.join(','))+'&subject='+encodeURIComponent(hoursMailSubject(wd))+'&body='+encodeURIComponent(buildMailtoBody(wd));
   window.location.href=url;
@@ -573,10 +574,12 @@ function buildHomeCalendar(c){
 
     var card=document.createElement('div');
     card.dataset.week=wkey;card.dataset.mailState=mailState;
-    card.className='week-card'+(sent?' sent':'');
+    var doubt=typeof weekDoubt==='function'?weekDoubt(wkey):null;
+    card.className='week-card'+(sent?' sent':'')+(doubt?' doubt':'');
     var reviewLabel=mailState==='sent'?'Ver estado':mailState==='scheduled'?'Ver programación':mailState==='changed'?'Revisar cambios':'Programar semana';
     var badge=hoursHistorySent(wkey)?'<span class="sent-badge">✓ Enviada</span>':mailState==='unrecorded'?'<span class="sent-badge hours-unrecorded">Sin registro</span>':remote?'<button type="button" class="sent-badge hours-week-badge '+(covered?'covered':mailState?'attention':'unknown')+'" data-hours-week="'+wkey+'" aria-label="'+reviewLabel+'">'+(mailState==='missing'||mailState==='ready'?reviewLabel:hoursWeekBadge(mailState))+'</button>':sent?'<span class="sent-badge">\u2713 Enviada</span>':'';
-    card.innerHTML='<div class="week-header"><div class="week-info"><h3>Semana '+wn(mon)+badge+'</h3><div class="week-range">'+fd(mon)+' \u2014 '+fd(sun)+'</div></div><div class="week-total">'+dStr+'</div></div>';
+    card.innerHTML='<div class="week-header"><div class="week-info"><h3>Semana '+wn(mon)+badge+'</h3><div class="week-range">'+fd(mon)+' \u2014 '+fd(sun)+'</div></div><div class="week-header-side">'+(typeof weekDoubtBadgeHtml==='function'&&weekDoubtAllowed(wkey)?weekDoubtBadgeHtml(wkey):'')+'<div class="week-total">'+dStr+'</div></div></div>';
+    if(doubt){var doubtNote=document.createElement('div');doubtNote.className='week-doubt-note';doubtNote.textContent='En duda'+(weekDoubtSummary(doubt)?' · '+weekDoubtSummary(doubt):'');card.querySelector('.week-info').appendChild(doubtNote);}
     if(remote&&hoursWeekDate(wkey,mailState)){var scheduleNote=document.createElement('div');scheduleNote.className='hours-week-readonly';scheduleNote.textContent='Envío '+hoursWeekDate(wkey,mailState);card.querySelector('.week-info').appendChild(scheduleNote);}
 
     var grid=document.createElement('div'); grid.className='days-grid';
@@ -584,7 +587,7 @@ function buildHomeCalendar(c){
       var d=wk[i],dt=dayT(d),hrs=dayH(d),inM=d.getMonth()===CM;
       var cell=document.createElement('div');
       var hCls='';if(dt==='normal'){if(hrs===6.5)hCls=' h65';else if(hrs===7)hCls=' h7';else if(hrs===8)hCls=' h8';else if(hrs===9)hCls=' h9';}
-      cell.className='day-cell'+(dt!=='normal'?' '+dt:hCls);
+      cell.className='day-cell'+(dt!=='normal'?' '+dt:hCls)+(doubt&&doubt.days.indexOf(i)!==-1?' doubt-day':'');
       if(!inM)cell.style.opacity='0.4';
       var ts=isToday(d)?'color:var(--accent-bright)':'';
       cell.innerHTML=

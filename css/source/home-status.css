@@ -51,6 +51,19 @@
 /* v566: Acciones se integra con el verde de la semana enviada o programada. */
 .home-week-actions .home-week-more{border-color:var(--sent-border);color:var(--sent-text);background:color-mix(in srgb,var(--sent-border) 45%,var(--surface));font-weight:600}
 .home-week-actions .home-week-more svg{color:var(--sent-text)}
+/* Semanas en duda (v576): ámbar con parpadeo suave y días dudosos con contorno. */
+.week-header-side{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.week-doubt-btn{width:28px;height:28px;padding:0;border:1.5px solid var(--border);border-radius:50%;background:var(--surface);color:var(--text-muted);font:inherit;font-size:.85rem;font-weight:700;line-height:1;cursor:pointer}
+.week-doubt-btn.on{border-color:#d97706;background:#f59e0b;color:#fff}
+.week-card.doubt,.week-card.sent.doubt{border-color:#f59e0b;background:color-mix(in srgb,#f59e0b 12%,var(--surface));animation:week-doubt-pulse 1.8s ease-in-out infinite}
+@keyframes week-doubt-pulse{0%,100%{box-shadow:0 0 0 0 color-mix(in srgb,#f59e0b 0%,transparent)}50%{box-shadow:0 0 0 4px color-mix(in srgb,#f59e0b 50%,transparent)}}
+@media(prefers-reduced-motion:reduce){.week-card.doubt{animation:none}}
+.week-card.doubt .day-cell.doubt-day{box-shadow:inset 0 0 0 2px #f59e0b}
+.week-doubt-note{margin-top:3px;font-size:.66rem;font-weight:600;color:#b45309}
+.week-doubt-days{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
+.week-doubt-day{display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 2px;border:1.5px solid var(--border);border-radius:10px;background:var(--surface2);color:var(--text);font:inherit;font-weight:700;cursor:pointer}
+.week-doubt-day small{font-size:.6rem;font-weight:500;color:var(--text-muted)}
+.week-doubt-day.on{border-color:#f59e0b;background:color-mix(in srgb,#f59e0b 16%,var(--surface))}
 .home-week-actions .home-week-edit{background:#f4a066;border-color:#f4a066;color:#fff;font-weight:700}
 .home-week-actions .home-week-cancel{background:color-mix(in srgb,var(--c-red) 10%,var(--surface));border:1.5px solid color-mix(in srgb,var(--c-red) 55%,transparent);color:var(--c-red)}
 .home-week-actions .home-week-edit svg,.home-week-actions .home-week-cancel svg{color:inherit}

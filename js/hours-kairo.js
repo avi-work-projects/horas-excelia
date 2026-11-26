@@ -155,6 +155,8 @@ async function openHoursReview(targetWeek,intent){
   try{
     if(navigator.onLine===false)throw new Error('Sin conexión. No se puede comprobar Outlook.');
     var url=hoursKairoUrl();if(!url){openInvoiceSettings({connection:true});return;}
+    /* Semanas en duda: avisar antes de programar (la semana o todas las del mes). */
+    if(intent!=='check'&&typeof weekDoubtConfirm==='function'&&!weekDoubtConfirm(targetWeek?[targetWeek]:homeSubmissionWeeks(CY,CM).map(function(w){return w.key;})))return;
     if(!targetWeek&&intent!=='check'){
       var previous=homePreviousMailMonth(CY,CM);
       if(previous.known&&!previous.ready){showToast('Primero deben estar programados los correos de '+new Date(previous.period+'-01T12:00:00').toLocaleDateString('es-ES',{month:'long',year:'numeric'})+'.','error');return;}

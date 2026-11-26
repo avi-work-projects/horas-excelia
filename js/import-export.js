@@ -372,7 +372,8 @@ var _g4=document.getElementById('exportAllBtn'); if(_g4)_g4.addEventListener('cl
     householdTab:householdTab(appStorage.getItem(HOUSEHOLD_TAB_KEY)),
     navIconStyle:appStorage.getItem('excelia-nav-icons-v1')||'original',
     theme:appStorage.getItem('excelia-theme-v1')||null,
-    actionStyle:appStorage.getItem('excelia-action-style-v1')||null};
+    actionStyle:appStorage.getItem('excelia-action-style-v1')||null,
+    weekDoubts:typeof weekDoubts==='function'?weekDoubts():{}};
   shareOrDownload(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),'gestify-backup.json',function(){showToast('Backup completo exportado','success');});
 });
 var _g5=document.getElementById('importAllBtn'); if(_g5)_g5.addEventListener('click',function(){
@@ -511,6 +512,7 @@ function _applyFullImport(d,mode){
       if(d.alarmDays)appStorage.setItem('excelia-alarm-days',d.alarmDays);
       if(d.theme)appStorage.setItem('excelia-theme-v1',d.theme);
       if(d.actionStyle==='filled'||d.actionStyle==='soft')appStorage.setItem('excelia-action-style-v1',d.actionStyle);
+      if(d.weekDoubts&&typeof d.weekDoubts==='object'&&!Array.isArray(d.weekDoubts)){var _wd={};Object.keys(d.weekDoubts).forEach(function(k){if(/^\d{4}-\d{2}-\d{2}$/.test(k)){var c=weekDoubtClean(d.weekDoubts[k]);if(c)_wd[k]=c;}});appStorage.setItem('excelia-week-doubts-v1',JSON.stringify(_wd));}
       if(d.routineAppearance)setRutGymColor(d.routineAppearance.gymColor);
       if(d.eventAppearance)setEventAppearance(d.eventAppearance);
       if(d.householdTab)setHouseholdTab(d.householdTab);

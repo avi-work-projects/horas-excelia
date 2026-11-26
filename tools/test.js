@@ -404,6 +404,7 @@ const REGLAS = [
       'excelia-nav-icons-v1':      'navIconStyle',
       'excelia-theme-v1':          'theme',
       'excelia-action-style-v1':   'actionStyle',
+      'excelia-week-doubts-v1':    'weekDoubts',
       /* A proposito FUERA del backup: */
       'excelia-macro-alarm-url':   false,   /* clave antigua, solo se lee como respaldo */
       'excelia-popup-dismissed':   false,   /* aviso de una sesion, no es un dato */
