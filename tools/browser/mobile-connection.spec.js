@@ -160,7 +160,8 @@ test('cancelar la espera detiene las comprobaciones y una agenda fallida ofrece 
   await expect(calendar).toContainText('No se ha podido abrir Kairo');await expect(calendar.locator('iframe')).toHaveCount(0);
   state.brokenAgenda=false;await calendar.getByRole('button',{name:'Reintentar'}).click();
   await expect(page.frameLocator('iframe').getByRole('heading')).toHaveText('Agenda de prueba');
-  await closeAgenda(page);await expect(calendar).toHaveCount(0);await expect(page.locator('#hoursCalendarBtn')).toBeFocused();
+  // El panel se retira con un temporizador: con el reloj simulado hay que dejarlo avanzar.
+  await closeAgenda(page);await page.clock.fastForward(1000);await expect(calendar).toHaveCount(0);await expect(page.locator('#hoursCalendarBtn')).toBeFocused();
 });
 
 test('vinculación privada sin Kairo permite los modos y rechaza orígenes ajenos',async({page})=>{
