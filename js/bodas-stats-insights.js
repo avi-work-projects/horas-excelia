@@ -65,8 +65,8 @@ function renderBodaSummary(all,todas,couples){
   function n(f){return pool.filter(function(x){return bodaMatchesDate(x,f);}).length;}
   var h='<section class="stats-section boda-stats-summary" aria-label="Resumen"><header class="stats-head"><h3>Resumen</h3>'+renderBodaYearPicker(todas)+'</header>';
   h+=bodaSumRow('Parejas','<b>'+pool.length+'</b>',[bodaSumPart(n('pasadas'),'pasadas',' data-stats-couples="pasadas"'),bodaSumPart(n('activas'),'en curso',' data-stats-couples="activas"'),bodaSumPart(n('futuras'),'próximas',' data-stats-couples="futuras"')],
-    o.taught+' con clases impartidas',' id="bodaStatsCouples" data-stats-couples="todas" aria-label="Ver todas las parejas"');
-  h+=bodaSumRow('Clases','<b>'+o.total+'</b>',[bodaSumPart(o.taken,'impartidas'),bodaSumPart(o.pending,'pendientes'),bodaSumPart(o.unassigned,'sin pareja')]);
+    o.taught+(o.taught===1?' pareja ha recibido alguna clase':' parejas han recibido alguna clase'),' id="bodaStatsCouples" data-stats-couples="todas" aria-label="Ver todas las parejas"');
+  h+=bodaSumRow('Clases','<b>'+o.total+'</b>',[bodaSumPart(o.taken,'impartidas'),bodaSumPart(o.pending,'pendientes'),bodaSumPart(o.unassigned,o.unassigned===1?'hueco sin asignar':'huecos sin asignar')]);
   if(all.length){
     var first=all[0].start,last=all[all.length-1].start;
     var days=Math.max(1,Math.round((new Date(last+'T00:00:00')-new Date(first+'T00:00:00'))/86400000)+1);

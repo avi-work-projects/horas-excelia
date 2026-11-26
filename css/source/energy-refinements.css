@@ -274,8 +274,8 @@ body:has(#evFormOv.open) .tasks-fab{visibility:hidden}
 .ev-day-left:has(.ev-day-vips){gap:2px}
 
 /* El ancho del nombre del mes no desplaza las flechas compartidas. */
-.boda-asg-nav,.boda-cal-nav{display:grid;grid-template-columns:32px minmax(0,1fr) 32px;align-items:center;gap:10px;width:100%}
-.boda-asg-nav>strong,.boda-asg-month,.boda-cal-month{text-align:center;min-width:0}
+.boda-asg-nav{display:grid;grid-template-columns:32px minmax(0,1fr) 32px;align-items:center;gap:10px;width:100%}
+.boda-asg-nav>strong,.boda-asg-month{text-align:center;min-width:0}
 /* Deshacer acompaña a la ficha de sesión sin tapar sus controles de estado. */
 body:has(#evDetailOv.open #evDRutSes) .toast{bottom:calc(min(360px,88dvh) + 12px)}
 body:has(#evDetailOv.open .ev-car-sheet #evDRutSes) .toast{bottom:calc(56dvh + 12px)}

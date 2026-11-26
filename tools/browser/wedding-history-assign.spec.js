@@ -135,7 +135,7 @@ test('v566: gráficos sin cambio de subpestaña, línea de récord, calendario c
   expect(await page.evaluate(()=>BODA_CAL_HL)).toBe('b');
   await page.evaluate(()=>window._hd=document.querySelector('.boda-sticky-hd'));
   await page.locator('#bodaCalPrev').click();await page.locator('#bodaCalPrev').click();
-  await expect(page.locator('.boda-cal-month')).toHaveText('Julio 2026');
+  await expect(page.locator('.boda-cal-month')).toHaveText('Julio2026');
   await expect(page.locator('.boda-cal-lg.on[data-hl="b"]')).toHaveCount(1);
   // Cambiar de mes repinta solo el calendario: la cabecera de subpestañas es el mismo nodo.
   expect(await page.evaluate(()=>window._hd.isConnected)).toBe(true);
@@ -169,4 +169,12 @@ test('deslizar sobre un gráfico de Estadísticas no cambia de subpestaña; fuer
   expect(await page.evaluate(()=>BODA_SUBTAB)).toBe('stats');
   await swipe('.boda-stats-summary',160);
   await expect.poll(()=>page.evaluate(()=>BODA_SUBTAB)).toBe('calendario');
+});
+
+test('Calendario: Hoy vuelve al mes actual y el mes se escribe con el año debajo',async({page})=>{
+  await page.evaluate(()=>{BODA_SUBTAB='calendario';BODA_CAL_YEAR=2025;BODA_CAL_MONTH=2;refreshEvents(false);});
+  await expect(page.locator('.boda-cal-month')).toHaveText('Marzo2025');
+  await page.locator('#bodaCalToday').click();
+  await expect(page.locator('.boda-cal-month')).toHaveText('Octubre2026');
+  await expect(page.locator('.boda-cal-month .sy-year-sub')).toHaveText('2026');
 });

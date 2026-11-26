@@ -146,6 +146,8 @@ function bindBodaCalendar(root){
   if(cp)cp.addEventListener('click',function(){bodaCalMove(-1);});
   var cn=root.querySelector('#bodaCalNext');
   if(cn)cn.addEventListener('click',function(){bodaCalMove(1);});
+  var ct=root.querySelector('#bodaCalToday');
+  if(ct)ct.addEventListener('click',function(){var now=new Date();BODA_CAL_DAY=null;BODA_CAL_YEAR=now.getFullYear();BODA_CAL_MONTH=now.getMonth();bodaCalRefresh();});
   /* Deslizar sobre la rejilla para cambiar de mes */
   var cg=root.querySelector('#bodaCalGrid');
   if(cg&&typeof addSwipe==='function')addSwipe(cg,function(){bodaCalMove(1);},function(){bodaCalMove(-1);});

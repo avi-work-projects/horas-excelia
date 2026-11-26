@@ -1,8 +1,8 @@
 {
   "schemaVersion": 2,
   "title": "Gestify · mapa visual",
-  "generatedAt": "2026-11-26T11:14:23.806Z",
-  "referenceCommit": "7eab5828453111eef8a61fe4ea3898f797cb8fa6",
+  "generatedAt": "2026-11-26T12:05:04.807Z",
+  "referenceCommit": "dfec87899e32aff4854d829c40f56a31b5954ebb",
   "date": "2026-08-21T10:00:00+02:00",
   "viewport": {
     "width": 400,
@@ -9782,7 +9782,7 @@
         "wedding-new",
         "wedding-issues"
       ],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "calendar-export",
@@ -10189,13 +10189,12 @@
         "js/bodas-bind.js"
       ],
       "image": "captures/wedding-calendar.png",
-      "imageHash": "11a9b2eac437fd505208c1e10a4698bab331556673808200d705863cf91e2153",
       "anchors": {},
       "entryBox": null,
       "dependencies": [
         {
           "file": "index.html",
-          "hash": "bcd66a170a075b171c04e8b759cc47e4c9c7ae9f01934473d1d8f49ff3aedaf4"
+          "hash": "09ac87933ec05a956418d68d2e3545b4f5456ce33eb8c16136cf54919a03042c"
         },
         {
           "file": "js/nav-icons.js",
@@ -10204,7 +10203,7 @@
         {
           "file": "js/core.js",
           "part": "core-runtime",
-          "hash": "cf0adf093b04cb625864280ca6355e946dc89063307e5116d80ec3c59805d3cb"
+          "hash": "270a79e6bd6c7a10cfbc62a6d47a38e1af91d082fd5d99078980b4391d8c9579"
         },
         {
           "file": "js/data-integrity.js",
@@ -10220,7 +10219,7 @@
         },
         {
           "file": "css/source/base.css",
-          "hash": "76192f32c58655ef3f58b9d2464020845fe85d70447300a360fc5fa80caaed4b"
+          "hash": "b3339a2b388140a7f034d30838bcdebe79a91b3c3899a2c0731e9edd3801e1c7"
         },
         {
           "file": "css/source/navigation-controls.css",
@@ -10252,11 +10251,11 @@
         },
         {
           "file": "css/source/wedding-moves.css",
-          "hash": "4ddd710ad7e1b2999518fa9a2ee06932e07a686ea23ab05ba6425984f572e3e2"
+          "hash": "6287c90bdfe18d4fc9539d10fcb1f3c17cd94f096632685c6dc9237813031ff2"
         },
         {
           "file": "css/source/routines.css",
-          "hash": "43b1089a41b86a4bf8f03383befef13171eae05beabf4ae35a37ee7e746d2e9e"
+          "hash": "966063d9d1e6cabd64209deef8d15609e36c5462d1bbb5892f3756323108f274"
         },
         {
           "file": "css/source/shared-refinements.css",
@@ -10268,7 +10267,7 @@
         },
         {
           "file": "css/source/energy-refinements.css",
-          "hash": "ad85d3b26f5f8df5ee36ff93be1fc959a75319d21835eb64572b248eb8e89965"
+          "hash": "3f8fcdea508f0e30361069c4ac096cfca544deebb91d586745c773843d7f0d93"
         },
         {
           "file": "css/source/home-reminders.css",
@@ -10280,7 +10279,7 @@
         },
         {
           "file": "css/source/home-status.css",
-          "hash": "ce05d6d8c773b5469b79234aea1904b90a46b633172f6743b0e206b53c577499"
+          "hash": "c986cbaf604cec2e65dde5952c147d377fb385a66691736b19bffdd7dc4a6d6c"
         },
         {
           "file": "css/source/invoices-calendar.css",
@@ -10300,7 +10299,7 @@
         },
         {
           "file": "js/home-week-actions.js",
-          "hash": "11fea26112f37e6a41f54e84d3293a041b91a5bf12d0eca5cfca2f27309e2421"
+          "hash": "79a34ab8728a245b3899524b6c035195267098ee6fe0e23a717c9efec16e8802"
         },
         {
           "file": "js/events-render.js",
@@ -10336,11 +10335,11 @@
         },
         {
           "file": "js/bodas.js",
-          "hash": "7ebee05d8cc8e7830f2de8656db16c5d3ab6e384bfbd7268a2cdf326acf0d1de"
+          "hash": "d7550ec741be8cfa544b983ca2ab98846aa30a1a99d6c34d1a008a1243f88f8e"
         },
         {
           "file": "js/bodas-bind.js",
-          "hash": "a8c419c55dd18fe739111fec6cdceb0d66cbf005127f154b6fd0ff253a62bff4"
+          "hash": "86705fea98872278b2a742018fe04f0c720cb54523e72701debe05572b2d1980"
         },
         {
           "file": "tools/visual-map/capture.cjs",
@@ -10353,7 +10352,9 @@
         }
       ],
       "dependencyVersion": 2,
-      "commit": "1a479a6b94f7a3710c1752000b24a75d93cd188c",
+      "commit": "dfec87899e32aff4854d829c40f56a31b5954ebb",
+      "verifiedEdges": [],
+      "imageHash": "291a143ad1404cda0b31bb13ef7cc70567846299673daa75bd23ffe6a0a68d63",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -10368,8 +10369,7 @@
           }
         }
       ],
-      "verifiedEdges": [],
-      "fresh": false
+      "fresh": true
     },
     {
       "id": "wedding-stats",
@@ -10390,6 +10390,7 @@
         "js/statistics-ui.js"
       ],
       "image": "captures/wedding-stats.png",
+      "imageHash": "f515d7350c40832222c1a33cdd05fc82c9fc0661de4c3717e4608e1cc8bcbcbb",
       "anchors": {
         "wedding-stats-charts": {
           "x": 390,
@@ -10577,10 +10578,6 @@
       ],
       "dependencyVersion": 2,
       "commit": "7eab5828453111eef8a61fe4ea3898f797cb8fa6",
-      "verifiedEdges": [
-        "wedding-stats-charts"
-      ],
-      "imageHash": "f515d7350c40832222c1a33cdd05fc82c9fc0661de4c3717e4608e1cc8bcbcbb",
       "review": "Sin revisar",
       "reviewHistory": [
         {
@@ -10594,7 +10591,10 @@
           }
         }
       ],
-      "fresh": true
+      "verifiedEdges": [
+        "wedding-stats-charts"
+      ],
+      "fresh": false
     },
     {
       "id": "wedding-config",
@@ -18247,7 +18247,7 @@
         }
       ],
       "verifiedEdges": [],
-      "fresh": true
+      "fresh": false
     },
     {
       "id": "routine-history",

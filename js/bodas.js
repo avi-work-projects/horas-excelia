@@ -350,9 +350,10 @@ function _renderBodaCalendario(){
   (porDia[BODA_CAL_DAY]||[]).forEach(function(ev){if(ev.boda&&ev.boda.coupleId)dayCouples[ev.boda.coupleId]=true;});
 
   var h='<div class="boda-cal-nav">';
-  h+='<button class="sy-nav" id="bodaCalPrev">&#9664;</button>';
-  h+='<div class="boda-cal-month">'+MN[m]+' '+y+'</div>';
-  h+='<button class="sy-nav" id="bodaCalNext">&#9654;</button>';
+  h+='<button class="sy-nav" id="bodaCalPrev" aria-label="Mes anterior">&#9664;</button>';
+  h+='<div class="sy-year sy-year-2line boda-cal-month">'+MN[m]+'<span class="sy-year-sub">'+y+'</span></div>';
+  h+='<button class="sy-nav" id="bodaCalNext" aria-label="Mes siguiente">&#9654;</button>';
+  h+='<button class="today-btn boda-cal-today" id="bodaCalToday">Hoy</button>';
   h+='</div>';
   h+='<div class="boda-cal-hdr">';
   ['L','M','X','J','V','S','D'].forEach(function(d){h+='<div>'+d+'</div>';});
@@ -605,8 +606,8 @@ function _renderBodaClases(){
   h+='</div>';
   /* Añadir y los dos filtros «Ver», en una sola fila compacta. */
   h+='<div class="boda-create-actions" aria-label="Añadir a Wedding Moves">';
-  h+='<button class="bday-io-btn io-primaria boda-create-button boda-add-class" id="bodaAddClass" aria-label="Añadir clase"><span>Añadir</span><span>clase</span></button>';
-  h+='<button class="bday-io-btn io-primaria boda-create-button boda-add-couple" id="bodaAddCouple" aria-label="Añadir pareja"><span>Añadir</span><span>pareja</span></button>';
+  h+='<button class="bday-io-btn io-primaria boda-create-button boda-add-class" id="bodaAddClass" aria-label="Añadir clase"><span class="boda-add-plus" aria-hidden="true">+</span><span class="boda-add-txt"><span>Añadir</span><span>clase</span></span></button>';
+  h+='<button class="bday-io-btn io-primaria boda-create-button boda-add-couple" id="bodaAddCouple" aria-label="Añadir pareja"><span class="boda-add-plus" aria-hidden="true">+</span><span class="boda-add-txt"><span>Añadir</span><span>pareja</span></span></button>';
   h+='<label class="boda-see-chip"><input type="checkbox" id="bodaShowPast"'+(BODA_HIDE_PAST?'':' checked')+'> Pasadas</label>';
   h+='<label class="boda-see-chip"><input type="checkbox" style="--chk:var(--wm-wine)" id="bodaShowClosed"'
     +(BODA_HIDE_CLOSED?'':' checked')+'> Cerrados</label>';

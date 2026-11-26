@@ -16,7 +16,9 @@
 .boda-sec .ev-btn.primary,:is(.ev-detail-overlay,.ev-form-overlay)[id^="boda"] .ev-btn.primary,.boda-sec .boda-save-ok{color:var(--io-primary-ink)}
 .boda-create-button{--io-primary:color-mix(in srgb,var(--wm-wine) 10%,var(--surface));--io-primary-border:color-mix(in srgb,var(--wm-wine) 35%,var(--border));--io-primary-ink:var(--wm-wine);}
 .boda-create-actions{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:2px 0}
-.boda-create-actions .bday-io-btn{flex:1 1 0;display:inline-flex;flex-direction:column;align-items:center;justify-content:center;min-width:0;min-height:40px;padding:4px 8px;font-size:.72rem;line-height:1.2;white-space:nowrap}
+.boda-create-actions .bday-io-btn{flex:1 1 0;display:inline-flex;align-items:center;justify-content:center;gap:6px;min-width:0;min-height:40px;padding:4px 8px;font-size:.72rem;line-height:1.2;white-space:nowrap}
+.boda-add-plus{font-size:1rem;font-weight:700;line-height:1}
+.boda-add-txt{display:flex;flex-direction:column;align-items:flex-start}
 /* Pareja en marrón, para distinguirla de Clase (granate). */
 .boda-create-button.boda-add-couple{--io-primary:color-mix(in srgb,#8b5e34 12%,var(--surface));--io-primary-border:color-mix(in srgb,#8b5e34 40%,var(--border));--io-primary-ink:#8b5e34}
 .boda-see-chip{flex:none;display:inline-flex;align-items:center;gap:5px;min-height:36px;padding:0 8px;border:1px solid var(--border);border-radius:999px;background:var(--surface);color:var(--text-muted);font-size:.72rem;cursor:pointer}
@@ -252,8 +254,11 @@
 .boda-asg-legend i.lg-libre{border-color:#8b5e34;background:rgba(139,94,52,.3)}
 .boda-asg-legend i.lg-ajena{background:repeating-linear-gradient(45deg,rgba(160,160,200,.35),rgba(160,160,200,.35) 2px,transparent 2px,transparent 5px)}
 /* Subpestana Calendario de bodas */
-.boda-cal-nav{display:flex;align-items:center;justify-content:center;gap:14px;margin:2px 0 8px}
-.boda-cal-month{font-size:.9rem;font-weight:600;color:var(--text);min-width:150px;text-align:center}
+/* Cabecera del mes como Calendario 1 mes: flechas pegadas al mes (grande) con el año debajo y Hoy a la derecha. */
+.boda-cal-nav{position:relative;display:flex;align-items:center;justify-content:center;gap:5px;min-height:44px;margin:2px 0 8px;padding:0 58px}
+.boda-cal-nav .boda-cal-month{min-width:96px}
+#eventsOverlay .boda-cal-nav .boda-cal-today{position:absolute;right:0;top:50%;transform:translateY(-50%);margin:0;border-color:var(--wm-wine);color:var(--wm-wine)}
+@media(max-width:360px){.boda-cal-nav{padding:0 48px}#eventsOverlay .boda-cal-nav .boda-cal-today{padding:6px 9px}}
 .boda-cal-hdr{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:2px}
 .boda-cal-hdr div{text-align:center;font-size:.58rem;color:var(--text-dim);text-transform:uppercase}
 .boda-cal-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px}
