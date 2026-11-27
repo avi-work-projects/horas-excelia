@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v581 — Botones de Ajustes con su color y despliegue con reintentos';
+var APP_VERSION = 'v582 — Entrega de facturas a Kairo en Android';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){

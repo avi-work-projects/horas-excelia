@@ -381,10 +381,10 @@
 
 **Funciones:** validateHomeInvoiceStatus:6 · homeInvoiceCacheRead:13 · homeInvoiceCacheSave:23 · homeInvoiceCheckedAt:24 · homeInvoiceScheduleDate:25 · homePreviousInvoicePeriod:26 · homeInvoiceModel:27 · homeInvoiceRequirement:55 · renderHomeInvoiceStatus:58 · paintHomeInvoiceStatus:82 · initHomeInvoiceStatus:118
 
-### js/invoices-kairo.js  _(91 líneas)_
+### js/invoices-kairo.js  _(123 líneas)_
 **Estado global:** INVOICE_KAIRO_BUSY:2
 
-**Funciones:** invoiceKairoUrl:3 · invoiceKairoState:9 · invoiceKairoSection:12 · invoiceKairoExchange:24 · finish:27 · receive:28 · bindInvoiceKairo:48
+**Funciones:** invoiceKairoUrl:3 · invoiceKairoState:9 · invoiceKairoSection:12 · invoiceKairoCheckResult:24 · invoiceKairoExchange:54 · finish:57 · receive:58 · bindInvoiceKairo:78
 
 ### js/invoices-projects.js  _(79 líneas)_
 **Funciones:** invoiceProjectPeriods:2 · invoiceProjectFor:10 · invoiceProjectChange:15 · invoiceProjectApply:22 · invoiceProjectReply:30

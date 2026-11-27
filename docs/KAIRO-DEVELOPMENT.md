@@ -446,3 +446,7 @@ el 20/10; noviembre conserva 20/11 programado. La sesión de Chromium bloqueaba
 CDP; reiniciar la unidad aislada `gestify-outlook.service` y solicitar la
 comprobación explícita recuperó el estado `ready`. No se usó el teléfono ni se
 programaron, emitieron o enviaron correos reales. La prueba en Vivo queda pendiente.
+
+## Facturas desde Android (v582)
+
+En Android, Enviar a Kairo y Consultar estado usan una entrega temporal autenticada en la Raspberry. El enlace lleva una referencia aleatoria y se puede abrir en la app independiente. Para un envío, Kairo exige pulsar Preparar borrador y abre el paso 2 cuando la importación devuelve el estado de revisión. Gestify consulta el resultado con la misma referencia. La entrega caduca tras diez minutos. El receptor y el adaptador de instalación se mantienen en el proyecto Kairo.

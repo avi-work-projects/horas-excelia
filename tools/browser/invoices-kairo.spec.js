@@ -132,3 +132,34 @@ test('cambiar un día y restaurarlo: consulta sin recepción, textos claros y pa
   await expect(popup.locator('#receive')).toBeHidden();expect(calls()).toBe(1);
   await popup.screenshot({path:info.outputPath('receptor-restaurado-393.png'),animations:'disabled'});
 });
+
+test('Android recibe el resultado aunque Kairo abra la factura en una app independiente',async({page,context})=>{
+  await page.addInitScript(()=>Object.defineProperty(navigator,'userAgent',{get:()=>'Chrome Android'}));
+  await setup(page,context);
+  const ticket='a'.repeat(64);
+  let transfer,confirmed=false;
+  await context.route(base+'gestify-entrega**',async route=>{
+    const req=route.request(),url=new URL(req.url());
+    if(req.method()==='POST'){
+      transfer=req.postDataJSON();
+      expect(transfer.action).toBe('prepare');
+      expect(verifyInvoiceExport(JSON.parse(transfer.source))).toEqual({operationIdMatches:true,contentHashMatches:true});
+      return route.fulfill({status:201,json:{ticket}});
+    }
+    if(url.searchParams.get('abrir')===ticket)return route.fulfill({body:'<button>Preparar borrador</button>',contentType:'text/html'});
+    expect(url.searchParams.get('resultado')).toBe(ticket);
+    const {period,operationId,contentHash}=transfer;
+    return route.fulfill({json:confirmed?{ok:true,result:{period,operationId,contentHash,state:'review'}}:{pending:true}});
+  });
+  const popup=await exchange(page,'#invoiceKairoSend',false);
+  await expect(popup.getByRole('button',{name:'Preparar borrador'})).toBeVisible();
+  const target=popup.url();
+  await popup.close();
+  const kairo=await context.newPage();
+  await kairo.goto(target);
+  expect(await kairo.evaluate(()=>window.opener)).toBeNull();
+  await kairo.getByRole('button',{name:'Preparar borrador'}).click();
+  confirmed=true;
+  await kairo.close();
+  await expect(page.locator('#invoiceKairoMessage')).toContainText('Preparación recibida');
+});
