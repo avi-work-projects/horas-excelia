@@ -51,7 +51,10 @@ test('respuesta perdida persiste pendiente, bloquea nuevas facturas y reintenta 
  let popup=await save(page);await expect(page.locator('#invoiceError')).toContainText('sin confirmar');await popup.close();
  expect(await page.evaluate(()=>invoiceData().config.project)).toBe('DEMO/OLD');
  expect(await page.evaluate(()=>invoiceData().projectPending.project)).toBe('DEMO/NEW');
- await page.evaluate(()=>openInvoiceMonth('2027-03'));await expect(page.locator('#invoiceKairoSend')).toBeDisabled();
+ await page.evaluate(()=>openInvoiceMonth('2027-03'));await expect(page.locator('#invoiceKairoContinue')).toBeEnabled();await context.route('**/gestify-status?period=2027-03',r=>r.fulfill({json:{period:'2027-03',state:'missing',generated:false,issued:false,scheduled:false,sent:false,scheduledDate:null},headers:{'Access-Control-Allow-Origin':'http://127.0.0.1:8765'}}));
+ await page.locator('#invoiceKairoContinue').click();
+ await expect(page.locator('#invoiceKairoMessage')).toContainText('Completa los datos');
+ expect(await page.evaluate(()=>!!invoiceData().months['2027-03']?.kairo)).toBe(false);
  await page.evaluate(()=>openInvoiceSettings());await page.locator('#invoiceSettingsEdit').click();
  popup=await save(page);await expect(page.locator('#invoiceProjectStatus')).toContainText('sincronizado');
  expect(await page.evaluate(()=>invoiceData().projectPending||null)).toBeNull();expect(counters()).toEqual({writes:1,requests:2});

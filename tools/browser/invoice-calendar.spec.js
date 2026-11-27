@@ -19,13 +19,14 @@ test('mes visual con ausencias y envío previsto, sin eventos ni consultas al ab
  await expect(page.locator('[data-date="2027-02-18"]')).toContainText('V');
  await expect(page.locator('[data-date="2027-02-19"]')).toContainText('F');
  await expect(page.locator('#invoiceCalendar .delivery')).toHaveCount(1);
+ await expect(page.locator('.delivery .invoice-calendar-envelope use')).toHaveAttribute('href','#dispatch-invoice-mail');
  await expect(page.locator('input[type="month"],#invoiceConfig,#invoiceJson')).toHaveCount(0);
  await expect(page.locator('.invoice-month-summary')).toHaveAttribute('open','');
  for(const width of [320,393,440]){
   await page.setViewportSize({width,height:880});
   expect(await page.locator('.invoice-sheet').evaluate(el=>el.scrollWidth<=el.clientWidth)).toBe(true);
   expect(await page.locator('.invoice-body').evaluate(el=>el.scrollTop)).toBe(0);
-  const send=await page.locator('#invoiceKairoSend').boundingBox(),sheet=await page.locator('.invoice-sheet').boundingBox();
+  const send=await page.locator('#invoiceKairoContinue').boundingBox(),sheet=await page.locator('.invoice-sheet').boundingBox();
   expect(send.y+send.height).toBeLessThanOrEqual(sheet.y+sheet.height);
   const calendar=await page.locator('#invoiceCalendar').boundingBox();expect(calendar.y).toBeGreaterThan(send.y+send.height);
  }

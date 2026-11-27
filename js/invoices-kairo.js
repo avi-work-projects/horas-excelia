@@ -10,16 +10,19 @@ function invoiceKairoState(state){
   return ({cancelled:'Preparación cancelada en Kairo.',pending:'Recepción sin confirmar. Consulta antes de repetir.',review:'Preparación recibida. Revisa y aprueba en Kairo.',blocked:'Revisión bloqueada. Revisa en Kairo.',approved:'Versión aprobada en Kairo.',accepted:'Factura emitida; correo pendiente en Kairo.',sent:'Correo enviado desde Kairo.',email_cancelled:'Factura emitida; correo cancelado.',emitting:'Emisión en curso en Kairo.',queued:'Operación en curso en Kairo.',sending:'Correo en curso en Kairo.',uncertain:'Resultado pendiente de comprobar en Kairo.',missing:'Esta versión aún no consta en Kairo.',different:'Kairo conserva otra versión; revisa allí antes de continuar.'})[state]||'Consulta el estado en Kairo.';
 }
 function invoiceKairoSection(p,record,url,problem){
-  var locked=!url,disabled=(!p||problem)?' disabled':'';
+  var locked=!url;
   var h='<section class="invoice-kairo-card'+(locked?' invoice-card invoice-kairo-locked':'')+'" aria-label="Kairo">';
-  if(locked)h+='<header class="invoice-kairo-header"><h3>Kairo</h3><span class="invoice-kairo-badge">Sin configurar</span></header>';
-  if(locked)h+='<button class="ev-btn invoice-connection-action" id="invoiceKairoConfig">Configurar conexión</button>';
-  else{
-    h+='<div class="invoice-actions">';
-    if(!record.final)h+='<button class="ev-btn ev-btn-primary invoice-primary-action" id="invoiceKairoSend"'+disabled+'>Enviar a Kairo</button>';
-    h+='<button class="ev-btn" id="invoiceKairoStatus"'+disabled+'>Consultar estado</button></div>';
-  }
-  return h+'<p class="invoice-note" id="invoiceKairoMessage" role="status">'+(locked&&record.kairo?'Configura de nuevo la dirección privada para consultar Kairo.':!locked&&disabled?'Completa los datos de facturación para continuar.':record.kairo?escHtml(invoiceKairoState(record.kairo.state))+(p&&record.kairo.contentHash!==p.contentHash?' La preparación local ha cambiado.':''):'')+'</p></section>';
+  if(locked)h+='<header class="invoice-kairo-header"><h3>Kairo</h3><span class="invoice-kairo-badge">Sin configurar</span></header><button class="ev-btn invoice-connection-action" id="invoiceKairoConfig">Configurar conexión</button>';
+  else h+='<div class="invoice-actions"><button class="ev-btn ev-btn-primary invoice-primary-action" id="invoiceKairoContinue">Continuar en Kairo</button></div>';
+  var note=locked&&record.kairo?'Configura de nuevo la dirección privada para consultar Kairo.':record.kairo?invoiceKairoState(record.kairo.state):!locked&&problem?'Completa los datos de facturación para preparar una factura nueva.':'';
+  if(record.kairo&&p&&record.kairo.contentHash!==p.contentHash)note+=' La preparación local ha cambiado.';
+  return h+'<p class="invoice-note" id="invoiceKairoMessage" role="status">'+escHtml(note)+'</p></section>';
+}
+function invoiceKairoNavigate(popup,target){
+  if(popup){
+    if(popup.closed)throw new Error('Ventana cerrada. Vuelve a abrir la factura.');
+    popup.location.replace(target);
+  }else if(!window.open(target,'_blank'))location.assign(target);
 }
 function invoiceKairoCheckResult(r,p){
   if(!r||r.operationId!==p.operationId||r.contentHash!==p.contentHash||r.period!==p.period||!['review','cancelled','blocked','approved','accepted','sent','email_cancelled','emitting','queued','sending','uncertain','missing','different'].includes(r.state))throw new Error('Respuesta de Kairo no válida. Consulta el estado.');
@@ -37,8 +40,7 @@ async function invoiceKairoMobile(url,p,action,popup){
   var receipt=await request(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
   if(!receipt||!/^[a-f0-9]{64}$/.test(receipt.ticket))throw new Error('Referencia de entrega no válida.');
   var target=endpoint+'?abrir='+receipt.ticket;
-  if(popup.closed)throw new Error('Ventana cerrada. Vuelve a abrir la factura.');
-  popup.location.replace(target);
+  invoiceKairoNavigate(popup,target);
   var deadline=Date.now()+10*60*1000;
   while(Date.now()<deadline){
     await new Promise(function(resolve){setTimeout(resolve,1800);});
@@ -75,48 +77,62 @@ function invoiceKairoExchange(url,p,action,popup){
     var timeout=setTimeout(function(){finish(Object.assign(new Error('Sin respuesta de Kairo. Comprueba Tailscale y consulta el estado antes de repetir.'),{code:'network'}));},45000);
   });
 }
-function bindInvoiceKairo(root,p,url,options){
-  options=options||{};
-  var send=root.querySelector('#invoiceKairoSend');if(options.revise&&send)send.textContent='Enviar cambios a Kairo';
-  ['Send','Status'].forEach(function(suffix){
-    var button=root.querySelector('#invoiceKairo'+suffix);if(!button)return;
-    button.onclick=async function(){
-      if(INVOICE_KAIRO_BUSY)return;
-      var message=root.querySelector('#invoiceKairoMessage'),popup;
-      try{
-        if(navigator.onLine===false)throw Object.assign(new Error('Sin conexión. La preparación sigue guardada en este dispositivo.'),{code:'network'});
-        url=invoiceKairoUrl(url);
-        // Abrir dentro del gesto del usuario; nunca datos fiscales en la URL.
+function bindInvoiceKairo(root,period,p,url,options){
+  var button=root.querySelector('#invoiceKairoContinue'),message=root.querySelector('#invoiceKairoMessage');
+  if(!button)return;
+  button.onclick=async function(){
+    if(INVOICE_KAIRO_BUSY)return;
+    var mobile=/Android/i.test(navigator.userAgent),popup=null,opened=false;
+    try{
+      INVOICE_KAIRO_BUSY=true;button.disabled=true;
+      if(navigator.onLine===false)throw Object.assign(new Error('Sin conexión. La preparación sigue guardada en este dispositivo.'),{code:'network'});
+      url=invoiceKairoUrl(url);
+      if(!mobile){
         popup=window.open('about:blank','_blank');
         if(!popup)throw new Error('Permite abrir la ventana privada de Kairo para continuar.');
-        INVOICE_KAIRO_BUSY=true;root.querySelectorAll('#invoiceKairoSend,#invoiceKairoStatus').forEach(function(el){el.disabled=true;});
-        if(!await ensureKairoConnection()){popup.close();return;}
-        if(popup.closed)return;
-        var mobile=/Android/i.test(navigator.userAgent);
-        if(!mobile)popup.location.replace(url+'gestify');
-        var data=invoiceData(),record=data.months[p.period];
-        if(!record||record.preparation.contentHash!==p.contentHash)throw new Error('La preparación cambió. Vuelve a abrir el mes.');
-        if(suffix==='Send'&&record.final)throw new Error('Este mes ya tiene un PDF definitivo. Consulta su estado.');
-        if(suffix==='Send'){
-          if(!options.revise){record.kairo={operationId:p.operationId,contentHash:p.contentHash,state:'pending'};invoiceSave(data);}
-          var manual=root.querySelector('#invoiceDocument');if(manual)manual.remove();
-          var gmail=root.querySelector('#invoiceGmail');if(gmail)gmail.remove();
-        }
-        INVOICE_KAIRO_BUSY=true;root.querySelectorAll('#invoiceKairoSend,#invoiceKairoStatus').forEach(function(el){el.disabled=true;});
-        message.textContent='Conectando con Kairo… Mantén abierta su ventana.';
-        var exchange=mobile?invoiceKairoMobile:invoiceKairoExchange;
-        var result=await exchange(url,p,suffix==='Send'?(options.revise?'revise':'prepare'):'status',popup);
-        data=invoiceData();record=data.months[p.period];
-        if(record&&record.preparation.contentHash===p.contentHash){record.kairo={operationId:p.operationId,contentHash:p.contentHash,state:result.state};invoiceSave(data);if(data.config.kairoUrl&&invoiceKairoUrl(data.config.kairoUrl)===url&&typeof fetchHomeInvoiceStatus==='function')fetchHomeInvoiceStatus(p.period,data.config.kairoUrl,true);}
-        message.textContent=invoiceKairoState(result.state);
-      }catch(e){
-        message.textContent=e.message;
-        if(e.code==='network'){
-          var connect=document.createElement('button');connect.type='button';connect.className='ev-btn';connect.textContent='Activar VPN';
-          connect.onclick=function(){openMobileConnection(null,'vpn');};message.append(' ',connect);
-        }
       }
-      finally{INVOICE_KAIRO_BUSY=false;root.querySelectorAll('#invoiceKairoSend,#invoiceKairoStatus').forEach(function(el){el.disabled=false;});}
-    };
-  });
+      if(!await ensureKairoConnection())return;
+      message.textContent='Consultando la factura en Kairo…';
+      if(!await fetchHomeInvoiceStatus(period,url,true)||INVOICE_HOME_CACHE.url!==url)throw Object.assign(new Error('No se ha podido conectar con Kairo. Comprueba la conexión VPN Kairo.'),{code:'network'});
+      var remote=INVOICE_HOME_CACHE.periods[period].data;
+      var monthUrl=url+'gestify-month?period='+period;
+      var data=invoiceData(),record=data.months[period];
+      var revise=options.revise&&['scheduled','draft'].includes(remote.state);
+      if((remote.state!=='missing'&&!revise)||(record&&record.final)){
+        invoiceKairoNavigate(popup,monthUrl);opened=true;
+        message.textContent=remote.sent?'Factura enviada desde Kairo.':'Consulta el mes en Kairo.';
+        return;
+      }
+      if(!p||!record||!record.preparation)throw new Error('Completa los datos de facturación para preparar este mes.');
+      if(record.preparation.contentHash!==p.contentHash)throw new Error('La preparación cambió. Vuelve a abrir el mes.');
+      if(!revise){record.kairo={operationId:p.operationId,contentHash:p.contentHash,state:'pending'};invoiceSave(data);}
+      ['#invoiceDocument','#invoiceGmail'].forEach(function(selector){var el=root.querySelector(selector);if(el)el.remove();});
+      var action=revise?'revise':'prepare',result;
+      message.textContent='Continúa la preparación en Kairo.';
+      if(mobile){
+        result=await invoiceKairoMobile(url,p,action,popup);
+      }else{
+        invoiceKairoNavigate(popup,url+'gestify');opened=true;
+        result=await invoiceKairoExchange(url,p,action,popup);
+      }
+      data=invoiceData();record=data.months[period];
+      if(record&&record.preparation&&record.preparation.contentHash===p.contentHash){
+        record.kairo={operationId:p.operationId,contentHash:p.contentHash,state:result.state};invoiceSave(data);
+        if(data.config.kairoUrl===url)fetchHomeInvoiceStatus(period,url,true);
+      }
+      message.textContent=invoiceKairoState(result.state);
+      if(!mobile&&!popup.closed&&result.state==='review')invoiceKairoNavigate(popup,monthUrl);
+    }catch(e){
+      var network=e.code==='network'||e instanceof TypeError||e.name==='TimeoutError';
+      message.textContent=network&&e.code!=='network'?'Kairo no ha respondido. Comprueba la conexión VPN Kairo.':e.message;
+      if(network){
+        forgetKairoVpn();
+        var connect=document.createElement('button');connect.type='button';connect.className='ev-btn';connect.textContent='Activar VPN';
+        connect.onclick=function(){openMobileConnection(null,'vpn');};message.append(' ',connect);
+      }
+    }finally{
+      if(popup&&!opened&&!popup.closed)popup.close();
+      INVOICE_KAIRO_BUSY=false;button.disabled=false;
+    }
+  };
 }

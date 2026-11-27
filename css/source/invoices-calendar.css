@@ -13,7 +13,9 @@
 .invoice-calendar td.delivery{border:2px solid var(--c-green)}
 .invoice-calendar td.delivery.normal{color:var(--text);background:color-mix(in srgb,var(--c-green) 12%,var(--surface))}
 .invoice-calendar td.delivery.planned{border-style:dashed}
-.invoice-calendar-envelope{position:absolute;right:2px;bottom:1px;font-size:.66rem;color:var(--c-green);line-height:1}
+.invoice-calendar-envelope{position:absolute;right:1px;bottom:1px;line-height:0;color:var(--c-green)}
+.invoice-calendar .invoice-calendar-envelope svg{width:16px;height:16px;display:block}
+.invoice-calendar td.delivery .invoice-calendar-number{transform:translate(-3px,-1px)}
 .invoice-calendar-legend{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;font-size:.62rem;margin:5px 0 8px}
 .invoice-calendar-legend span{color:var(--invoice-day-tone);white-space:nowrap}
 .invoice-calendar-delivery{border-top:1px solid var(--border);padding-top:7px;display:grid;gap:2px;font-size:.75rem;color:var(--c-green)}

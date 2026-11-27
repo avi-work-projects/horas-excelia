@@ -450,3 +450,5 @@ programaron, emitieron o enviaron correos reales. La prueba en Vivo queda pendie
 ## Facturas desde Android (v582)
 
 En Android, Enviar a Kairo y Consultar estado usan una entrega temporal autenticada en la Raspberry. El enlace lleva una referencia aleatoria y se puede abrir en la app independiente. Para un envío, Kairo exige pulsar Preparar borrador y abre el paso 2 cuando la importación devuelve el estado de revisión. Gestify consulta el resultado con la misma referencia. La entrega caduca tras diez minutos. El receptor y el adaptador de instalación se mantienen en el proyecto Kairo.
+
+Desde v583 la ficha del mes ofrece **Continuar en Kairo**. Consulta el estado en directo antes de decidir el destino. Un mes con factura abre su revisión en Kairo, incluido el estado de envío. Un mes pendiente abre la preparación. La modificación explícita de un borrador desde Inicio conserva su confirmación y exige aprobar de nuevo la revisión.

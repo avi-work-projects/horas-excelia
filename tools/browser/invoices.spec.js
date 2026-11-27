@@ -93,7 +93,7 @@ test('Kairo sin configurar sigue visible y abre directamente su conexión editab
  await expect(page.locator('.invoice-kairo-locked')).toBeVisible();
  await expect(page.locator('.invoice-kairo-badge')).toHaveText('Sin configurar');
  await expect(page.locator('#invoiceKairoConfig')).toBeVisible();
- await expect(page.locator('#invoiceKairoSend,#invoiceKairoStatus,#invoiceGmail')).toHaveCount(0);
+ await expect(page.locator('#invoiceKairoContinue,#invoiceKairoStatus,#invoiceGmail')).toHaveCount(0);
  await page.screenshot({path:info.outputPath('kairo-sin-configurar.png'),animations:'disabled'});
  await page.locator('#invoiceKairoConfig').click();
  await expect(page.locator('#invoiceTitle')).toHaveText('Facturas y Correo');
@@ -110,7 +110,7 @@ test('Kairo sin configurar sigue visible y abre directamente su conexión editab
    hoursCacheRemember({period,rows,checkedAt:new Date().toISOString()},hoursKairoUrl(),hoursSourceSignature(rows));paintHoursStatus();
  });
  await page.locator('#invoiceHomeBtn').click();
- await expect(page.locator('#invoiceKairoSend')).toBeDisabled();await expect(page.locator('#invoiceKairoStatus')).toBeDisabled();
+ await expect(page.locator('#invoiceKairoContinue')).toBeEnabled();await expect(page.locator('#invoiceKairoStatus')).toHaveCount(0);
  await expect(page.locator('#invoiceKairoMessage')).toContainText('Completa los datos');
  await expect(page.locator('#invoiceAmounts')).toHaveCount(0);
  await expect(page.locator('.invoice-month-summary')).not.toContainText('€');
@@ -119,13 +119,13 @@ test('Kairo sin configurar sigue visible y abre directamente su conexión editab
 
 test('desglose por tramos antes del envío, sin scroll inicial y sin Excel en móvil',async({page},info)=>{
  await page.evaluate(()=>{const data=invoiceData();data.config.rate='';data.config.kairoUrl='https://synthetic-kairo.test.ts.net/facturas/';invoiceSave(data);ECON_YEAR_CONFIG[2026]={rate:320,multiRate:true,ratePeriods:[{startDate:'2026-01-01',rate:320,rateMode:'daily'},{startDate:'2026-10-16',rate:340,rateMode:'daily'}]};return openInvoiceMonth('2026-10');});
- await expect(page.locator('#invoiceKairoSend')).toBeVisible();
+ await expect(page.locator('#invoiceKairoContinue')).toBeVisible();
  await expect(page.locator('#invoiceAmounts')).not.toContainText('€');
  await expect(page.locator('#invoiceExcel,#invoiceTools')).toHaveCount(0);await expect(page.locator('#invoiceJson')).toHaveCount(0);await expect(page.locator('#invoiceDays')).not.toHaveAttribute('open','');
  for(const width of [320,400,440]){
   await page.setViewportSize({width,height:880});
   await page.evaluate(()=>{document.querySelector('.invoice-month-summary').open=true;document.querySelector('.invoice-body').scrollTop=0;});
-  const sheet=await page.locator('.invoice-sheet').boundingBox(),send=await page.locator('#invoiceKairoSend').boundingBox(),summary=await page.locator('.invoice-month-summary').boundingBox();
+  const sheet=await page.locator('.invoice-sheet').boundingBox(),send=await page.locator('#invoiceKairoContinue').boundingBox(),summary=await page.locator('.invoice-month-summary').boundingBox();
   expect(send.y).toBeGreaterThanOrEqual(summary.y+summary.height);expect(await page.locator('.invoice-body').evaluate(el=>el.scrollTop)).toBe(0);expect(send.y+send.height).toBeLessThan(sheet.y+sheet.height);
   expect(await page.locator('.invoice-sheet').evaluate(el=>el.scrollWidth<=el.clientWidth)).toBe(true);
   const amounts=page.locator('#invoiceAmounts');const height=(await amounts.boundingBox()).height;

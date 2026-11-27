@@ -381,10 +381,10 @@
 
 **Funciones:** validateHomeInvoiceStatus:6 · homeInvoiceCacheRead:13 · homeInvoiceCacheSave:23 · homeInvoiceCheckedAt:24 · homeInvoiceScheduleDate:25 · homePreviousInvoicePeriod:26 · homeInvoiceModel:27 · homeInvoiceRequirement:55 · renderHomeInvoiceStatus:58 · paintHomeInvoiceStatus:82 · initHomeInvoiceStatus:118
 
-### js/invoices-kairo.js  _(123 líneas)_
+### js/invoices-kairo.js  _(139 líneas)_
 **Estado global:** INVOICE_KAIRO_BUSY:2
 
-**Funciones:** invoiceKairoUrl:3 · invoiceKairoState:9 · invoiceKairoSection:12 · invoiceKairoCheckResult:24 · invoiceKairoExchange:54 · finish:57 · receive:58 · bindInvoiceKairo:78
+**Funciones:** invoiceKairoUrl:3 · invoiceKairoState:9 · invoiceKairoSection:12 · invoiceKairoNavigate:21 · invoiceKairoCheckResult:27 · invoiceKairoExchange:56 · finish:59 · receive:60 · bindInvoiceKairo:80
 
 ### js/invoices-projects.js  _(79 líneas)_
 **Funciones:** invoiceProjectPeriods:2 · invoiceProjectFor:10 · invoiceProjectChange:15 · invoiceProjectApply:22 · invoiceProjectReply:30
@@ -1000,13 +1000,13 @@
 **Rangos por prefijo de clase:**
 .home-invoice:27-44 · .home-panel:2-41 · .home-pending:20-25 · .home-rule:30-31 · .home-status:16-16 · .home-submission:15-45 · .home-week:49-76 · .week-actions:48-71 · .week-card:58-61 · .week-doubt:56-66 · .week-header:55-55
 
-### css/source/invoices-calendar.css  _(27 líneas)_
+### css/source/invoices-calendar.css  _(29 líneas)_
 
 **Secciones:**
 
 
 **Rangos por prefijo de clase:**
-.invoice-calendar:1-25 · .invoice-month:22-24
+.invoice-calendar:1-27 · .invoice-month:24-26
 
 ### css/source/theme-cream.css  _(90 líneas)_
 

@@ -81,7 +81,7 @@ test('modificar factura usa la revisión real, conserva la confirmación y nunca
   const old=await page.evaluate(()=>invoiceData().months['2027-02'].kairo.contentHash);
   await invoice.getByRole('button',{name:'Modificar envíos'}).click();
   await expect(page.locator('#invoicePeriod')).toContainText('Febrero 2027');
-  const waiting=page.waitForEvent('popup');await page.getByRole('button',{name:'Enviar cambios a Kairo'}).click();const popup=await waiting;
+  const waiting=page.waitForEvent('popup');await page.getByRole('button',{name:'Continuar en Kairo'}).click();const popup=await waiting;
   await expect(popup.getByRole('button',{name:'Actualizar borrador'})).toBeVisible();expect(api.posts).toHaveLength(0);
   expect(await page.evaluate(()=>invoiceData().months['2027-02'].kairo.contentHash)).toBe(old);
   await popup.getByRole('button',{name:'Actualizar borrador'}).click();

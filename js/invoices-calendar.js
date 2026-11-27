@@ -21,7 +21,7 @@ function renderInvoiceCalendar(period,config){
     if(number<1||number>days)h+='<td class="empty"></td>';
     else{
       var date=new Date(year,month,number),iso=dk(date),type=dayT(date),marked=delivery.date===iso,kind=types[type],label=number+' de '+MN[month]+(kind?' · '+kind[1]:'')+(marked?' · '+delivery.title:'');
-      h+='<td data-date="'+iso+'" class="'+(kind?type:'normal')+(index%7>4?' weekend':'')+(marked?' delivery '+delivery.kind:'')+'" aria-label="'+escHtml(label)+'"><span class="invoice-calendar-number">'+number+'</span><span class="invoice-calendar-mark">'+(kind?kind[0]:'')+'</span>'+(marked?'<span class="invoice-calendar-envelope" aria-hidden="true">✉</span>':'')+'</td>';
+      h+='<td data-date="'+iso+'" class="'+(kind?type:'normal')+(index%7>4?' weekend':'')+(marked?' delivery '+delivery.kind:'')+'" aria-label="'+escHtml(label)+'"><span class="invoice-calendar-number">'+number+'</span><span class="invoice-calendar-mark">'+(kind?kind[0]:'')+'</span>'+(marked?'<span class="invoice-calendar-envelope" aria-hidden="true">'+dispatchIcon('invoice-mail')+'</span>':'')+'</td>';
     }
     if(index%7===6)h+='</tr>';
   }
