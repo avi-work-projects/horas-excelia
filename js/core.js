@@ -3,7 +3,7 @@
    ============================================================ */
 
 // ── Versión de la app (actualizar en cada push significativo) ─
-var APP_VERSION = 'v580 — Corrige el error al elegir un acceso rápido de evento';
+var APP_VERSION = 'v581 — Botones de Ajustes con su color y despliegue con reintentos';
 
 // ── MacroDroid: normalizar URL base (quita trailing slash y nombre de macro) ─
 function normalizeMacroBase(url){

@@ -77,7 +77,7 @@ jobs:
     runs-on: ubuntu-24.04
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      url: ${{ steps.deployment.outputs.page_url || steps.deployment2.outputs.page_url || steps.deployment3.outputs.page_url }}
     steps:
       - uses: actions/download-artifact@v5
         with:
@@ -93,6 +93,33 @@ jobs:
           path: 'dist'
           include-hidden-files: true
 
+      # deploy-pages busca el artefacto en cuanto termina la subida y, desde
+      # noviembre de 2026, GitHub tarda unos segundos en listarlo
+      # (actions/deploy-pages#451). «Re-run failed jobs» no lo arregla: sube un
+      # segundo artefacto y falla por duplicado. Se espera y se reintenta aquí.
+      - name: Wait for artifact listing
+        run: sleep 15
+
       - name: Deploy to GitHub Pages
         id: deployment
+        continue-on-error: true
+        uses: actions/deploy-pages@v5
+
+      - name: Wait before retry
+        if: steps.deployment.outcome == 'failure'
+        run: sleep 30
+
+      - name: Deploy to GitHub Pages (retry)
+        id: deployment2
+        if: steps.deployment.outcome == 'failure'
+        continue-on-error: true
+        uses: actions/deploy-pages@v5
+
+      - name: Wait before last retry
+        if: steps.deployment.outcome == 'failure' && steps.deployment2.outcome == 'failure'
+        run: sleep 60
+
+      - name: Deploy to GitHub Pages (last retry)
+        id: deployment3
+        if: steps.deployment.outcome == 'failure' && steps.deployment2.outcome == 'failure'
         uses: actions/deploy-pages@v5

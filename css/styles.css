@@ -3127,11 +3127,11 @@ button.action-edit.active,button.action-edit:active{background:rgba(251,146,60,.
 .boda-date-ficha input[type="date"]::-webkit-calendar-picker-indicator{margin-left:4px;padding:0}
 
 /* Text edits retain the solid orange; only standalone pencils use a tint. */
-button.action-edit.action-edit-text,button.settings-edit-btn,button.hip-edit-btn,button.bday-vip-edit-btn:not(.active){background:#fb923c!important;color:#fff!important;border-color:#fb923c!important}
+button.action-edit.action-edit-text,button.hip-edit-btn,button.bday-vip-edit-btn:not(.active){background:#fb923c!important;color:#fff!important;border-color:#fb923c!important}
 button.action-edit.action-edit-text:active{background:#f97316!important}
 /* Estilo «Suave» (Ajustes, v575): Editar con fondo claro, contorno y texto naranja. */
-[data-action-style="soft"][data-action-style] :is(button.action-edit.action-edit-text,button.settings-edit-btn,button.hip-edit-btn,button.bday-vip-edit-btn:not(.active)){background:color-mix(in srgb,#fb923c 12%,var(--surface))!important;color:#c2570c!important;border:1.5px solid color-mix(in srgb,#fb923c 60%,transparent)!important}
-[data-theme="dark"][data-action-style="soft"] :is(button.action-edit.action-edit-text,button.settings-edit-btn,button.hip-edit-btn,button.bday-vip-edit-btn:not(.active)){color:#fdba74!important}
+[data-action-style="soft"][data-action-style] :is(button.action-edit.action-edit-text,button.hip-edit-btn,button.bday-vip-edit-btn:not(.active)){background:color-mix(in srgb,#fb923c 12%,var(--surface))!important;color:#c2570c!important;border:1.5px solid color-mix(in srgb,#fb923c 60%,transparent)!important}
+[data-theme="dark"][data-action-style="soft"] :is(button.action-edit.action-edit-text,button.hip-edit-btn,button.bday-vip-edit-btn:not(.active)){color:#fdba74!important}
 .rut-icon-opt{min-width:0;flex-shrink:0}
 .rut-icon-opt svg{flex-shrink:0;display:block}
 .bday-month-hdr{font-size:.82rem;color:var(--text);background:var(--surface2);border:1px solid var(--border);border-left:3px solid #fb923c;border-radius:8px;padding:10px 12px;margin:18px 0 9px;font-weight:750}
